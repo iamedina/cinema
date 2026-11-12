@@ -58,12 +58,25 @@
            aria-label="Ver detalles de ${titulo}">
         <img src="${escapeHtml(poster)}" alt="Póster de ${titulo}"
              class="img-pelicula rounded" loading="lazy" decoding="async">
+        <button type="button" class="fav-btn"
+                data-fav-id="${escapeHtml(item.id)}"
+                data-titulo="${escapeHtml(item.titulo)}"
+                data-anio="${escapeHtml(item.anio)}"
+                data-tipo="${escapeHtml(item.tipo)}"
+                data-poster="${escapeHtml(item.poster || "")}"
+                aria-pressed="false" aria-label="Añadir ${titulo} a Mi lista"
+                title="Añadir a Mi lista">
+          <i class="bi bi-heart" aria-hidden="true"></i>
+        </button>
         <p class="info-extra">${escapeHtml(item.anio)} · ${etiquetaTipo(item.tipo)}</p>
       </div>
       <div class="titulo-container text-center mt-2">
         <h2 class="titulo-pelicula">${titulo}</h2>
       </div>
     `;
+
+    /* El módulo de favoritos puede no estar cargado (páginas futuras). */
+    if (CINEMA.favoritos) CINEMA.favoritos.aplicarEstado(article);
 
     return article;
   }
@@ -98,18 +111,25 @@
   function activarNavegacion(contenedor) {
     if (!contenedor) return;
 
+    /* Los controles propios de la tarjeta (corazón, futuros botones)
+       no deben disparar la navegación a la ficha. */
+    const esControl = (elemento) =>
+      Boolean(elemento && elemento.closest && elemento.closest("button, a, input, select, textarea, label"));
+
     const ir = (elemento) => {
       const id = elemento.dataset.id;
       if (id) window.location.href = "descripcion.html?id=" + encodeURIComponent(id);
     };
 
     contenedor.addEventListener("click", (evento) => {
+      if (esControl(evento.target)) return;
       const objetivo = evento.target.closest("[data-id]");
       if (objetivo) ir(objetivo);
     });
 
     contenedor.addEventListener("keydown", (evento) => {
       if (evento.key !== "Enter" && evento.key !== " ") return;
+      if (esControl(evento.target)) return;
       const objetivo = evento.target.closest("[data-id]");
       if (!objetivo) return;
       evento.preventDefault();
