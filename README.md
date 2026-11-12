@@ -89,6 +89,20 @@ La rejilla usa **columnas pares explícitas** (6 / 4 / 2 según el ancho) y cada
 página entrega 60 títulos, así las filas siempre quedan completas y no aparece
 un hueco al final.
 
+## Ficha de detalle
+
+`descripcion.html?id=...` muestra el tráiler, **reparto** (con foto y personaje),
+**plataformas de streaming** (JustWatch vía TMDB, con enlace a todas las
+opciones), **galería** de imágenes con lightbox y **títulos similares**
+(clicables y con corazón para guardar en Mi lista).
+
+- Solo se muestra lo que la API devuelve: si un título no tiene plataformas
+  registradas, esa sección no aparece.
+- El reparto se limita a 12 actores y los similares a 12, para que la rejilla
+  no deje huecos.
+- Con OMDb (doble clic, sin servidor) se muestra el reparto en texto y el
+  resto de secciones se omite.
+
 ## Estructura
 
 ```
@@ -111,7 +125,7 @@ js/buscador.js      Buscador de la cabecera
 js/home.js          Carruseles de la portada
 js/busqueda.js      Búsqueda + paginación
 js/listado.js       Listados por tipo, filtros y paginación
-js/detalle.js       Ficha + tráiler embebido
+js/detalle.js       Ficha: tráiler, reparto, plataformas, galería y similares
 js/mi-lista.js      Página Mi lista
 
 server.js           Estático + proxy TMDB + fusión de páginas
