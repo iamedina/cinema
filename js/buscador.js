@@ -32,15 +32,9 @@
 
     const boton = document.getElementById("buscarBtn");
     if (boton) {
-      boton.setAttribute("role", "button");
-      boton.setAttribute("tabindex", "0");
+      /* Es un <button> real: ya es enfocable y activable con Enter/Espacio. */
       boton.setAttribute("aria-label", "Buscar");
       boton.addEventListener("click", ejecutar);
-      boton.addEventListener("keydown", (evento) => {
-        if (evento.key !== "Enter" && evento.key !== " ") return;
-        evento.preventDefault();
-        ejecutar();
-      });
     }
 
     return { input, ejecutar };

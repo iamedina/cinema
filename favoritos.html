@@ -7,11 +7,19 @@
     <link href="vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
     <link href="vendor/bootstrap/bootstrap.min.css" rel="stylesheet">
     <title>Mi lista | CINEMA</title>
+    <meta name="description" content="Tus películas y series guardadas en este navegador.">
+    <meta name="theme-color" content="#000000">
+    <meta name="color-scheme" content="dark">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Mi lista | CINEMA">
+    <meta property="og:description" content="Tus películas y series guardadas en este navegador.">
+    <meta property="og:image" content="img/image-cinema.png">
     <link rel="icon" type="image/png" href="img/image-cinema.png">
     <link rel="stylesheet" href="css/style.css">
 </head>
 
 <body>
+    <a class="saltar-contenido" href="#contenido">Saltar al contenido</a>
 
     <div class="barra-superior">
         <header>
@@ -23,10 +31,9 @@
                 </div>
                 <div class="search">
                     <div class="position-relative w-100">
-                        <input type="text" class="ps-3" id="nombrePeliculas" autocomplete="off"
+                        <input type="text" class="ps-3" id="nombrePeliculas" autocomplete="off" aria-label="Buscar películas y series"
                             placeholder="Buscar películas y series...">
-                        <i class="bi bi-search text-white position-absolute" id="buscarBtn"
-                            style="top: 50%; right: 20px; transform: translateY(-40%); cursor: pointer;"></i>
+                        <button type="button" id="buscarBtn" class="buscar-boton" aria-label="Buscar" style="top: 50%; right: 20px; transform: translateY(-40%); cursor: pointer;"><i class="bi bi-search text-white" aria-hidden="true"></i></button>
                     </div>
                 </div>
             </div>
@@ -39,7 +46,7 @@
             <div class="mover group">
                 <div class="anclas-header">
                     <a href="index.html">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em">
+                        <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em">
                             <path fill="currentColor"
                                 d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1">
                             </path>
@@ -47,7 +54,7 @@
                         <span>Inicio</span>
                     </a>
                     <a href="pelicula.html">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" width="1em" height="1em">
+                        <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" width="1em" height="1em">
                             <path fill="currentColor" fill-rule="evenodd"
                                 d="M11.402 2.773q-.201.004-.395.054c.1-.236.152-.488.154-.744a2.15 2.15 0 0 0-.676-1.485A2.2 2.2 0 0 0 8.949 0a2.2 2.2 0 0 0-1.124.31c-.34.201-.617.49-.803.834A2.17 2.17 0 0 0 6.219.31a2.21 2.21 0 0 0-2.646.296a2.14 2.14 0 0 0-.668 1.477c.001.256.053.508.153.744a1.65 1.65 0 0 0-1.577.42A1.6 1.6 0 0 0 1 4.393c0 .43.173.841.481 1.145c.308.303.726.463 1.161.463h8.716c.435 0 .853-.17 1.161-.474a1.607 1.607 0 0 0 0-2.29a1.66 1.66 0 0 0-1.161-.473l.043.01Zm-.044 4.477H7.75V14h1.874a1.5 1.5 0 0 0 1.487-1.302l.732-5.489q-.24.04-.485.041m-8.716 0a3 3 0 0 1-.485-.04l.732 5.488A1.5 1.5 0 0 0 4.376 14H6.25V7.25z"
                                 clip-rule="evenodd"></path>
@@ -55,7 +62,7 @@
                         <span>Películas</span>
                     </a>
                     <a href="serie.html">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em">
+                        <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em">
                             <path fill="currentColor" fill-rule="evenodd"
                                 d="M11.218 7.954H6.3V9.17h2.036V15h1.475V9.17h1.816l1.96 5.83h1.776l2.369-7.046h-1.607l-1.611 5.527h-.034l-1.612-5.527zM2 5a1 1 0 0 1 1-1h18a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1zm6 16.05c0-.414.344-.75.753-.75h6.494a.75.75 0 0 1 .753.75v.75H8z">
                             </path>
@@ -63,7 +70,7 @@
                         <span>Series</span>
                     </a>
                     <a href="anime.html">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em">
+                        <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em">
                             <g fill="currentColor">
                                 <path d="M10.75 12a1.25 1.25 0 1 1 2.5 0a1.25 1.25 0 0 1-2.5 0"></path>
                                 <path
@@ -83,9 +90,12 @@
         </nav>
     </div>
 
+    <main id="contenido" tabindex="-1">
+        <h1 class="sr-only">Mi lista</h1>
+
     <section class="nuevas" style="margin-top: 50px;">
         <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-4">
-            <h3 class="text-white text-start mb-0" id="tituloListado">Mi lista</h3>
+            <h2 class="text-white text-start mb-0" id="tituloListado">Mi lista</h2>
             <div class="mi-lista-acciones oculto" id="accionesLista">
                 <button type="button" class="btn-vaciar" id="vaciarLista">
                     <i class="bi bi-trash3" aria-hidden="true"></i>
@@ -93,8 +103,10 @@
                 </button>
             </div>
         </div>
-        <div id="resultado"></div>
+        <div id="resultado" aria-busy="false"></div>
     </section>
+
+</main>
 
     <footer class="text-light pt-4" style="background: rgb(20 22 25 / var(--tw-bg-opacity, 1));">
         <div class="container py-4">
