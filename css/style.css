@@ -196,18 +196,106 @@ nav .mover {
    ---------------------------------------------------------- */
 
 .nuevas {
-  padding: 0 80px;
+  padding: 0 40px;
   margin-top: 40px;
 }
 
+/* Columnas pares y explícitas: las filas siempre quedan completas
+   (60 títulos por página y 12 por carrusel son divisibles por 6, 4 y 2). */
 #resultado,
 #resultadoRecientes,
 #resultadoRecientesSeries,
 #resultadoRecientesAnime {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 16px;
   align-items: start;
+}
+
+/* Barra de filtros de los listados */
+
+#filtros:empty {
+  display: none;
+}
+
+.barra-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 12px;
+  padding: 14px 16px;
+  margin-bottom: 20px;
+  background: var(--panel);
+  border: 1px solid #ffffff14;
+  border-radius: 12px;
+}
+
+.filtro {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1 1 150px;
+  min-width: 0;
+  max-width: 240px;
+  margin: 0;
+}
+
+.filtro-etiqueta {
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--texto-suave);
+}
+
+.filtro-select {
+  width: 100%;
+  padding: 8px 34px 8px 12px;
+  border: 1px solid #ffffff26;
+  border-radius: 8px;
+  background-color: #14171b;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 16 16'><path fill='%23adb5bd' d='M8 11L2 5h12z'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 12px;
+  color: #fff;
+  font-size: 0.92rem;
+  appearance: none;
+  -webkit-appearance: none;
+  cursor: pointer;
+}
+
+.filtro-select:focus-visible {
+  outline: 2px solid var(--primario);
+  outline-offset: 1px;
+}
+
+.filtro-limpiar {
+  align-self: flex-end;
+  padding: 8px 18px;
+  border: 1px solid #ffffff33;
+  border-radius: 999px;
+  background: transparent;
+  color: #fff;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, opacity 0.2s ease;
+}
+
+.filtro-limpiar:hover:not(:disabled) {
+  background: #ffffff14;
+  border-color: #ffffff66;
+}
+
+.filtro-limpiar:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.resumen-listado {
+  color: var(--texto-suave);
+  font-size: 0.9rem;
+  min-height: 1.2em;
 }
 
 #resultado {
@@ -546,6 +634,19 @@ footer a:hover {
   }
 }
 
+@media (max-width: 1199px) {
+  .nuevas {
+    padding: 0 32px;
+  }
+
+  #resultado,
+  #resultadoRecientes,
+  #resultadoRecientesSeries,
+  #resultadoRecientesAnime {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
 @media (max-width: 768px) {
   header {
     padding: 8px 16px;
@@ -592,8 +693,22 @@ footer a:hover {
   #resultadoRecientes,
   #resultadoRecientesSeries,
   #resultadoRecientesAnime {
-    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-    gap: 12px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .barra-filtros {
+    gap: 10px;
+    padding: 12px;
+  }
+
+  .filtro {
+    flex: 1 1 130px;
+    max-width: none;
+  }
+
+  .filtro-limpiar {
+    flex: 1 1 100%;
   }
 
   .contenedor {
@@ -608,6 +723,20 @@ footer a:hover {
   .fav-btn {
     opacity: 1;
     transform: none;
+  }
+}
+
+@media (max-width: 559px) {
+  #resultado,
+  #resultadoRecientes,
+  #resultadoRecientesSeries,
+  #resultadoRecientesAnime {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .filtro {
+    flex: 1 1 100%;
   }
 }
 

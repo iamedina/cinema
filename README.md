@@ -75,6 +75,20 @@ Cada póster tiene un corazón que guarda el título en el navegador
 - Si el navegador bloquea el almacenamiento, el sitio sigue funcionando: solo
   no recuerda la lista.
 
+## Filtros de los listados
+
+Películas, series y anime tienen una barra de filtros: **género, año, orden
+y nota mínima**. Los filtros viven en la URL (`?genero=28&anio=2024&orden=nota`)
+para poder compartir un listado o recargar sin perderlo.
+
+- Solo aparecen con el servidor en marcha: OMDb no admite filtros.
+- `Limpiar` vuelve al catálogo completo y a la página 1.
+- La paginación numérica se mantiene; cambiar un filtro reinicia a la página 1.
+
+La rejilla usa **columnas pares explícitas** (6 / 4 / 2 según el ancho) y cada
+página entrega 60 títulos, así las filas siempre quedan completas y no aparece
+un hueco al final.
+
 ## Estructura
 
 ```
@@ -90,11 +104,13 @@ css/style.css       Todos los estilos
 js/api.js           Datos: TMDB vía proxy, OMDb de respaldo, caché
 js/almacen.js       Acceso seguro a localStorage (claves versionadas)
 js/favoritos.js     Corazón, contador y lista de favoritos
+js/generos.js       Géneros fijos de TMDB (sin petición extra)
+js/filtros.js       Barra de filtros y estado en la URL
 js/ui.js            Tarjetas, escapado de HTML, navegación
 js/buscador.js      Buscador de la cabecera
 js/home.js          Carruseles de la portada
 js/busqueda.js      Búsqueda + paginación
-js/listado.js       Listados por tipo
+js/listado.js       Listados por tipo, filtros y paginación
 js/detalle.js       Ficha + tráiler embebido
 js/mi-lista.js      Página Mi lista
 
