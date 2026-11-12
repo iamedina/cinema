@@ -237,14 +237,50 @@
     };
   }
 
-  function pathDescubrir(tipo, page) {
-    const base = "?page=" + page + "&paginas=" + PAGINAS_POR_VISTA + "&sort_by=popularity.desc";
+  /* Órdenes admitidos por la barra de filtros. */
+  const ORDENES = {
+    popularidad: { movie: "popularity.desc", tv: "popularity.desc" },
+    nota: { movie: "vote_average.desc", tv: "vote_average.desc" },
+    novedad: { movie: "primary_release_date.desc", tv: "first_air_date.desc" },
+    titulo: { movie: "original_title.asc", tv: "original_name.asc" },
+  };
 
-    if (tipo === "anime") {
-      return "/discover/tv" + base + "&with_genres=16&with_origin_country=JP";
+  function sortTmdb(tipo, orden) {
+    const grupo = ORDENES[orden] || ORDENES.popularidad;
+    return tipo === "movie" ? grupo.movie : grupo.tv;
+  }
+
+  function pathDescubrir(tipo, page, filtros) {
+    const f = filtros || {};
+    const esTv = tipo !== "movie";
+
+    const partes = [
+      "page=" + page,
+      "paginas=" + PAGINAS_POR_VISTA,
+      "sort_by=" + sortTmdb(tipo, f.orden),
+    ];
+
+    const generos = [];
+    if (tipo === "anime") generos.push("16");
+    if (f.genero && /^\d+$/.test(String(f.genero)) && String(f.genero) !== "16") {
+      generos.push(String(f.genero));
     }
-    if (tipo === "series") return "/discover/tv" + base;
-    return "/discover/movie" + base;
+    if (generos.length) partes.push("with_genres=" + generos.join(","));
+
+    if (f.anio && /^\d{4}$/.test(String(f.anio))) {
+      partes.push((esTv ? "first_air_date_year=" : "primary_release_year=") + f.anio);
+    }
+
+    if (f.nota && /^\d+(\.\d+)?$/.test(String(f.nota))) {
+      partes.push("vote_average.gte=" + f.nota);
+    }
+
+    /* Ordenar por nota sin un mínimo de votos llena la página de rarezas. */
+    if (f.orden === "nota") partes.push("vote_count.gte=200");
+
+    if (tipo === "anime") partes.push("with_origin_country=JP");
+
+    return "/discover/" + (esTv ? "tv" : "movie") + "?" + partes.join("&");
   }
 
   function pathTrending(tipo) {
@@ -276,13 +312,14 @@
     };
   }
 
-  async function listarTmdb({ tipo, page }) {
-    const json = await tmdb(pathDescubrir(tipo, page));
+  async function listarTmdb({ tipo, page, filtros }) {
+    const json = await tmdb(pathDescubrir(tipo, page, filtros));
     if (!json) return null;
 
     return {
       items: (json.results || []).map(normalizarTmdb),
       page,
+      total: json.total_results || 0,
       totalPaginas: json.total_pages || 1,
     };
   }
@@ -583,6 +620,7 @@
     listar,
     recientes,
     detalle,
+    tmdbListo: tmdbDisponible,
     SEMILLAS_HOME,
     SEMILLAS_LISTADO,
     USAR_SERVIDOR,

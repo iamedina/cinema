@@ -1,11 +1,14 @@
 /**
  * CINEMA · páginas de listado: pelicula.html, serie.html y anime.html.
  * El tipo se lee de <body data-tipo="...">.
+ *
+ * La paginación numérica se mantiene. Los filtros (género, año, orden
+ * y nota) viven en la URL y reinician la lista en la página 1.
  */
 (function () {
   "use strict";
 
-  const { api, ui, buscador } = window.CINEMA;
+  const { api, ui, buscador, filtros: moduloFiltros } = window.CINEMA;
 
   const tipo = document.body.dataset.tipo || "movie";
 
@@ -14,10 +17,13 @@
   const anterior = document.getElementById("anterior");
   const siguiente = document.getElementById("siguiente");
   const paginacion = document.getElementById("paginacion");
+  const resumen = document.getElementById("resumenListado");
+  const contenedorFiltros = document.getElementById("filtros");
 
   let page = parseInt(new URLSearchParams(location.search).get("page"), 10) || 1;
   let totalPaginas = 0;
   let tokenActual = 0;
+  let filtros = moduloFiltros ? moduloFiltros.leer() : {};
 
   ui.activarNavegacion(resultado);
   buscador.init();
@@ -41,23 +47,35 @@
     history.replaceState(null, "", location.pathname + (query ? "?" + query : ""));
   }
 
-  async function cargar(pagina) {
+  function actualizarResumen(cantidad) {
+    if (!resumen) return;
+    resumen.textContent = cantidad ? cantidad + " títulos en esta página" : "";
+  }
+
+  async function cargar(pagina, { scroll = true } = {}) {
     const token = ++tokenActual;
     page = pagina;
 
     ui.pintarCargando(resultado, 10);
     if (chevron) chevron.classList.add("oculto");
+    actualizarResumen(0);
 
     try {
-      const datos = await api.listar({ tipo, page: pagina });
+      const datos = await api.listar({ tipo, page: pagina, filtros });
       if (token !== tokenActual) return;
 
       totalPaginas = datos.totalPaginas;
 
       if (!datos.items.length) {
-        ui.pintarEstado(resultado, "No hay títulos disponibles ahora mismo.");
+        ui.pintarEstado(
+          resultado,
+          Object.keys(filtros).length
+            ? "No hay títulos con esos filtros. Prueba a quitarlos."
+            : "No hay títulos disponibles ahora mismo."
+        );
       } else {
         ui.pintarTarjetas(resultado, datos.items);
+        actualizarResumen(datos.items.length);
       }
     } catch (error) {
       if (token !== tokenActual) return;
@@ -68,7 +86,7 @@
       if (token === tokenActual) {
         actualizarControles();
         sincronizarUrl();
-        window.scrollTo({ top: 0, behavior: "smooth" });
+        if (scroll) window.scrollTo({ top: 0, behavior: "smooth" });
       }
     }
   }
@@ -82,6 +100,17 @@
   if (siguiente) {
     siguiente.addEventListener("click", () => {
       if (page < totalPaginas) cargar(page + 1);
+    });
+  }
+
+  if (moduloFiltros && contenedorFiltros) {
+    moduloFiltros.init({
+      tipo,
+      contenedor: contenedorFiltros,
+      alCambiar: (nuevos) => {
+        filtros = nuevos;
+        cargar(1);
+      },
     });
   }
 

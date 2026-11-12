@@ -19,13 +19,13 @@
     if (!elemento) return;
 
     ui.activarNavegacion(elemento);
-    ui.pintarCargando(elemento, 8);
+    ui.pintarCargando(elemento, 12);
 
     try {
       const items = await api.recientes({
         tipo,
         semillas: api.SEMILLAS_HOME[tipo],
-        limite: 8,
+        limite: 12,
       });
 
       if (!items.length) {

@@ -159,6 +159,15 @@ async function proxyTmdb(pathname, searchParams) {
   if (!TMDB_ES_TOKEN) params.set("api_key", TMDB_KEY);
 
   const esLista = ES_LISTA.test(pathname);
+
+  /*
+   * Se pide una página extra de TMDB para poder rellenar la vista aunque
+   * TMDB repita algún título entre páginas. Sin esto, una vista de 60
+   * podía quedarse en 58/59 y dejar la última fila de la rejilla coja.
+   */
+  const paginasExtra = esLista && paginas >= 3 && paginas < MAX_PAGINAS_FUSION ? 1 : 0;
+  const paginasPedidas = paginas + paginasExtra;
+
   const urls = [];
 
   /*
@@ -170,7 +179,7 @@ async function proxyTmdb(pathname, searchParams) {
   const paginaSitio = Math.max(1, parseInt(params.get("page"), 10) || 1);
   const primeraTmdb = (paginaSitio - 1) * paginas + 1;
 
-  for (let i = 0; i < paginas; i += 1) {
+  for (let i = 0; i < paginasPedidas; i += 1) {
     const pagina = Math.min(500, primeraTmdb + i);
     const consulta = new URLSearchParams(params);
     if (esLista) consulta.set("page", String(pagina));
@@ -202,9 +211,12 @@ async function proxyTmdb(pathname, searchParams) {
     const primera = jsons[0];
     const resultados = [];
     const vistos = new Set();
+    const esBusqueda = pathname.indexOf("search/") === 0;
 
     for (const json of jsons) {
       for (const item of json.results || []) {
+        /* En /search/multi TMDB mezcla personas: no son títulos. */
+        if (esBusqueda && item.media_type === "person") continue;
         const clave = item.id + ":" + (item.media_type || item.title || item.name || "");
         if (vistos.has(clave)) continue;
         vistos.add(clave);
@@ -224,7 +236,7 @@ async function proxyTmdb(pathname, searchParams) {
     cuerpo = {
       ...primera,
       page: paginaSitio,
-      results: resultados,
+      results: resultados.slice(0, porVista),
       total_results: total,
       total_pages: Math.max(1, Math.min(Math.floor(500 / paginas), Math.ceil(total / porVista))),
     };
