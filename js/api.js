@@ -17,6 +17,10 @@
 
   const IDIOMA = "es-ES";
   const POSTER_BASE = "https://image.tmdb.org/t/p/w500";
+  const PERFIL_BASE = "https://image.tmdb.org/t/p/w185";
+  const LOGO_BASE = "https://image.tmdb.org/t/p/w92";
+  const BACKDROP_BASE = "https://image.tmdb.org/t/p/w780";
+  const BACKDROP_ORIGINAL = "https://image.tmdb.org/t/p/original";
   /* TMDB devuelve 20 por página: fusionamos 3 para mostrar 60. */
   const PAGINAS_POR_VISTA = 3;
   const TIMEOUT_MS = 15000;
@@ -201,6 +205,81 @@
     return null;
   }
 
+  function repartoTmdb(json) {
+    const cast = (json.credits && json.credits.cast) || [];
+    return cast.slice(0, 12).map((p) => ({
+      id: p.id,
+      nombre: p.name,
+      personaje: p.character || null,
+      foto: p.profile_path ? PERFIL_BASE + p.profile_path : null,
+    }));
+  }
+
+  function directorTmdb(json) {
+    const serie = Boolean(json.name && !json.title);
+    if (serie) {
+      const creadores = (json.created_by || []).map((p) => p.name).filter(Boolean);
+      return creadores.length ? creadores.join(", ") : null;
+    }
+    const equipo = (json.credits && json.credits.crew) || [];
+    const directores = equipo.filter((p) => p.job === "Director").map((p) => p.name);
+    return directores.length ? directores.join(", ") : null;
+  }
+
+  function proveedoresTmdb(json) {
+    const bloque = json["watch/providers"] && json["watch/providers"].results;
+    if (!bloque) return null;
+    /* España primero; si no hay, el catálogo de EE. UU. como referencia. */
+    const region = bloque.ES || bloque.US || Object.values(bloque)[0];
+    if (!region) return null;
+
+    const grupos = [
+      ["flatrate", "Suscripción"],
+      ["free", "Gratis"],
+      ["ads", "Con anuncios"],
+      ["rent", "Alquiler"],
+      ["buy", "Compra"],
+    ];
+    const items = [];
+    const vistos = new Set();
+
+    for (const [clave, etiqueta] of grupos) {
+      const lista = region[clave];
+      if (!Array.isArray(lista)) continue;
+      for (const p of lista) {
+        if (!p || !p.provider_name) continue;
+        if (vistos.has(p.provider_id)) continue;
+        vistos.add(p.provider_id);
+        items.push({
+          id: p.provider_id,
+          nombre: p.provider_name,
+          logo: p.logo_path ? LOGO_BASE + p.logo_path : null,
+          tipo: etiqueta,
+        });
+      }
+    }
+
+    if (!items.length) return null;
+    return { enlace: region.link || null, items };
+  }
+
+  function similaresTmdb(json) {
+    const lista =
+      (json.similar && json.similar.results) ||
+      (json.recommendations && json.recommendations.results) ||
+      [];
+    return lista.filter((i) => i && i.media_type !== "person").slice(0, 12).map(normalizarTmdb);
+  }
+
+  function galeriaTmdb(json) {
+    const imagenes = (json.images && json.images.backdrops) || [];
+    const lista = imagenes.length ? imagenes : ((json.images && json.images.posters) || []);
+    return lista.slice(0, 12).map((img) => ({
+      url: BACKDROP_BASE + img.file_path,
+      grande: BACKDROP_ORIGINAL + img.file_path,
+    }));
+  }
+
   function normalizarDetalleTmdb(json) {
     const serie = Boolean(json.name && !json.title);
     const trailer = elegirTrailer(json.videos && json.videos.results);
@@ -234,6 +313,11 @@
         "https://www.youtube.com/results?search_query=" +
         encodeURIComponent(titulo + " " + fecha.slice(0, 4) + " trailer"),
       imdbId: (json.external_ids && json.external_ids.imdb_id) || null,
+      reparto: repartoTmdb(json),
+      director: directorTmdb(json),
+      proveedores: proveedoresTmdb(json),
+      similares: similaresTmdb(json),
+      galeria: galeriaTmdb(json),
     };
   }
 
@@ -340,7 +424,7 @@
         coincidencia[1] +
         "/" +
         coincidencia[2] +
-        "?append_to_response=videos,external_ids,content_ratings,release_dates"
+        "?append_to_response=videos,external_ids,content_ratings,release_dates,credits,similar,recommendations,images,watch/providers&include_image_language=es,en,null"
     );
     if (!json) return null;
 
@@ -584,6 +668,16 @@
         "https://www.youtube.com/results?search_query=" +
         encodeURIComponent((datos.Title || "") + " " + (datos.Year || "") + " trailer"),
       imdbId: datos.imdbID,
+      reparto: (datos.Actors && datos.Actors !== "N/A" ? datos.Actors.split(", ") : []).map((nombre, i) => ({
+        id: "omdb-" + i,
+        nombre,
+        personaje: null,
+        foto: null,
+      })),
+      director: datos.Director && datos.Director !== "N/A" ? datos.Director : null,
+      proveedores: null,
+      similares: [],
+      galeria: [],
     };
   }
 
