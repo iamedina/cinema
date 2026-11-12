@@ -63,6 +63,18 @@ Los archivos HTML siguen funcionando con doble clic. En ese caso el sitio
 detecta que no hay servidor y usa OMDb como respaldo: todo se ve igual, pero
 sin catálogo amplio ni tráilers.
 
+## Mi lista (favoritos)
+
+Cada póster tiene un corazón que guarda el título en el navegador
+(`localStorage`), sin cuenta ni servidor. La lista se puede ver en
+`favoritos.html` y el contador aparece en la cabecera.
+
+- Se guarda la **ficha completa** (id, título, año, tipo y póster), así la
+  página funciona al instante y sin pedir nada a la API.
+- Se sincroniza entre pestañas del mismo navegador.
+- Si el navegador bloquea el almacenamiento, el sitio sigue funcionando: solo
+  no recuerda la lista.
+
 ## Estructura
 
 ```
@@ -72,15 +84,19 @@ pelicula.html       Listado de películas  (body data-tipo="movie")
 serie.html          Listado de series     (body data-tipo="series")
 anime.html          Listado de anime      (body data-tipo="anime")
 descripcion.html    Ficha de un título    (?id=...)
+favoritos.html      Mi lista (favoritos guardados en el navegador)
 
 css/style.css       Todos los estilos
 js/api.js           Datos: TMDB vía proxy, OMDb de respaldo, caché
+js/almacen.js       Acceso seguro a localStorage (claves versionadas)
+js/favoritos.js     Corazón, contador y lista de favoritos
 js/ui.js            Tarjetas, escapado de HTML, navegación
 js/buscador.js      Buscador de la cabecera
 js/home.js          Carruseles de la portada
 js/busqueda.js      Búsqueda + paginación
 js/listado.js       Listados por tipo
 js/detalle.js       Ficha + tráiler embebido
+js/mi-lista.js      Página Mi lista
 
 server.js           Estático + proxy TMDB + fusión de páginas
 config.example.js   Plantilla de configuración
