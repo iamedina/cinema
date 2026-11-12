@@ -1,0 +1,529 @@
+/* ============================================================
+   CINEMA · hoja de estilos principal
+   ============================================================ */
+
+:root {
+  --fondo: #000;
+  --panel: rgb(20 22 25);
+  --texto-suave: #adb5bd;
+  --primario: #0d6efd;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+body {
+  background-color: var(--fondo);
+  color: #fff;
+  min-height: 100vh;
+}
+
+img {
+  max-width: 100%;
+}
+
+/* ------------------------------------------------------------
+   Cabecera
+   ---------------------------------------------------------- */
+
+.barra-superior {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+
+header {
+  position: static;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 8px 30px;
+  background-color: var(--panel);
+}
+
+.header-main {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  flex: 1;
+  min-width: 0;
+}
+
+.logo {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.logo img {
+  display: block;
+  height: 56px;
+  width: auto;
+  object-fit: contain;
+}
+
+header a {
+  text-decoration: none;
+  color: #fff;
+  font-weight: 520;
+}
+
+.search {
+  flex: 1;
+  min-width: 0;
+  max-width: 560px;
+  display: flex;
+  align-items: center;
+}
+
+.search input {
+  width: 100%;
+  padding: 9px 44px 9px 16px;
+  background-color: #ffffff1a;
+  border: 1px solid #f1f3f50a;
+  border-radius: 1000px;
+  color: #fff;
+  font-weight: 540;
+}
+
+input:focus {
+  outline: none;
+  box-shadow: none;
+}
+
+input::placeholder {
+  color: #ffffffd3;
+}
+
+.login-div {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.login {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 6px 22px;
+  border: 2px solid #fff;
+  border-radius: 8px;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.login:hover {
+  background-color: rgba(51, 51, 51, 0.75);
+  border-color: rgba(82, 82, 82, 0.9);
+}
+
+/* ------------------------------------------------------------
+   Navegación
+   ---------------------------------------------------------- */
+
+nav {
+  background-color: var(--panel);
+  z-index: 45;
+  padding: 10px 0;
+}
+
+nav .mover {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 80px;
+}
+
+.anclas-header {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.anclas-header a {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  background-color: #ffffff1a;
+  border: 1px solid transparent;
+  color: var(--texto-suave);
+  font-weight: 520;
+  transition: background-color 0.4s ease, border-color 0.4s ease, color 0.4s ease;
+}
+
+.anclas-header a:hover,
+.anclas-header a:focus-visible {
+  background-color: #ffffff2c;
+  border-color: #ffffff88;
+  color: #fff;
+}
+
+/* ------------------------------------------------------------
+   Secciones y rejillas
+   ---------------------------------------------------------- */
+
+.nuevas {
+  padding: 0 80px;
+  margin-top: 40px;
+}
+
+#resultado,
+#resultadoRecientes,
+#resultadoRecientesSeries,
+#resultadoRecientesAnime {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 20px;
+  align-items: start;
+}
+
+#resultado {
+  padding: 0 0 24px;
+}
+
+/* ------------------------------------------------------------
+   Tarjetas
+   ---------------------------------------------------------- */
+
+.pelicula-card {
+  width: 100%;
+  transition: transform 0.3s ease;
+}
+
+.pelicula-card:hover {
+  transform: translateY(-4px);
+}
+
+.imagen-container {
+  position: relative;
+  aspect-ratio: 2 / 3;
+  overflow: hidden;
+  border-radius: 10px;
+  background-color: #1b1e23;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
+  cursor: pointer;
+}
+
+.imagen-container:focus-visible {
+  outline: 2px solid var(--primario);
+  outline-offset: 3px;
+}
+
+.img-pelicula {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+.pelicula-card:hover .img-pelicula {
+  opacity: 0.75;
+  transform: scale(1.03);
+}
+
+.info-extra {
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: 8px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  background: rgba(0, 0, 0, 0.72);
+  color: #fff;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.titulo-container {
+  opacity: 1;
+}
+
+.titulo-pelicula {
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: #fff;
+  line-height: 1.25;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* ------------------------------------------------------------
+   Estados de carga
+   ---------------------------------------------------------- */
+
+.esqueleto {
+  aspect-ratio: 2 / 3;
+  border-radius: 10px;
+  background: linear-gradient(100deg, #16181c 30%, #22262c 50%, #16181c 70%);
+  background-size: 200% 100%;
+  animation: brillo 1.4s linear infinite;
+}
+
+@keyframes brillo {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+}
+
+.estado-vacio {
+  grid-column: 1 / -1;
+  padding: 48px 16px;
+  color: var(--texto-suave);
+  text-align: center;
+  font-size: 1.05rem;
+}
+
+.estado-error {
+  color: #f8a5a5;
+}
+
+.oculto {
+  display: none !important;
+}
+
+/* ------------------------------------------------------------
+   Paginación
+   ---------------------------------------------------------- */
+
+#chevron {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 0 40px;
+}
+
+#anterior,
+#siguiente {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: #6c757d;
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+#anterior:hover:not(:disabled),
+#siguiente:hover:not(:disabled) {
+  background-color: rgba(108, 117, 125, 0.19);
+  color: #fff;
+}
+
+#anterior:disabled,
+#siguiente:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+#paginacion {
+  margin: 0 6px;
+  color: #6c757d;
+  font-weight: 600;
+}
+
+/* ------------------------------------------------------------
+   Ficha de detalle
+   ---------------------------------------------------------- */
+
+#detalles {
+  padding-top: 24px;
+}
+
+.contenedor {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 30px 20px 50px;
+}
+
+.articleDetalle {
+  flex: 1;
+  min-width: 0;
+  max-width: 879px;
+}
+
+.detalle-accion {
+  flex-shrink: 0;
+  align-self: flex-start;
+  padding-top: 24px;
+}
+
+.detalle-tipo-texto {
+  margin: 0 0 14px;
+  color: var(--primario);
+  font-weight: 600;
+}
+
+.poster-detalle {
+  width: 100%;
+  max-height: 400px;
+  height: 358px;
+  object-fit: cover;
+}
+
+.clasificacion {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  background-color: #ffffff0e;
+  border: 1px solid #ffffff34;
+  color: #fff;
+  font-weight: 500;
+}
+
+.detalle-plot {
+  font-size: 18px;
+  line-height: 1.65;
+  color: #ced4da;
+}
+
+/* ------------------------------------------------------------
+   Tráiler
+   ---------------------------------------------------------- */
+
+.trailer-seccion {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 0 20px 60px;
+}
+
+.trailer-seccion h3 {
+  margin-bottom: 16px;
+  color: #fff;
+}
+
+.trailer-marco {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.5);
+}
+
+.trailer-marco iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.trailer-fallback {
+  padding: 32px 24px;
+  border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.05);
+  text-align: center;
+}
+
+.espacio {
+  padding: 24px;
+  border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.05);
+}
+
+/* ------------------------------------------------------------
+   Pie de página
+   ---------------------------------------------------------- */
+
+footer {
+  width: 100%;
+}
+
+footer a:hover {
+  text-decoration: underline !important;
+}
+
+/* ------------------------------------------------------------
+   Responsive
+   ---------------------------------------------------------- */
+
+@media (max-width: 900px) {
+  .contenedor {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .articleDetalle {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .detalle-accion {
+    padding-top: 0;
+  }
+}
+
+@media (max-width: 768px) {
+  header {
+    padding: 8px 16px;
+    gap: 12px;
+  }
+
+  .header-main {
+    gap: 12px;
+  }
+
+  .logo img {
+    height: 44px;
+  }
+
+  .login {
+    padding: 4px 14px;
+  }
+
+  nav .mover,
+  .nuevas {
+    padding: 0 16px;
+  }
+
+  .anclas-header {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    scrollbar-width: none;
+  }
+
+  .anclas-header::-webkit-scrollbar {
+    display: none;
+  }
+
+  .anclas-header a {
+    flex-shrink: 0;
+  }
+
+  #resultado {
+    padding: 0 0 16px;
+  }
+
+  #resultado,
+  #resultadoRecientes,
+  #resultadoRecientesSeries,
+  #resultadoRecientesAnime {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+  }
+
+  .contenedor {
+    padding: 20px 16px 40px;
+  }
+
+  .trailer-seccion {
+    padding: 0 16px 40px;
+  }
+}
