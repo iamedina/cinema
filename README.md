@@ -7,13 +7,19 @@ API nunca se envía al navegador.
 ## Arrancar
 
 ```bash
-node server.js
+npm start
 ```
 
 Abre <http://127.0.0.1:8080>.
 
+También sirve `node server.js` directamente. Para desarrollo, `npm run dev`
+reinicia el servidor solo al guardar cambios.
+
 No hace falta `npm install`: el servidor solo usa módulos nativos de Node
 (fetch incluido, Node 18 o superior).
+
+Bootstrap y los iconos se sirven desde `vendor/`, así que la interfaz se ve
+igual sin conexión a internet.
 
 ## Activar TMDB (catálogo amplio y tráilers)
 
@@ -31,7 +37,7 @@ module.exports = {
 };
 ```
 
-4. Reinicia el servidor (`Ctrl+C` y `node server.js`).
+4. Reinicia el servidor (`Ctrl+C` y `npm start`).
 
 El servidor acepta las dos credenciales de TMDB:
 
