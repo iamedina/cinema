@@ -22,7 +22,7 @@
     vacio.className = "mi-lista-vacia";
     vacio.innerHTML =
       '<i class="bi bi-heart" aria-hidden="true"></i>' +
-      "<h3>Todavía no has guardado nada</h3>" +
+      "<h2>Todavía no has guardado nada</h2>" +
       "<p>Pulsa el corazón de cualquier póster para añadirlo a tu lista. Se guarda en este navegador.</p>" +
       '<a class="btn btn-primary px-4 rounded-5" href="index.html">Explorar títulos</a>';
     return vacio;

@@ -103,6 +103,22 @@ opciones), **galería** de imágenes con lightbox y **títulos similares**
 - Con OMDb (doble clic, sin servidor) se muestra el reparto en texto y el
   resto de secciones se omite.
 
+## Accesibilidad y metadatos
+
+Cada página lleva su propio `<title>`, `meta description`, `theme-color` y
+etiquetas `og:` para compartirse bien en redes y buscadores.
+
+- Un solo `<h1>` por página y jerarquía de encabezados sin saltos.
+- `<main id="contenido">` como región principal y enlace **«Saltar al
+  contenido»** para ir con el teclado sin recorrer la cabecera.
+- Foco visible en todos los controles (campo de búsqueda, filtros,
+  paginación, corazones, galería, botones).
+- Los SVGs decorativos se ocultan a los lectores de pantalla y el menú marca
+  la página actual con `aria-current="page"`.
+- Contraste corregido en textos secundarios, paginación y contador de Mi lista.
+- Se respeta «reducir movimiento»: sin parpadeos ni scrolls suaves.
+- En pantallas táctiles el corazón crece a 40px.
+
 ## Estructura
 
 ```
@@ -120,7 +136,7 @@ js/almacen.js       Acceso seguro a localStorage (claves versionadas)
 js/favoritos.js     Corazón, contador y lista de favoritos
 js/generos.js       Géneros fijos de TMDB (sin petición extra)
 js/filtros.js       Barra de filtros y estado en la URL
-js/ui.js            Tarjetas, escapado de HTML, navegación
+js/ui.js            Tarjetas, escapado de HTML, navegación y foco
 js/buscador.js      Buscador de la cabecera
 js/home.js          Carruseles de la portada
 js/busqueda.js      Búsqueda + paginación

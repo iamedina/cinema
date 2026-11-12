@@ -71,7 +71,7 @@
         <p class="info-extra">${escapeHtml(item.anio)} · ${etiquetaTipo(item.tipo)}</p>
       </div>
       <div class="titulo-container text-center mt-2">
-        <h2 class="titulo-pelicula">${titulo}</h2>
+        <p class="titulo-pelicula">${titulo}</p>
       </div>
     `;
 
@@ -102,9 +102,18 @@
     contenedor.appendChild(fragmento);
   }
 
+  /** Respeta «reducir movimiento» del sistema para los scrolls suaves. */
+  function reduceMovimiento() {
+    try {
+      return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    } catch {
+      return false;
+    }
+  }
+
   function pintarEstado(contenedor, mensaje) {
     if (!contenedor) return;
-    contenedor.innerHTML = `<p class="estado-vacio">${escapeHtml(mensaje)}</p>`;
+    contenedor.innerHTML = `<p class="estado-vacio" role="status">${escapeHtml(mensaje)}</p>`;
   }
 
   /** Un solo listener por contenedor: soporta ratón, Enter y Espacio. */
@@ -154,6 +163,7 @@
     POSTER_PLACEHOLDER,
     escapeHtml,
     etiquetaTipo,
+    reduceMovimiento,
     crearTarjeta,
     pintarTarjetas,
     pintarCargando,

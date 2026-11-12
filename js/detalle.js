@@ -19,7 +19,9 @@
   function mostrarEstado(mensaje, esError = false) {
     if (!contenedor) return;
     contenedor.innerHTML =
-      '<p class="estado-vacio' + (esError ? " estado-error" : "") + '">' + escapeHtml(mensaje) + "</p>";
+      '<p class="estado-vacio' + (esError ? " estado-error" : "") + '" role="status">' +
+      escapeHtml(mensaje) +
+      "</p>";
   }
 
   function fila(etiqueta, valor) {
@@ -31,7 +33,7 @@
     if (!contenido) return "";
     return (
       '<section class="detalle-seccion' + (clase ? " " + clase : "") + '">' +
-      "<h3>" + escapeHtml(titulo) + "</h3>" +
+      "<h2>" + escapeHtml(titulo) + "</h2>" +
       contenido +
       "</section>"
     );
@@ -45,7 +47,7 @@
     if (datos.trailerKey) {
       return (
         '<section class="detalle-seccion">' +
-        "<h3>Tráiler</h3>" +
+        "<h2>Tráiler</h2>" +
         '<div class="trailer-marco">' +
         '<iframe src="https://www.youtube.com/embed/' +
         escapeHtml(datos.trailerKey) +
@@ -60,7 +62,7 @@
 
     return (
       '<section class="detalle-seccion">' +
-      "<h3>Tráiler</h3>" +
+      "<h2>Tráiler</h2>" +
       '<div class="trailer-fallback">' +
       '<p class="mb-3">No hay tráiler disponible en español ni en inglés.</p>' +
       '<a class="btn btn-primary fw-semibold" href="' +
@@ -253,7 +255,7 @@
       '<article class="articleDetalle">' +
       '<div class="text-white espacio">' +
       '<div class="text-start border-0 ps-3">' +
-      '<h2 class="fw-bold">' +
+      '<h1 class="fw-bold">' +
       escapeHtml(datos.titulo) +
       " (" +
       escapeHtml(datos.anio) +

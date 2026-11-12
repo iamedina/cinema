@@ -45,8 +45,10 @@
     estado.page = page;
 
     if (titulo) titulo.textContent = 'Resultados para "' + query + '"';
+    document.title = 'Resultados para "' + query + '" | CINEMA';
 
     ui.pintarCargando(resultado, 10);
+    if (resultado) resultado.setAttribute("aria-busy", "true");
     if (chevron) chevron.classList.add("oculto");
 
     try {
@@ -73,7 +75,8 @@
       if (token === tokenActual) {
         actualizarControles();
         sincronizarUrl();
-        if (scroll) window.scrollTo({ top: 0, behavior: "smooth" });
+        if (resultado) resultado.setAttribute("aria-busy", "false");
+        if (scroll) window.scrollTo({ top: 0, behavior: ui.reduceMovimiento() ? "auto" : "smooth" });
       }
     }
   }
