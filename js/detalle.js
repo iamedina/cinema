@@ -6,7 +6,7 @@
 (function () {
   "use strict";
 
-  const { api, ui, buscador } = window.CINEMA;
+  const { api, ui, buscador, dominioPublico, reproductor } = window.CINEMA;
   const escapeHtml = ui.escapeHtml;
   const POSTER_PLACEHOLDER = ui.POSTER_PLACEHOLDER;
   const etiquetaTipo = ui.etiquetaTipo;
@@ -70,6 +70,45 @@
       '" target="_blank" rel="noopener noreferrer">Buscar en YouTube</a>' +
       "</div>" +
       "</section>"
+    );
+  }
+
+  /* ============================================================
+   * Ver ahora (dominio público)
+   * ========================================================== */
+
+  function atributosVerAhora(item, datos) {
+    return (
+      "data-ver-ahora aria-haspopup=\"dialog\" " +
+      'data-video="' + escapeHtml(dominioPublico.url(item)) + '" ' +
+      'data-titulo="' + escapeHtml(datos.titulo) + '" ' +
+      'data-anio="' + escapeHtml(datos.anio) + '" ' +
+      'data-poster="' + escapeHtml(datos.poster || "") + '" ' +
+      'data-ficha="' + escapeHtml(dominioPublico.ficha(item)) + '"'
+    );
+  }
+
+  function bloqueVerAhora(datos, item) {
+    if (!item) return "";
+
+    return seccion(
+      "Ver ahora",
+      '<div class="ver-ahora">' +
+        '<div class="ver-ahora-texto">' +
+        '<p class="ver-ahora-badge"><i class="bi bi-unlock-fill" aria-hidden="true"></i> Dominio público</p>' +
+        "<p>Esta película ya pertenece a todos. Puedes verla aquí mismo, sin registro ni anuncios, " +
+        "desde la copia que Internet Archive conserva en dominio público.</p>" +
+        "</div>" +
+        '<button type="button" class="btn btn-primary ver-ahora-boton" ' +
+        atributosVerAhora(item, datos) +
+        ">" +
+        '<i class="bi bi-play-fill" aria-hidden="true"></i> Reproducir' +
+        "</button>" +
+        "</div>" +
+        '<p class="proveedores-fuente">Fuente: <a href="' +
+        escapeHtml(dominioPublico.ficha(item)) +
+        '" target="_blank" rel="noopener noreferrer">Internet Archive</a>. ' +
+        "CINEMA no aloja el vídeo.</p>"
     );
   }
 
@@ -232,6 +271,17 @@
     const rating = datos.rating ? "★ " + escapeHtml(datos.rating) + " / 10" : "Sin calificación";
     const botonTrailer = datos.trailerOficial || datos.busquedaTrailer;
     const etiquetaDirector = datos.tipoRaw === "tv" ? "Creador" : "Director";
+    const publico = dominioPublico.buscar(datos.id, datos.titulo, datos.anio);
+
+    const accionPrincipal = publico
+      ? '<button type="button" class="btn btn-primary fw-semibold detalle-ver-ahora" ' +
+        atributosVerAhora(publico, datos) +
+        ">" +
+        '<i class="bi bi-play-fill" aria-hidden="true"></i> Ver ahora' +
+        "</button>"
+      : '<a class="btn btn-primary fw-semibold" style="padding: 12px 80px;" href="' +
+        escapeHtml(botonTrailer) +
+        '" target="_blank" rel="noopener noreferrer">Ver trailer</a>';
 
     const columnaIzquierda = [
       fila("Título original", datos.titulo),
@@ -260,7 +310,7 @@
       escapeHtml(datos.titulo) +
       " (" +
       escapeHtml(datos.anio) +
-      ")</h2>" +
+      ")</h1>" +
       '<p class="detalle-tipo-texto">' +
       etiquetaTipo(datos.tipo) +
       "</p>" +
@@ -298,12 +348,11 @@
       "</div>" +
       "</article>" +
       '<div class="detalle-accion">' +
-      '<a class="btn btn-primary fw-semibold" style="padding: 12px 80px;" href="' +
-      escapeHtml(botonTrailer) +
-      '" target="_blank" rel="noopener noreferrer">Ver trailer</a>' +
+      accionPrincipal +
       "</div>" +
       "</div>" +
       bloqueTrailer(datos) +
+      bloqueVerAhora(datos, publico) +
       bloqueReparto(datos) +
       bloqueProveedores(datos) +
       bloqueGaleria(datos) +
@@ -335,6 +384,7 @@
       }
 
       activarGaleria();
+      reproductor.activar();
     } catch (error) {
       console.error("Error al cargar la ficha:", error);
       mostrarEstado("No pudimos encontrar ese título.", true);

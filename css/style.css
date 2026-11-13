@@ -1102,6 +1102,353 @@ body.sin-scroll {
 }
 
 /* ------------------------------------------------------------
+   Ver ahora (dominio público)
+   ---------------------------------------------------------- */
+
+.ver-ahora {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-top: 6px;
+  padding: 20px 22px;
+  border: 1px solid #ffffff1f;
+  border-radius: 14px;
+  background: linear-gradient(135deg, #171a20, #101216);
+}
+
+.ver-ahora-texto {
+  max-width: 620px;
+}
+
+.ver-ahora-texto p {
+  margin: 0;
+  color: #ced4da;
+  line-height: 1.6;
+}
+
+.ver-ahora-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px !important;
+  color: #7ee2a8;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.ver-ahora-boton {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 30px;
+  font-weight: 600;
+}
+
+.detalle-ver-ahora {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 80px;
+}
+
+/* ------------------------------------------------------------
+   Reproductor modal
+   ---------------------------------------------------------- */
+
+.reproductor {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.88);
+  backdrop-filter: blur(4px);
+}
+
+.reproductor-caja {
+  display: flex;
+  flex-direction: column;
+  width: min(1100px, 100%);
+  max-height: 94vh;
+  border: 1px solid #ffffff1f;
+  border-radius: 16px;
+  background: #0b0c0f;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8);
+  overflow: hidden;
+}
+
+.reproductor-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+}
+
+.reproductor-titulo {
+  margin: 0;
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.reproductor-cerrar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border: 1px solid #ffffff2e;
+  border-radius: 50%;
+  background: transparent;
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.reproductor-cerrar:hover {
+  background: #ffffff14;
+}
+
+.reproductor-cerrar:focus-visible {
+  outline: 2px solid var(--primario-suave);
+  outline-offset: 2px;
+}
+
+.reproductor-video {
+  display: block;
+  width: 100%;
+  max-height: calc(94vh - 150px);
+  background: #000;
+}
+
+.reproductor-error {
+  margin: 0;
+  padding: 10px 16px;
+  color: #f8a5a5;
+  font-size: 0.9rem;
+}
+
+.reproductor-error a {
+  color: #ffd0d0;
+}
+
+.reproductor-pie {
+  margin: 0;
+  padding: 10px 16px 14px;
+  color: var(--texto-suave);
+  font-size: 0.82rem;
+}
+
+.reproductor-pie a {
+  color: var(--primario-suave);
+}
+
+/* ------------------------------------------------------------
+   Página de dominio público
+   ---------------------------------------------------------- */
+
+.pd-encabezado {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.pd-intro {
+  max-width: 760px;
+  margin: 0;
+  color: #adb5bd;
+  line-height: 1.6;
+}
+
+.pd-intro a {
+  color: var(--primario-suave);
+}
+
+.pd-contador {
+  margin: 0;
+  color: var(--texto-suave);
+  font-size: 0.9rem;
+}
+
+.pd-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.pd-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #ffffff14;
+  border-radius: 12px;
+  background: #14161a;
+  overflow: hidden;
+}
+
+.pd-poster {
+  position: relative;
+  display: block;
+  aspect-ratio: 2 / 3;
+  background: linear-gradient(160deg, #23262d, #101216);
+}
+
+.pd-poster img {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pd-poster-respaldo {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #4a4f59;
+  font-size: 2.6rem;
+}
+
+.pd-info {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 12px 14px;
+}
+
+.pd-titulo {
+  display: -webkit-box;
+  min-height: 2.6em;
+  margin: 0;
+  color: #fff;
+  font-size: 0.98rem;
+  line-height: 1.3;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.pd-titulo a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.pd-titulo a:hover {
+  color: var(--primario-suave);
+}
+
+.pd-anio {
+  margin: 0;
+  color: var(--texto-suave);
+  font-size: 0.8rem;
+}
+
+.pd-acciones {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+}
+
+.pd-boton {
+  display: inline-flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 10px;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.pd-ficha {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 36px;
+  height: 36px;
+  border: 1px solid #ffffff33;
+  border-radius: 8px;
+  color: #fff;
+}
+
+.pd-ficha:hover {
+  background: #ffffff14;
+  color: #fff;
+}
+
+.pd-ficha:focus-visible {
+  outline: 2px solid var(--primario-suave);
+  outline-offset: 2px;
+}
+
+@media (max-width: 1199px) {
+  .pd-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 767px) {
+  .pd-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .ver-ahora {
+    padding: 16px;
+  }
+
+  .ver-ahora-boton {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .detalle-ver-ahora {
+    padding: 12px 40px;
+  }
+
+  .reproductor {
+    padding: 8px;
+  }
+
+  .reproductor-caja {
+    max-height: 96vh;
+    border-radius: 12px;
+  }
+
+  .reproductor-video {
+    max-height: calc(96vh - 170px);
+  }
+}
+
+@media (max-width: 559px) {
+  .pd-grid {
+    gap: 12px;
+  }
+
+  .pd-titulo {
+    font-size: 0.9rem;
+  }
+}
+
+/* ------------------------------------------------------------
    Pie de página
    ---------------------------------------------------------- */
 
