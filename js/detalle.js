@@ -47,7 +47,15 @@
     if (datos.trailerKey) {
       return (
         '<section class="detalle-seccion">' +
+        '<div class="trailer-cabecera">' +
         "<h2>Tráiler</h2>" +
+        '<button type="button" class="btn btn-outline-light btn-sm trailer-pantalla" ' +
+        'data-trailer-abrir data-trailer-key="' + escapeHtml(datos.trailerKey) + '" ' +
+        'data-trailer-titulo="' + escapeHtml(datos.titulo) + '" ' +
+        'aria-haspopup="dialog">' +
+        '<i class="bi bi-arrows-fullscreen" aria-hidden="true"></i> Pantalla completa' +
+        "</button>" +
+        "</div>" +
         '<div class="trailer-marco">' +
         '<iframe src="https://www.youtube.com/embed/' +
         escapeHtml(datos.trailerKey) +
@@ -73,13 +81,119 @@
     );
   }
 
+  /** Diálogo a pantalla completa con el mismo tráiler (se carga al abrir). */
+  function bloqueTrailerModal(datos) {
+    if (!datos.trailerKey) return "";
+
+    return (
+      '<div class="reproductor trailer-modal oculto" id="trailerModal" role="dialog" ' +
+      'aria-modal="true" aria-labelledby="trailerModalTitulo">' +
+      '<div class="reproductor-caja">' +
+      '<div class="reproductor-cabecera">' +
+      '<p class="reproductor-titulo" id="trailerModalTitulo">Tráiler de ' +
+      escapeHtml(datos.titulo) +
+      "</p>" +
+      '<button type="button" class="reproductor-cerrar" id="trailerModalCerrar" ' +
+      'aria-label="Cerrar tráiler">' +
+      '<i class="bi bi-x-lg" aria-hidden="true"></i>' +
+      "</button>" +
+      "</div>" +
+      '<div class="trailer-modal-marco">' +
+      '<iframe id="trailerModalVideo" title="Tráiler de ' +
+      escapeHtml(datos.titulo) +
+      '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" ' +
+      'allowfullscreen referrerpolicy="strict-origin-when-cross-origin"></iframe>' +
+      "</div>" +
+      "</div>" +
+      "</div>"
+    );
+  }
+
+  function activarTrailer() {
+    const modal = document.getElementById("trailerModal");
+    const marco = document.getElementById("trailerModalVideo");
+    const cerrar = document.getElementById("trailerModalCerrar");
+    if (!modal || !marco || !cerrar) return;
+
+    const inline = document.querySelector(".trailer-marco iframe");
+    let origen = null;
+
+    const abrir = (boton) => {
+      const clave = boton.getAttribute("data-trailer-key");
+      if (!clave) return;
+
+      origen = boton;
+
+      /* Detiene el tráiler incrustado para que no suenen dos a la vez. */
+      if (inline && inline.getAttribute("src")) {
+        inline.dataset.src = inline.getAttribute("src");
+        inline.removeAttribute("src");
+      }
+
+      marco.src =
+        "https://www.youtube.com/embed/" + encodeURIComponent(clave) + "?autoplay=1&rel=0";
+      modal.classList.remove("oculto");
+      document.body.classList.add("sin-scroll");
+      cerrar.focus();
+    };
+
+    const ocultar = () => {
+      if (modal.classList.contains("oculto")) return;
+
+      modal.classList.add("oculto");
+      marco.removeAttribute("src");
+      document.body.classList.remove("sin-scroll");
+
+      if (inline && inline.dataset.src) {
+        inline.src = inline.dataset.src;
+        delete inline.dataset.src;
+      }
+
+      if (origen) {
+        origen.focus();
+        origen = null;
+      }
+    };
+
+    document.querySelectorAll("[data-trailer-abrir]").forEach((boton) => {
+      boton.addEventListener("click", () => abrir(boton));
+    });
+
+    cerrar.addEventListener("click", ocultar);
+
+    modal.addEventListener("click", (evento) => {
+      if (evento.target === modal) ocultar();
+    });
+
+    document.addEventListener("keydown", (evento) => {
+      if (evento.key === "Escape" && !modal.classList.contains("oculto")) {
+        evento.preventDefault();
+        ocultar();
+      }
+    });
+
+    modal.addEventListener("keydown", (evento) => {
+      if (evento.key !== "Tab") return;
+
+      const focos = [cerrar, marco];
+      const indice = focos.indexOf(document.activeElement);
+      if (evento.shiftKey && indice <= 0) {
+        evento.preventDefault();
+        marco.focus();
+      } else if (!evento.shiftKey && indice === focos.length - 1) {
+        evento.preventDefault();
+        cerrar.focus();
+      }
+    });
+  }
+
   /* ============================================================
    * Ver ahora (dominio público)
    * ========================================================== */
-
   function atributosVerAhora(item, datos) {
     return (
       "data-ver-ahora aria-haspopup=\"dialog\" " +
+      'data-id="' + escapeHtml(datos.id) + '" ' +
       'data-video="' + escapeHtml(dominioPublico.url(item)) + '" ' +
       'data-titulo="' + escapeHtml(datos.titulo) + '" ' +
       'data-anio="' + escapeHtml(datos.anio) + '" ' +
@@ -352,6 +466,7 @@
       "</div>" +
       "</div>" +
       bloqueTrailer(datos) +
+      bloqueTrailerModal(datos) +
       bloqueVerAhora(datos, publico) +
       bloqueReparto(datos) +
       bloqueProveedores(datos) +
@@ -384,10 +499,16 @@
       }
 
       activarGaleria();
+      activarTrailer();
       reproductor.activar();
     } catch (error) {
       console.error("Error al cargar la ficha:", error);
-      mostrarEstado("No pudimos encontrar ese título.", true);
+      mostrarEstado(
+        api.esLimiteOmdb(error)
+          ? error.message
+          : "No pudimos encontrar ese título.",
+        true
+      );
     }
   }
 

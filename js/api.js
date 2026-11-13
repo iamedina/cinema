@@ -453,6 +453,20 @@
    */
   const API_KEY_OMDB = "a069f13a";
 
+  /** Error claro cuando OMDb agota su cuota diaria (401 / «limit»). */
+  function errorLimiteOmdb() {
+    const error = new Error(
+      "OMDb alcanzó su límite diario de peticiones. Abre el sitio con «npm start» " +
+        "para usar el catálogo de TMDB, que no depende de OMDb."
+    );
+    error.codigo = "omdb-limite";
+    return error;
+  }
+
+  function esLimiteOmdb(error) {
+    return Boolean(error && error.codigo === "omdb-limite");
+  }
+
   async function pedirOmdb(params) {
     const clave = JSON.stringify(params);
     const cacheado = cacheLeer("omdb:" + clave);
@@ -469,9 +483,16 @@
       if (!usarProxy) url.searchParams.set("apikey", API_KEY_OMDB);
 
       const res = await fetch(url.toString(), { signal: AbortSignal.timeout(12000) });
-      if (!res.ok) throw new Error("OMDb respondió HTTP " + res.status);
+      const json = await res.json().catch(() => null);
+      const detalle = json && json.Error ? String(json.Error) : "";
 
-      const json = await res.json();
+      if (!res.ok || !json) {
+        if (res.status === 401 || /limit/i.test(detalle)) throw errorLimiteOmdb();
+        throw new Error("OMDb respondió HTTP " + res.status);
+      }
+
+      if (json.Response === "False" && /limit/i.test(detalle)) throw errorLimiteOmdb();
+
       cacheEscribir("omdb:" + clave, json);
       return json;
     }).finally(() => enVuelo.delete(clave));
@@ -732,6 +753,7 @@
     listar,
     recientes,
     detalle,
+    esLimiteOmdb,
     tmdbListo: tmdbDisponible,
     SEMILLAS_HOME,
     SEMILLAS_LISTADO,

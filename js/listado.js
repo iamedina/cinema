@@ -94,7 +94,12 @@
       if (token !== tokenActual) return;
       console.error("Error al cargar el listado:", error);
       totalPaginas = 0;
-      ui.pintarEstado(resultado, "No se pudo conectar con el servicio. Revisa tu conexión e inténtalo de nuevo.");
+      ui.pintarEstado(
+        resultado,
+        api.esLimiteOmdb(error)
+          ? error.message
+          : "No se pudo conectar con el servicio. Revisa tu conexión e inténtalo de nuevo."
+      );
     } finally {
       if (token === tokenActual) {
         actualizarControles();
