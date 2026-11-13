@@ -137,8 +137,27 @@ La página de resultados explica lo que pasa cuando no hay nada que mostrar:
 `legal.html` reúne en una sola página qué es CINEMA, la política de derechos de
 autor (DMCA), privacidad, publicidad, fuentes de datos, clasificación por edad y
 contacto. El pie de todas las páginas enlaza a ella, a sus anclas
-(`#dmca`, `#privacidad`, `#publicidad`) y recuerda que el sitio **no aloja ni
-transmite** contenido audiovisual.
+(`#dmca`, `#privacidad`, `#publicidad`) y recuerda que el sitio **no aloja**
+contenido audiovisual.
+
+## Ver ahora (dominio público)
+
+CINEMA incluye un reproductor propio para **películas de dominio público**. No
+hay copias piratas ni servidores propios: el vídeo se carga desde la copia que
+**Internet Archive** publica legalmente.
+
+- En las fichas de esas películas aparece el bloque **«Ver ahora»** con el sello
+  «Dominio público»; el botón abre un reproductor modal con controles nativos.
+- La página `dominio-publico.html` reúne el catálogo completo (24 clásicos:
+  *Nosferatu*, *Metrópolis*, *La noche de los muertos vivientes*, *Charada*,
+  *Luna nueva*, *El acorazado Potemkin*…).
+- El MP4 solo se descarga al pulsar «Ver ahora»; al cerrar se pausa y se libera.
+- Se cierra con **Escape**, con la X o pulsando el fondo, y devuelve el foco al
+  botón de origen. Si el vídeo no carga, ofrece abrirlo en Internet Archive.
+- Funciona también con doble clic (`file://`): reconoce la película por su id de
+  IMDb cuando la ficha viene de OMDb.
+- El catálogo vive en `js/dominio-publico.js`; cada entrada se verificó contra
+  Internet Archive y su licencia de dominio público.
 
 ## Filtros de los listados
 
@@ -195,6 +214,7 @@ anime.html          Listado de anime      (body data-tipo="anime")
 descripcion.html    Ficha de un título    (?id=...)
 favoritos.html      Mi lista (favoritos guardados en el navegador)
 legal.html          Aviso legal, DMCA, privacidad y fuentes
+dominio-publico.html  Catálogo de cine de dominio público con reproductor
 
 css/style.css       Todos los estilos
 js/api.js           Datos: TMDB vía proxy, OMDb de respaldo, caché
@@ -209,6 +229,9 @@ js/home.js          Carruseles de la portada
 js/busqueda.js      Búsqueda + paginación + avisos
 js/listado.js       Listados por tipo, filtros y paginación
 js/detalle.js       Ficha: tráiler, reparto, plataformas, galería y similares
+js/dominio-publico.js  Catálogo local de cine de dominio público
+js/reproductor.js   Reproductor modal (Internet Archive)
+js/pagina-dominio.js  Pinta el catálogo de dominio público
 js/mi-lista.js      Página Mi lista
 
 tests/              Pruebas con node:test (npm test)
@@ -236,4 +259,4 @@ cachea 10 minutos.
 ## Créditos
 
 Este producto usa la API de TMDB pero no está respaldado ni certificado por
-TMDB.
+TMDB. El cine de dominio público procede de <https://archive.org>.
