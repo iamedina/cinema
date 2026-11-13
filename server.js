@@ -421,8 +421,8 @@ function iniciar(puerto) {
     console.log(`CINEMA corriendo en http://127.0.0.1:${real}`);
 
     if (!TMDB_KEY) {
-      console.warn(
-        "ATENCIÓN: no hay clave de TMDB. El sitio seguirá funcionando con OMDb,"
+      console.log(
+        "Nota: no hay clave de TMDB. El sitio seguirá funcionando con OMDb,"
         + " pero sin catálogo amplio ni tráilers. Crea config.local.js (mira config.example.js)."
       );
     } else {
@@ -430,8 +430,8 @@ function iniciar(puerto) {
     }
 
     if (!OMDB_KEY) {
-      console.warn(
-        "OMDb no tiene clave en el servidor: el navegador usará su clave de respaldo."
+      console.log(
+        "Nota: OMDb no tiene clave en el servidor: el navegador usará su clave de respaldo."
         + " Añade OMDB_API_KEY a config.local.js para ocultarla."
       );
     }
