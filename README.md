@@ -87,6 +87,11 @@ añade la clave, filtra los parámetros permitidos y cachea las respuestas.
 abres el HTML con doble clic), el cliente usa la clave pública incrustada en
 `js/api.js` y llama a OMDb directamente.
 
+La clave pública tiene un límite de unas 1.000 peticiones al día. Si se agota,
+las páginas muestran un aviso claro («OMDb alcanzó su límite diario…») en lugar
+de un error técnico y recuerdan que con `npm start` el catálogo usa TMDB y no
+depende de OMDb.
+
 ## Pruebas automáticas
 
 ```bash
@@ -94,9 +99,9 @@ npm test
 ```
 
 Ejecuta las pruebas con el runner nativo de Node (`node --test`), sin
-dependencias externas: almacenamiento seguro, historial de búsqueda, escapado
-de HTML, filtros en la URL y el servidor (proxy de OMDb, rutas permitidas,
-404 propio y `/api/health`).
+dependencias externas: almacenamiento seguro, historial de búsqueda, progreso de
+reproducción, escapado de HTML, filtros en la URL y el servidor (proxy de OMDb,
+rutas permitidas, 404 propio y `/api/health`).
 
 ## Mi lista (favoritos)
 
@@ -159,6 +164,24 @@ hay copias piratas ni servidores propios: el vídeo se carga desde la copia que
 - El catálogo vive en `js/dominio-publico.js`; cada entrada se verificó contra
   Internet Archive y su licencia de dominio público.
 
+## Seguir viendo
+
+El reproductor recuerda dónde te quedaste, en el navegador
+(`localStorage`), sin cuenta ni servidor:
+
+- Al cerrar o pausar se guarda la posición; también cada 15 segundos mientras
+  se reproduce.
+- Al volver a abrir una película empezada aparece **«Lo dejaste en 12:34.
+  ¿Continuar?»** con los botones **Reanudar** y **Empezar de cero**.
+- En `dominio-publico.html` cada póster muestra una barra de progreso y el
+  botón pasa a **Continuar**.
+- Al pasar del **90 %** la película se marca como **Vista** (sello sobre el
+  póster) y deja de aparecer en «Seguir viendo», pero conserva la posición.
+- La portada añade un carrusel **«Seguir viendo»** solo cuando hay algo
+  empezado, con acceso directo al reproductor.
+- Se sincroniza entre pestañas del mismo navegador. Si el navegador bloquea el
+  almacenamiento, el sitio sigue funcionando sin recordar el progreso.
+
 ## Filtros de los listados
 
 Películas, series y anime tienen una barra de filtros: **género, año, orden
@@ -179,6 +202,10 @@ un hueco al final.
 **plataformas de streaming** (JustWatch vía TMDB, con enlace a todas las
 opciones), **galería** de imágenes con lightbox y **títulos similares**
 (clicables y con corazón para guardar en Mi lista).
+
+- El tráiler tiene un botón **«Pantalla completa»** que lo abre en un diálogo
+  amplio. Se cierra con **Escape**, con la X o pulsando el fondo, pausa el
+  vídeo incrustado y devuelve el foco al botón.
 
 - Solo se muestra lo que la API devuelve: si un título no tiene plataformas
   registradas, esa sección no aparece.
@@ -230,6 +257,7 @@ js/busqueda.js      Búsqueda + paginación + avisos
 js/listado.js       Listados por tipo, filtros y paginación
 js/detalle.js       Ficha: tráiler, reparto, plataformas, galería y similares
 js/dominio-publico.js  Catálogo local de cine de dominio público
+js/progreso.js      Posición de reproducción y «Seguir viendo»
 js/reproductor.js   Reproductor modal (Internet Archive)
 js/pagina-dominio.js  Pinta el catálogo de dominio público
 js/mi-lista.js      Página Mi lista
