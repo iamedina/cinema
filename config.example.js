@@ -18,7 +18,17 @@
  * El servidor detecta cuál le has puesto y la envía como corresponde
  * (?api_key=... o Authorization: Bearer ...). También puedes usar la
  * variable de entorno TMDB_API_KEY.
+ *
+ * OMDb (respaldo):
+ *   1. Pide una clave gratis en https://www.omdbapi.com/apikey.aspx
+ *   2. Pega la clave abajo en OMDB_API_KEY.
+ *
+ * Con OMDB_API_KEY configurada, el navegador pide los datos al servidor
+ * (/api/omdb) y la clave de OMDb nunca se envía al cliente. Si la dejas
+ * vacía, el sitio sigue funcionando con la clave de respaldo que lleva
+ * el JS para cuando se abre el HTML con doble clic (file://).
  */
 module.exports = {
   TMDB_API_KEY: "PON_AQUI_TU_CREDENCIAL_DE_TMDB",
+  OMDB_API_KEY: "PON_AQUI_TU_CLAVE_DE_OMDB",
 };

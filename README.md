@@ -63,6 +63,41 @@ Los archivos HTML siguen funcionando con doble clic. En ese caso el sitio
 detecta que no hay servidor y usa OMDb como respaldo: todo se ve igual, pero
 sin catálogo amplio ni tráilers.
 
+### Clave de OMDb
+
+OMDb es el respaldo cuando no hay TMDB. Para que la clave tampoco viaje al
+navegador, añádela al servidor:
+
+```js
+module.exports = {
+  TMDB_API_KEY: "tu_credencial_aqui",
+  OMDB_API_KEY: "tu_clave_omdb",
+};
+```
+
+O con variables de entorno:
+
+```bash
+OMDB_API_KEY=tu_clave node server.js
+```
+
+Con `OMDB_API_KEY` configurada, el navegador pide `/api/omdb` y el servidor
+añade la clave, filtra los parámetros permitidos y cachea las respuestas.
+`/api/health` lo confirma con `"omdb":true`. Si el servidor no tiene clave (o
+abres el HTML con doble clic), el cliente usa la clave pública incrustada en
+`js/api.js` y llama a OMDb directamente.
+
+## Pruebas automáticas
+
+```bash
+npm test
+```
+
+Ejecuta las pruebas con el runner nativo de Node (`node --test`), sin
+dependencias externas: almacenamiento seguro, historial de búsqueda, escapado
+de HTML, filtros en la URL y el servidor (proxy de OMDb, rutas permitidas,
+404 propio y `/api/health`).
+
 ## Mi lista (favoritos)
 
 Cada póster tiene un corazón que guarda el título en el navegador
@@ -74,6 +109,36 @@ Cada póster tiene un corazón que guarda el título en el navegador
 - Se sincroniza entre pestañas del mismo navegador.
 - Si el navegador bloquea el almacenamiento, el sitio sigue funcionando: solo
   no recuerda la lista.
+
+## Historial de búsqueda
+
+El buscador de la cabecera recuerda tus últimas **8 consultas** en el navegador
+(`localStorage`), sin cuenta ni servidor.
+
+- Al enfocar el campo aparece un desplegable con las búsquedas recientes.
+- Se navega con las flechas, se elige con **Enter** o con el ratón y se cierra
+  con **Escape** o al hacer clic fuera.
+- «Borrar historial» lo vacía. Se sincroniza entre pestañas del mismo navegador.
+- Se descartan las consultas de menos de 2 letras y los duplicados sin
+  distinguir mayúsculas.
+
+## Avisos de búsqueda
+
+La página de resultados explica lo que pasa cuando no hay nada que mostrar:
+
+- Con menos de 2 letras avisa del mínimo en lugar de lanzar la petición.
+- Si hay muchísimos resultados, avisa de que solo se muestran los primeros y
+  sugiere añadir palabras para afinar la búsqueda.
+- El estado vacío de los listados ofrece **«Limpiar filtros»** cuando hay algún
+  filtro activo.
+
+## Aviso legal
+
+`legal.html` reúne en una sola página qué es CINEMA, la política de derechos de
+autor (DMCA), privacidad, publicidad, fuentes de datos, clasificación por edad y
+contacto. El pie de todas las páginas enlaza a ella, a sus anclas
+(`#dmca`, `#privacidad`, `#publicidad`) y recuerda que el sitio **no aloja ni
+transmite** contenido audiovisual.
 
 ## Filtros de los listados
 
@@ -129,22 +194,25 @@ serie.html          Listado de series     (body data-tipo="series")
 anime.html          Listado de anime      (body data-tipo="anime")
 descripcion.html    Ficha de un título    (?id=...)
 favoritos.html      Mi lista (favoritos guardados en el navegador)
+legal.html          Aviso legal, DMCA, privacidad y fuentes
 
 css/style.css       Todos los estilos
 js/api.js           Datos: TMDB vía proxy, OMDb de respaldo, caché
 js/almacen.js       Acceso seguro a localStorage (claves versionadas)
 js/favoritos.js     Corazón, contador y lista de favoritos
+js/historial.js     Historial de búsquedas recientes
 js/generos.js       Géneros fijos de TMDB (sin petición extra)
 js/filtros.js       Barra de filtros y estado en la URL
 js/ui.js            Tarjetas, escapado de HTML, navegación y foco
-js/buscador.js      Buscador de la cabecera
+js/buscador.js      Buscador de la cabecera + historial
 js/home.js          Carruseles de la portada
-js/busqueda.js      Búsqueda + paginación
+js/busqueda.js      Búsqueda + paginación + avisos
 js/listado.js       Listados por tipo, filtros y paginación
 js/detalle.js       Ficha: tráiler, reparto, plataformas, galería y similares
 js/mi-lista.js      Página Mi lista
 
-server.js           Estático + proxy TMDB + fusión de páginas
+tests/              Pruebas con node:test (npm test)
+server.js           Estático + proxy TMDB/OMDb + fusión de páginas
 config.example.js   Plantilla de configuración
 ```
 
@@ -160,6 +228,10 @@ El cliente pide `/api/tmdb/discover/movie?page=2&paginas=3`. El servidor:
 
 La clave se añade en el servidor y se elimina de cualquier parámetro que envíe
 el cliente.
+
+`/api/omdb` funciona igual: solo reenvía `s`, `i`, `t`, `y`, `type`, `page`,
+`plot`, `r`, `season` y `episode`, ignora cualquier `apikey` del cliente y
+cachea 10 minutos.
 
 ## Créditos
 

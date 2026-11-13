@@ -24,30 +24,37 @@ const path = require("path");
 const PUERTO = parseInt(process.env.PORT, 10) || 8080;
 const RAIZ = __dirname;
 const TMDB_BASE = process.env.TMDB_BASE || "https://api.themoviedb.org/3";
+const OMDB_BASE = process.env.OMDB_BASE || "https://www.omdbapi.com/";
 const IDIOMA = process.env.TMDB_LANGUAGE || "es-ES";
 const CACHE_TTL_MS = 10 * 60 * 1000;
 const MAX_PAGINAS_FUSION = 5;
 const TAMANO_PAGINA_TMDB = 20;
 
 /* ------------------------------------------------------------
- * Clave de TMDB (nunca se envía al navegador)
+ * Credenciales (nunca se envían al navegador)
  * ---------------------------------------------------------- */
 
-function leerClave() {
-  if (process.env.TMDB_API_KEY) return process.env.TMDB_API_KEY;
+function leerConfig() {
+  const config = {
+    tmdb: process.env.TMDB_API_KEY || null,
+    omdb: process.env.OMDB_API_KEY || null,
+  };
 
   try {
     // eslint-disable-next-line global-require
     const local = require("./config.local");
-    if (local && local.TMDB_API_KEY) return local.TMDB_API_KEY;
+    if (!config.tmdb && local && local.TMDB_API_KEY) config.tmdb = local.TMDB_API_KEY;
+    if (!config.omdb && local && local.OMDB_API_KEY) config.omdb = local.OMDB_API_KEY;
   } catch {
     /* No existe config.local.js */
   }
 
-  return null;
+  return config;
 }
 
-const TMDB_KEY = leerClave();
+const CONFIG = leerConfig();
+const TMDB_KEY = CONFIG.tmdb;
+const OMDB_KEY = CONFIG.omdb;
 
 /*
  * TMDB acepta dos credenciales:
@@ -232,18 +239,86 @@ async function proxyTmdb(pathname, searchParams) {
      */
     const total = primera.total_results || resultados.length;
     const porVista = 20 * paginas;
+    const totalPaginas = Math.max(
+      1,
+      Math.min(Math.floor(500 / paginas), Math.ceil(total / porVista))
+    );
 
     cuerpo = {
       ...primera,
       page: paginaSitio,
       results: resultados.slice(0, porVista),
       total_results: total,
-      total_pages: Math.max(1, Math.min(Math.floor(500 / paginas), Math.ceil(total / porVista))),
+      total_pages: totalPaginas,
+      /* TMDB no deja pasar de la página 500: avisamos al cliente. */
+      truncado: total > totalPaginas * porVista,
     };
   }
 
   cacheEscribir(claveCache, cuerpo);
   return { status: 200, body: cuerpo };
+}
+
+/* ------------------------------------------------------------
+ * Proxy de OMDb
+ * ---------------------------------------------------------- */
+
+const PARAMS_OMDB = new Set([
+  "s",
+  "i",
+  "t",
+  "y",
+  "type",
+  "page",
+  "plot",
+  "r",
+  "season",
+  "episode",
+]);
+
+const MAX_VALOR_OMDB = 200;
+
+async function proxyOmdb(searchParams) {
+  if (!OMDB_KEY) {
+    return {
+      status: 503,
+      body: {
+        Response: "False",
+        Error: "OMDb no configurado en el servidor",
+        codigo: "OMDB_NO_CONFIGURADO",
+      },
+    };
+  }
+
+  const params = new URLSearchParams();
+  for (const [clave, valor] of searchParams.entries()) {
+    if (!PARAMS_OMDB.has(clave)) continue;
+    if (valor.length > MAX_VALOR_OMDB) continue;
+    params.set(clave, valor);
+  }
+  if (!params.get("r")) params.set("r", "json");
+  params.set("apikey", OMDB_KEY);
+
+  const claveCache = params.toString();
+  const cacheado = cacheLeer("omdb:" + claveCache);
+  if (cacheado) return { status: 200, body: cacheado };
+
+  const url = new URL(OMDB_BASE);
+  for (const [clave, valor] of params.entries()) {
+    url.searchParams.set(clave, valor);
+  }
+
+  const respuesta = await fetch(url, { headers: { accept: "application/json" } });
+  if (!respuesta.ok) {
+    return {
+      status: respuesta.status,
+      body: { Response: "False", Error: "OMDb respondió HTTP " + respuesta.status },
+    };
+  }
+
+  const json = await respuesta.json();
+  cacheEscribir("omdb:" + claveCache, json);
+  return { status: 200, body: json };
 }
 
 /* ------------------------------------------------------------
@@ -274,9 +349,20 @@ const servidor = http.createServer(async (req, res) => {
     return responder(res, 200, {
       ok: true,
       tmdb: Boolean(TMDB_KEY),
+      omdb: Boolean(OMDB_KEY),
       auth: TMDB_KEY ? (TMDB_ES_TOKEN ? "token-v4" : "key-v3") : null,
       idioma: IDIOMA,
     });
+  }
+
+  if (pathname === "/api/omdb") {
+    try {
+      const { status, body } = await proxyOmdb(url.searchParams);
+      return responder(res, status, body, status === 200 ? { "Cache-Control": "public, max-age=600" } : {});
+    } catch (error) {
+      console.error("Error en el proxy OMDb:", error);
+      return responder(res, 502, { Response: "False", Error: "No se pudo contactar con OMDb" });
+    }
   }
 
   if (pathname.startsWith("/api/tmdb/")) {
@@ -327,14 +413,40 @@ const servidor = http.createServer(async (req, res) => {
   res.end(datos);
 });
 
-servidor.listen(PUERTO, "127.0.0.1", () => {
-  console.log(`CINEMA corriendo en http://127.0.0.1:${PUERTO}`);
-  if (!TMDB_KEY) {
-    console.warn(
-      "ATENCIÓN: no hay clave de TMDB. El sitio seguirá funcionando con OMDb,"
-      + " pero sin catálogo amplio ni tráilers. Crea config.local.js (mira config.example.js)."
-    );
-  } else {
-    console.log("Clave de TMDB detectada. Catálogo amplio y tráilers activados.");
-  }
-});
+function iniciar(puerto) {
+  const elegido = puerto === undefined ? PUERTO : puerto;
+
+  return servidor.listen(elegido, "127.0.0.1", () => {
+    const real = servidor.address().port;
+    console.log(`CINEMA corriendo en http://127.0.0.1:${real}`);
+
+    if (!TMDB_KEY) {
+      console.warn(
+        "ATENCIÓN: no hay clave de TMDB. El sitio seguirá funcionando con OMDb,"
+        + " pero sin catálogo amplio ni tráilers. Crea config.local.js (mira config.example.js)."
+      );
+    } else {
+      console.log("Clave de TMDB detectada. Catálogo amplio y tráilers activados.");
+    }
+
+    if (!OMDB_KEY) {
+      console.warn(
+        "OMDb no tiene clave en el servidor: el navegador usará su clave de respaldo."
+        + " Añade OMDB_API_KEY a config.local.js para ocultarla."
+      );
+    }
+  });
+}
+
+if (require.main === module) iniciar();
+
+module.exports = {
+  servidor,
+  iniciar,
+  proxyTmdb,
+  proxyOmdb,
+  pathSeguro,
+  leerConfig,
+  PREFIJOS_PERMITIDOS,
+  PARAMS_OMDB,
+};
