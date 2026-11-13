@@ -111,9 +111,21 @@
     }
   }
 
-  function pintarEstado(contenedor, mensaje) {
+  function pintarEstado(contenedor, mensaje, opciones) {
     if (!contenedor) return;
+
     contenedor.innerHTML = `<p class="estado-vacio" role="status">${escapeHtml(mensaje)}</p>`;
+
+    const accion = opciones && opciones.accion;
+    if (!accion || typeof accion.alPulsar !== "function") return;
+
+    const boton = document.createElement("button");
+    boton.type = "button";
+    boton.className = "estado-accion";
+    boton.textContent = accion.texto || "Reintentar";
+    boton.addEventListener("click", accion.alPulsar);
+
+    contenedor.querySelector(".estado-vacio").appendChild(boton);
   }
 
   /** Un solo listener por contenedor: soporta ratón, Enter y Espacio. */

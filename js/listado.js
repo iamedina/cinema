@@ -68,11 +68,23 @@
       totalPaginas = datos.totalPaginas;
 
       if (!datos.items.length) {
+        const hayFiltros = Object.keys(filtros).length > 0;
         ui.pintarEstado(
           resultado,
-          Object.keys(filtros).length
+          hayFiltros
             ? "No hay títulos con esos filtros. Prueba a quitarlos."
-            : "No hay títulos disponibles ahora mismo."
+            : "No hay títulos disponibles ahora mismo.",
+          hayFiltros
+            ? {
+                accion: {
+                  texto: "Limpiar filtros",
+                  alPulsar: () => {
+                    const boton = document.getElementById("limpiarFiltros");
+                    if (boton) boton.click();
+                  },
+                },
+              }
+            : undefined
         );
       } else {
         ui.pintarTarjetas(resultado, datos.items);

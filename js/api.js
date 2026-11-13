@@ -95,19 +95,26 @@
   let saludPromesa = null;
 
   /**
-   * Pregunta una sola vez al servidor si tiene clave de TMDB.
+   * Pregunta una sola vez al servidor qué servicios tiene configurados.
    * Así, sin clave no se lanzan peticiones que acabarían en 503 y
    * ensuciarían la consola del navegador.
    */
-  function tmdbDisponible() {
-    if (!USAR_SERVIDOR) return Promise.resolve(false);
+  function salud() {
+    if (!USAR_SERVIDOR) return Promise.resolve({});
     if (!saludPromesa) {
       saludPromesa = fetch("/api/health", { signal: AbortSignal.timeout(5000) })
-        .then((res) => (res.ok ? res.json() : { tmdb: false }))
-        .then((json) => Boolean(json && json.tmdb))
-        .catch(() => false);
+        .then((res) => (res.ok ? res.json() : {}))
+        .catch(() => ({}));
     }
     return saludPromesa;
+  }
+
+  async function tmdbDisponible() {
+    return Boolean((await salud()).tmdb);
+  }
+
+  async function omdbDisponible() {
+    return Boolean((await salud()).omdb);
   }
 
   /**
@@ -393,6 +400,7 @@
       page,
       total: json.total_results || items.length,
       totalPaginas: json.total_pages || 1,
+      truncado: Boolean(json.truncado),
     };
   }
 
@@ -405,6 +413,7 @@
       page,
       total: json.total_results || 0,
       totalPaginas: json.total_pages || 1,
+      truncado: Boolean(json.truncado),
     };
   }
 
@@ -436,6 +445,12 @@
    * ========================================================== */
 
   const API_OMDB = "https://www.omdbapi.com/";
+  /*
+   * Clave de respaldo: solo se usa al abrir el sitio con doble clic
+   * (file://) o si el servidor no tiene OMDB_API_KEY configurada.
+   * Con el servidor en marcha, la clave viaja desde el servidor y el
+   * navegador nunca la ve.
+   */
   const API_KEY_OMDB = "a069f13a";
 
   async function pedirOmdb(params) {
@@ -444,12 +459,14 @@
     if (cacheado) return cacheado;
     if (enVuelo.has(clave)) return enVuelo.get(clave);
 
+    const usarProxy = await omdbDisponible();
+
     const promesa = limitar(async () => {
-      const url = new URL(API_OMDB);
+      const url = usarProxy ? new URL("/api/omdb", location.origin) : new URL(API_OMDB);
       for (const [k, v] of Object.entries(params)) {
         if (v !== undefined && v !== null && v !== "") url.searchParams.set(k, v);
       }
-      url.searchParams.set("apikey", API_KEY_OMDB);
+      if (!usarProxy) url.searchParams.set("apikey", API_KEY_OMDB);
 
       const res = await fetch(url.toString(), { signal: AbortSignal.timeout(12000) });
       if (!res.ok) throw new Error("OMDb respondió HTTP " + res.status);
@@ -525,6 +542,7 @@
       page,
       total,
       totalPaginas: Math.min(100, Math.max(1, Math.ceil(total / 10))),
+      truncado: total > Math.min(100, Math.max(1, Math.ceil(total / 10))) * 10,
     };
   }
 

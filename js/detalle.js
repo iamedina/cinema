@@ -133,7 +133,8 @@
       "Dónde verla",
       '<ul class="proveedores-lista">' + items + "</ul>" +
         enlace +
-        '<p class="proveedores-fuente">Disponibilidades de JustWatch a través de TMDB.</p>'
+        '<p class="proveedores-fuente">Disponibilidades de JustWatch a través de TMDB. ' +
+          "CINEMA no aloja el contenido: los enlaces abren la plataforma oficial.</p>"
     );
   }
 
