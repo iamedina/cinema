@@ -81,6 +81,13 @@
     return true;
   }
 
+  /** Sustituye el historial completo (importación de una copia de seguridad). */
+  function reemplazar(valor) {
+    lista = limpiar(valor);
+    guardar();
+    return lista.length;
+  }
+
   /* Cambios hechos en otra pestaña. */
   almacen.alCambiar(({ nombre, valor }) => {
     if (nombre === NOMBRE) lista = limpiar(valor);
@@ -96,5 +103,6 @@
     leer,
     registrar,
     borrar,
+    reemplazar,
   };
 })();

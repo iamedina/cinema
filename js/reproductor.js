@@ -17,6 +17,13 @@
 
   const INTERVALO_GUARDADO = 15000; // ms entre guardados automáticos
 
+  /** Preferencias actuales; si el módulo falta, se usan los valores por defecto. */
+  function prefs() {
+    return window.CINEMA && window.CINEMA.preferencias
+      ? window.CINEMA.preferencias.leer()
+      : { recordarProgreso: true, reanudacion: "preguntar" };
+  }
+
   let dialogo = null;
   let video = null;
   let cerrarBoton = null;
@@ -140,7 +147,7 @@
     video.addEventListener("pause", guardarProgreso);
 
     video.addEventListener("ended", () => {
-      if (!idActual || !CINEMA.progreso) return;
+      if (!idActual || !CINEMA.progreso || !prefs().recordarProgreso) return;
       const duracion = video.duration;
       if (!isFinite(duracion) || duracion <= 0) return;
       CINEMA.progreso.guardar({
@@ -214,7 +221,7 @@
   }
 
   function guardarProgreso() {
-    if (!idActual || !CINEMA.progreso) return;
+    if (!idActual || !CINEMA.progreso || !prefs().recordarProgreso) return;
 
     const duracion = video.duration;
     if (!isFinite(duracion) || duracion <= 0) return;
@@ -271,7 +278,11 @@
     dialogo.classList.remove("oculto");
     document.body.classList.add("sin-scroll");
 
-    const guardado = id && CINEMA.progreso ? CINEMA.progreso.leer(id) : null;
+    const preferencias = prefs();
+    const recordar = preferencias.recordarProgreso !== false;
+    const modo = preferencias.reanudacion || "preguntar";
+
+    const guardado = recordar && id && CINEMA.progreso ? CINEMA.progreso.leer(id) : null;
     const minimo = CINEMA.progreso ? CINEMA.progreso.MINIMO : 5;
     const reanudable = Boolean(
       guardado &&
@@ -280,7 +291,9 @@
         (!guardado.duracion || guardado.posicion < guardado.duracion - 5)
     );
 
-    if (reanudable) {
+    /* Con «Preguntar» la posición se prepara mientras se muestra el panel;
+       con «Reanudar automáticamente» se busca al tener metadatos. */
+    if (reanudable && modo === "preguntar") {
       video.addEventListener(
         "loadedmetadata",
         () => {
@@ -297,9 +310,24 @@
     video.src = url;
     video.load();
 
-    if (reanudable) {
+    if (reanudable && modo === "preguntar") {
       mostrarReanudar(guardado.posicion);
       botonReanudar.focus();
+    } else if (reanudable && modo === "automatica") {
+      video.addEventListener(
+        "loadedmetadata",
+        () => {
+          try {
+            video.currentTime = guardado.posicion;
+          } catch {
+            /* sin búsqueda: se empieza desde el principio */
+          }
+          const intento = video.play();
+          if (intento && typeof intento.catch === "function") intento.catch(() => {});
+          video.focus();
+        },
+        { once: true }
+      );
     } else {
       cerrarBoton.focus();
       const intento = video.play();

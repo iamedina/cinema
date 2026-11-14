@@ -100,8 +100,11 @@ npm test
 
 Ejecuta las pruebas con el runner nativo de Node (`node --test`), sin
 dependencias externas: almacenamiento seguro, historial de búsqueda, progreso de
-reproducción, escapado de HTML, filtros en la URL y el servidor (proxy de OMDb,
-rutas permitidas, 404 propio y `/api/health`).
+reproducción, escapado de HTML, filtros en la URL, preferencias, tráilers y
+región, copias de seguridad y el servidor (proxy de OMDb, rutas permitidas, 404
+propio y `/api/health`). También se revisan las páginas HTML: que carguen
+`preferencias.js` antes que el resto, que enlacen Ajustes y que no falte ningún
+módulo o archivo referenciado.
 
 ## Mi lista (favoritos)
 
@@ -164,6 +167,37 @@ hay copias piratas ni servidores propios: el vídeo se carga desde la copia que
 - El catálogo vive en `js/dominio-publico.js`; cada entrada se verificó contra
   Internet Archive y su licencia de dominio público.
 
+## Ajustes y preferencias
+
+`ajustes.html` reúne las preferencias del sitio. Todo se guarda en este
+navegador (`localStorage`, clave `cinema:ajustes:v1`): no hay cuenta ni se envía
+nada al servidor. El engranaje de la cabecera y el enlace del pie llevan a ella
+desde cualquier página.
+
+- **Apariencia:** reducir animaciones (además de la preferencia del sistema) y
+  tamaño de texto normal o grande. Los cambios se aplican al instante.
+- **Tráilers:** orden del audio (`Latino → España → Inglés`, `España → Latino →
+  Inglés`, `Inglés → Latino → España` o solo oficiales) y carga automática. Con
+  la carga automática desactivada, la ficha muestra una miniatura de YouTube y
+  el vídeo solo se carga al pulsar, sin perder la etiqueta de idioma.
+- **Plataformas:** región de «Dónde verla» (México por defecto; también España,
+  Argentina, Colombia, Chile, Perú y EE. UU.). Cambia las plataformas de TMDB y
+  el enlace de respaldo de JustWatch. Si la región no tiene datos, se usan los
+  de España y luego los de EE. UU.
+- **Reproducción:** recordar o no la posición y qué hacer al reabrir una
+  película empezada (`Preguntar`, `Reanudar automáticamente` o `Empezar desde el
+  inicio`).
+- **Mis datos:** contadores de Mi lista, historial y progreso, borrado
+  individual, **exportar** una copia JSON, **importar** una copia (sustituye los
+  datos actuales) y **restablecer** los ajustes sin tocar las listas.
+- **Información del sitio:** estado de `/api/health` (servidor, TMDB y OMDb) y
+  enlaces legales. Con `file://` avisa de que no hay servidor y explica cómo
+  arrancarlo.
+
+La copia de seguridad tiene la forma
+`{ sitio: "CINEMA", version: 1, exportado, ajustes, favoritos, historial, progreso }`
+y al importarla se sanean las listas igual que si se hubieran guardado a mano.
+
 ## Seguir viendo
 
 El reproductor recuerda dónde te quedaste, en el navegador
@@ -172,7 +206,11 @@ El reproductor recuerda dónde te quedaste, en el navegador
 - Al cerrar o pausar se guarda la posición; también cada 15 segundos mientras
   se reproduce.
 - Al volver a abrir una película empezada aparece **«Lo dejaste en 12:34.
-  ¿Continuar?»** con los botones **Reanudar** y **Empezar de cero**.
+  ¿Continuar?»** con los botones **Reanudar** y **Empezar de cero**, salvo que
+  en Ajustes se haya elegido **Reanudar automáticamente** o **Empezar desde el
+  inicio**.
+- Con **«Recordar dónde me quedé»** desactivado no se guarda nada nuevo y no se
+  ofrece reanudar; el progreso anterior se conserva hasta borrarlo en Ajustes.
 - En `dominio-publico.html` cada póster muestra una barra de progreso y el
   botón pasa a **Continuar**.
 - Al pasar del **90 %** la película se marca como **Vista** (sello sobre el
@@ -206,9 +244,13 @@ guardar en Mi lista).
 
 - El tráiler se elige por prioridad: **oficial en español latino**, después
   **oficial en España**, después **oficial en otro idioma** y, por último,
-  cualquier tráiler de YouTube. La etiqueta junto a «Tráiler» indica el audio
-  (`Tráiler oficial (latino)`, `(España)`, `(inglés)` o `Tráiler`). Los
-  subtitulados pierden prioridad porque se busca audio, no subtítulos.
+  cualquier tráiler de YouTube. El orden se puede cambiar en Ajustes (por
+  ejemplo, España primero o solo oficiales). La etiqueta junto a «Tráiler»
+  indica el audio (`Tráiler oficial (latino)`, `(España)`, `(inglés)` o
+  `Tráiler`). Los subtitulados pierden prioridad porque se busca audio, no
+  subtítulos.
+- Con **«Cargar el tráiler automáticamente»** desactivado, la ficha muestra una
+  miniatura con botón de reproducción y el iframe se crea solo al pulsar.
 - Los **títulos similares** de una película empiezan por su **saga o trilogía**
   (colección de TMDB, en orden cronológico), siguen con las recomendaciones y
   terminan con los similares, sin duplicados y con un máximo de 12. Si hay
@@ -289,14 +331,17 @@ anime.html          Listado de anime      (body data-tipo="anime")
 descripcion.html    Ficha de un título    (?id=...)
 persona.html        Ficha de una persona  (?id=tmdb-person-...)
 favoritos.html      Mi lista (favoritos guardados en el navegador)
+ajustes.html        Preferencias: apariencia, tráilers, región, datos y estado
 legal.html          Aviso legal, DMCA, privacidad y fuentes
 dominio-publico.html  Catálogo de cine de dominio público con reproductor
 
 css/style.css       Todos los estilos
 js/api.js           Datos: TMDB vía proxy, OMDb de respaldo, caché
+js/preferencias.js  Preferencias globales y clases de apariencia
 js/almacen.js       Acceso seguro a localStorage (claves versionadas)
 js/favoritos.js     Corazón, contador y lista de favoritos
 js/historial.js     Historial de búsquedas recientes
+js/ajustes.js       Controles de Ajustes, contadores y copias de seguridad
 js/generos.js       Géneros fijos de TMDB (sin petición extra)
 js/filtros.js       Barra de filtros y estado en la URL
 js/ui.js            Tarjetas, escapado de HTML, navegación y foco

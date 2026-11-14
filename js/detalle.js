@@ -65,6 +65,46 @@
    * Tráiler
    * ========================================================== */
 
+  /** Preferencias actuales; si el módulo falta, se usan los valores por defecto. */
+  function prefs() {
+    return window.CINEMA && window.CINEMA.preferencias
+      ? window.CINEMA.preferencias.leer()
+      : { cargarTrailer: true };
+  }
+
+  /** Miniatura de YouTube: se usa cuando el tráiler no se carga solo. */
+  function miniaturaYoutube(clave) {
+    return "https://i.ytimg.com/vi/" + encodeURIComponent(clave) + "/hqdefault.jpg";
+  }
+
+  function marcoTrailer(datos) {
+    if (prefs().cargarTrailer !== false) {
+      return (
+        '<div class="trailer-marco">' +
+        '<iframe src="https://www.youtube.com/embed/' +
+        escapeHtml(datos.trailerKey) +
+        '" title="Tráiler de ' +
+        escapeHtml(datos.titulo) +
+        '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" ' +
+        'allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>' +
+        "</div>"
+      );
+    }
+
+    return (
+      '<div class="trailer-marco trailer-diferido">' +
+      '<button type="button" class="trailer-portada" data-trailer-cargar ' +
+      'data-trailer-key="' + escapeHtml(datos.trailerKey) + '" ' +
+      'data-trailer-titulo="' + escapeHtml(datos.titulo) + '" ' +
+      'aria-label="Cargar el tráiler de ' + escapeHtml(datos.titulo) + '">' +
+      '<img src="' + escapeHtml(miniaturaYoutube(datos.trailerKey)) + '" alt="" ' +
+      'loading="lazy" decoding="async">' +
+      '<span class="trailer-play" aria-hidden="true"><i class="bi bi-play-fill"></i></span>' +
+      "</button>" +
+      "</div>"
+    );
+  }
+
   function bloqueTrailer(datos) {
     if (datos.trailerKey) {
       return (
@@ -83,14 +123,7 @@
         '<i class="bi bi-arrows-fullscreen" aria-hidden="true"></i> Pantalla completa' +
         "</button>" +
         "</div>" +
-        '<div class="trailer-marco">' +
-        '<iframe src="https://www.youtube.com/embed/' +
-        escapeHtml(datos.trailerKey) +
-        '" title="Tráiler de ' +
-        escapeHtml(datos.titulo) +
-        '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" ' +
-        'allowfullscreen loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe>' +
-        "</div>" +
+        marcoTrailer(datos) +
         "</section>"
       );
     }
@@ -142,8 +175,52 @@
     const cerrar = document.getElementById("trailerModalCerrar");
     if (!modal || !marco || !cerrar) return;
 
-    const inline = document.querySelector(".trailer-marco iframe");
+    const marcoInline = document.querySelector(".trailer-marco");
     let origen = null;
+
+    const pausarInline = () => {
+      const iframe = marcoInline && marcoInline.querySelector("iframe");
+      if (iframe && iframe.getAttribute("src")) {
+        iframe.dataset.src = iframe.getAttribute("src");
+        iframe.removeAttribute("src");
+      }
+    };
+
+    const reanudarInline = () => {
+      const iframe = marcoInline && marcoInline.querySelector("iframe");
+      if (iframe && iframe.dataset.src) {
+        iframe.src = iframe.dataset.src;
+        delete iframe.dataset.src;
+      }
+    };
+
+    /* Tráiler diferido: el iframe se crea al pulsar la portada. */
+    const botonCargar = document.querySelector("[data-trailer-cargar]");
+    if (botonCargar) {
+      botonCargar.addEventListener("click", () => {
+        const clave = botonCargar.getAttribute("data-trailer-key");
+        if (!clave) return;
+
+        const contenedor = botonCargar.parentElement;
+        if (!contenedor) return;
+
+        const iframe = document.createElement("iframe");
+        iframe.src =
+          "https://www.youtube.com/embed/" + encodeURIComponent(clave) + "?autoplay=1&rel=0";
+        iframe.title = "Tráiler de " + (botonCargar.getAttribute("data-trailer-titulo") || "");
+        iframe.setAttribute(
+          "allow",
+          "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        );
+        iframe.setAttribute("allowfullscreen", "");
+        iframe.setAttribute("referrerpolicy", "strict-origin-when-cross-origin");
+
+        contenedor.classList.remove("trailer-diferido");
+        contenedor.innerHTML = "";
+        contenedor.appendChild(iframe);
+        iframe.focus();
+      });
+    }
 
     const abrir = (boton) => {
       const clave = boton.getAttribute("data-trailer-key");
@@ -152,10 +229,7 @@
       origen = boton;
 
       /* Detiene el tráiler incrustado para que no suenen dos a la vez. */
-      if (inline && inline.getAttribute("src")) {
-        inline.dataset.src = inline.getAttribute("src");
-        inline.removeAttribute("src");
-      }
+      pausarInline();
 
       marco.src =
         "https://www.youtube.com/embed/" + encodeURIComponent(clave) + "?autoplay=1&rel=0";
@@ -171,10 +245,7 @@
       marco.removeAttribute("src");
       document.body.classList.remove("sin-scroll");
 
-      if (inline && inline.dataset.src) {
-        inline.src = inline.dataset.src;
-        delete inline.dataset.src;
-      }
+      reanudarInline();
 
       if (origen) {
         origen.focus();

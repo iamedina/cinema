@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="vendor/bootstrap/bootstrap.min.css" rel="stylesheet">
+    <title>Ajustes | CINEMA</title>
+    <meta name="description" content="Preferencias de CINEMA: apariencia, tráilers, región, reproducción y tus datos guardados.">
+    <meta name="theme-color" content="#000000">
+    <meta name="color-scheme" content="dark">
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Ajustes | CINEMA">
+    <meta property="og:description" content="Preferencias de CINEMA: apariencia, tráilers, región, reproducción y tus datos guardados.">
+    <meta property="og:image" content="img/image-cinema.png">
+    <link rel="icon" type="image/png" href="img/image-cinema.png">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/preferencias.js"></script>
+</head>
+
+<body>
+    <a class="saltar-contenido" href="#contenido">Saltar al contenido</a>
+
+    <div class="barra-superior">
+    <header>
+        <div class="header-main">
+            <div class="logo">
+                <a href="index.html">
+                    <img src="img/image-cinema.png" alt="CINEMA">
+                </a>
+            </div>
+            <div class="search">
+                <div class="position-relative w-100">
+                    <input type="text" class="ps-3" id="nombrePeliculas" autocomplete="off" aria-label="Buscar películas y series"
+                        placeholder="Buscar películas y series...">
+                    <button type="button" id="buscarBtn" class="buscar-boton" aria-label="Buscar" style="top: 50%; right: 20px; transform: translateY(-40%); cursor: pointer;"><i class="bi bi-search text-white" aria-hidden="true"></i></button>
+                </div>
+            </div>
+        </div>
+        <div class="login-div">
+            <a class="login ajustes-enlace" href="ajustes.html" title="Ajustes" aria-current="page">
+                <i class="bi bi-gear" aria-hidden="true"></i>
+                <span class="ajustes-texto">Ajustes</span>
+            </a>
+        </div>
+    </header>
+
+    <nav>
+        <div class="mover group">
+            <div class="anclas-header">
+                <a href="index.html">
+                    <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em">
+                        <path fill="currentColor"
+                            d="M10 19v-5h4v5c0 .55.45 1 1 1h3c.55 0 1-.45 1-1v-7h1.7c.46 0 .68-.57.33-.87L12.67 3.6c-.38-.34-.96-.34-1.34 0l-8.36 7.53c-.34.3-.13.87.33.87H5v7c0 .55.45 1 1 1h3c.55 0 1-.45 1-1">
+                        </path>
+                    </svg>
+                    <span>Inicio</span>
+                </a>
+                <a href="pelicula.html">
+                    <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 14 14" width="1em" height="1em">
+                        <path fill="currentColor" fill-rule="evenodd"
+                            d="M11.402 2.773q-.201.004-.395.054c.1-.236.152-.488.154-.744a2.15 2.15 0 0 0-.676-1.485A2.2 2.2 0 0 0 8.949 0a2.2 2.2 0 0 0-1.124.31c-.34.201-.617.49-.803.834A2.17 2.17 0 0 0 6.219.31a2.21 2.21 0 0 0-2.646.296a2.14 2.14 0 0 0-.668 1.477c.001.256.053.508.153.744a1.65 1.65 0 0 0-1.577.42A1.6 1.6 0 0 0 1 4.393c0 .43.173.841.481 1.145c.308.303.726.463 1.161.463h8.716c.435 0 .853-.17 1.161-.474a1.607 1.607 0 0 0 0-2.29a1.66 1.66 0 0 0-1.161-.473l.043.01Zm-.044 4.477H7.75V14h1.874a1.5 1.5 0 0 0 1.487-1.302l.732-5.489q-.24.04-.485.041m-8.716 0a3 3 0 0 1-.485-.04l.732 5.488A1.5 1.5 0 0 0 4.376 14H6.25V7.25z"
+                            clip-rule="evenodd"></path>
+                    </svg>
+                    <span>Películas</span>
+                </a>
+                <a href="serie.html">
+                    <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em">
+                        <path fill="currentColor" fill-rule="evenodd"
+                            d="M11.218 7.954H6.3V9.17h2.036V15h1.475V9.17h1.816l1.96 5.83h1.776l2.369-7.046h-1.607l-1.611 5.527h-.034l-1.612-5.527zM2 5a1 1 0 0 1 1-1h18a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1zm6 16.05c0-.414.344-.75.753-.75h6.494a.75.75 0 0 1 .753.75v.75H8z">
+                        </path>
+                    </svg>
+                    <span>Series</span>
+                </a>
+                <a href="anime.html">
+                    <svg aria-hidden="true" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" width="1em" height="1em">
+                        <g fill="currentColor">
+                            <path d="M10.75 12a1.25 1.25 0 1 1 2.5 0a1.25 1.25 0 0 1-2.5 0"></path>
+                            <path
+                                d="M9.353 11.25a2.751 2.751 0 0 1 5.293 0h7.075c-.383-5.034-4.589-9-9.721-9c-5.133 0-9.339 3.966-9.722 9zm5.293 1.5a2.751 2.751 0 0 1-5.293 0H2.278c.383 5.034 4.59 9 9.722 9s9.339-3.966 9.721-9z">
+                            </path>
+                        </g>
+                    </svg>
+                    <span>Animes</span>
+                </a>
+                <a href="favoritos.html">
+                    <i class="bi bi-heart" aria-hidden="true"></i>
+                <span>Mi lista</span>
+                    <span class="contador-favoritos" data-contador-favoritos hidden>0</span>
+                    </a>
+            </div>
+        </div>
+    </nav>
+    </div>
+
+    <main id="contenido" tabindex="-1">
+        <div class="ajustes-pagina">
+            <div class="contenedor ajustes-contenedor">
+                <header class="ajustes-cabecera">
+                    <h1>Ajustes</h1>
+                    <p>Tus preferencias se guardan solo en este navegador. No hay cuentas ni datos en servidores.</p>
+                </header>
+
+                <p class="ajustes-aviso" id="ajustesEstado" role="status" aria-live="polite" hidden></p>
+
+                <form class="ajustes-form" id="formAjustes" novalidate>
+
+                    <!-- Apariencia -->
+                    <section class="ajustes-bloque" aria-labelledby="tituloApariencia">
+                        <div class="ajustes-bloque-cabecera">
+                            <h2 id="tituloApariencia"><i class="bi bi-palette" aria-hidden="true"></i> Apariencia</h2>
+                            <p>Cambios visuales que se aplican al instante en todas las páginas.</p>
+                        </div>
+
+                        <label class="ajuste-fila" for="reducirAnimaciones">
+                            <span class="ajuste-texto">
+                                <strong>Reducir animaciones</strong>
+                                <small>Desactiva transiciones y movimiento. También se respeta la preferencia del sistema.</small>
+                            </span>
+                            <span class="ajuste-switch">
+                                <input type="checkbox" id="reducirAnimaciones">
+                                <span class="ajuste-switch-ui" aria-hidden="true"></span>
+                            </span>
+                        </label>
+
+                        <div class="ajuste-fila ajuste-fila-grupo" role="group" aria-labelledby="textoGrandeLabel">
+                            <span class="ajuste-texto" id="textoGrandeLabel">
+                                <strong>Tamaño del texto</strong>
+                                <small>Agranda el texto de las fichas y los listados.</small>
+                            </span>
+                            <div class="ajuste-segmentado">
+                                <label>
+                                    <input type="radio" name="textoGrande" value="normal">
+                                    <span>Normal</span>
+                                </label>
+                                <label>
+                                    <input type="radio" name="textoGrande" value="grande">
+                                    <span>Grande</span>
+                                </label>
+                            </div>
+                        </div>
+                    </section>
+
+                    <!-- Tráilers -->
+                    <section class="ajustes-bloque" aria-labelledby="tituloTrailers">
+                        <div class="ajustes-bloque-cabecera">
+                            <h2 id="tituloTrailers"><i class="bi bi-play-btn" aria-hidden="true"></i> Tráilers</h2>
+                            <p>Qué tráiler se elige y cuándo se carga en la ficha.</p>
+                        </div>
+
+                        <div class="ajuste-fila">
+                            <label class="ajuste-texto" for="ordenTrailer">
+                                <strong>Orden del audio</strong>
+                                <small>Se prefiere el tráiler oficial y, entre ellos, el idioma que elijas.</small>
+                            </label>
+                            <select id="ordenTrailer" class="ajuste-select">
+                                <option value="latino">Latino → España → Inglés</option>
+                                <option value="espana">España → Latino → Inglés</option>
+                                <option value="ingles">Inglés → Latino → España</option>
+                                <option value="solo-oficial">Solo tráilers oficiales</option>
+                            </select>
+                        </div>
+
+                        <label class="ajuste-fila" for="cargarTrailer">
+                            <span class="ajuste-texto">
+                                <strong>Cargar el tráiler automáticamente</strong>
+                                <small>Si lo desactivas, verás una miniatura y el vídeo solo se carga al pulsar.</small>
+                            </span>
+                            <span class="ajuste-switch">
+                                <input type="checkbox" id="cargarTrailer">
+                                <span class="ajuste-switch-ui" aria-hidden="true"></span>
+                            </span>
+                        </label>
+                    </section>
+
+                    <!-- Plataformas -->
+                    <section class="ajustes-bloque" aria-labelledby="tituloPlataformas">
+                        <div class="ajustes-bloque-cabecera">
+                            <h2 id="tituloPlataformas"><i class="bi bi-globe2" aria-hidden="true"></i> Plataformas</h2>
+                            <p>País que se usa para «Dónde verla». Si TMDB no tiene datos de ese país, se muestran los de España o EE. UU.</p>
+                        </div>
+
+                        <div class="ajuste-fila">
+                            <label class="ajuste-texto" for="region">
+                                <strong>Región</strong>
+                                <small>También cambia el enlace de búsqueda en JustWatch.</small>
+                            </label>
+                            <select id="region" class="ajuste-select">
+                                <option value="MX">México</option>
+                                <option value="ES">España</option>
+                                <option value="AR">Argentina</option>
+                                <option value="CO">Colombia</option>
+                                <option value="CL">Chile</option>
+                                <option value="PE">Perú</option>
+                                <option value="US">Estados Unidos</option>
+                            </select>
+                        </div>
+                    </section>
+
+                    <!-- Reproducción -->
+                    <section class="ajustes-bloque" aria-labelledby="tituloReproduccion">
+                        <div class="ajustes-bloque-cabecera">
+                            <h2 id="tituloReproduccion"><i class="bi bi-collection-play" aria-hidden="true"></i> Reproducción</h2>
+                            <p>Se aplica al cine de dominio público que se reproduce dentro de CINEMA.</p>
+                        </div>
+
+                        <label class="ajuste-fila" for="recordarProgreso">
+                            <span class="ajuste-texto">
+                                <strong>Recordar dónde me quedé</strong>
+                                <small>Guarda la posición de cada película en este navegador.</small>
+                            </span>
+                            <span class="ajuste-switch">
+                                <input type="checkbox" id="recordarProgreso">
+                                <span class="ajuste-switch-ui" aria-hidden="true"></span>
+                            </span>
+                        </label>
+
+                        <div class="ajuste-fila">
+                            <label class="ajuste-texto" for="reanudacion">
+                                <strong>Al abrir el reproductor</strong>
+                                <small>Qué hacer si la película ya estaba empezada.</small>
+                            </label>
+                            <select id="reanudacion" class="ajuste-select">
+                                <option value="preguntar">Preguntar</option>
+                                <option value="automatica">Reanudar automáticamente</option>
+                                <option value="inicio">Empezar desde el inicio</option>
+                            </select>
+                        </div>
+                    </section>
+
+                    <!-- Mis datos -->
+                    <section class="ajustes-bloque" aria-labelledby="tituloDatos">
+                        <div class="ajustes-bloque-cabecera">
+                            <h2 id="tituloDatos"><i class="bi bi-database" aria-hidden="true"></i> Mis datos</h2>
+                            <p>Todo lo que CINEMA guarda vive únicamente en este navegador.</p>
+                        </div>
+
+                        <div class="ajuste-dato">
+                            <div class="ajuste-dato-texto">
+                                <strong>Mi lista</strong>
+                                <small><span data-contador="favoritos">0</span> títulos guardados</small>
+                            </div>
+                            <button type="button" class="btn btn-outline-light btn-sm" data-borrar="favoritos">
+                                Vaciar
+                            </button>
+                        </div>
+
+                        <div class="ajuste-dato">
+                            <div class="ajuste-dato-texto">
+                                <strong>Historial de búsqueda</strong>
+                                <small><span data-contador="historial">0</span> búsquedas recientes</small>
+                            </div>
+                            <button type="button" class="btn btn-outline-light btn-sm" data-borrar="historial">
+                                Borrar
+                            </button>
+                        </div>
+
+                        <div class="ajuste-dato">
+                            <div class="ajuste-dato-texto">
+                                <strong>Progreso de reproducción</strong>
+                                <small><span data-contador="progreso">0</span> títulos con progreso guardado</small>
+                            </div>
+                            <button type="button" class="btn btn-outline-light btn-sm" data-borrar="progreso">
+                                Borrar
+                            </button>
+                        </div>
+
+                        <div class="ajustes-acciones">
+                            <button type="button" class="btn btn-primary" id="exportarDatos">
+                                <i class="bi bi-download" aria-hidden="true"></i> Exportar copia
+                            </button>
+                            <label class="btn btn-outline-light mb-0" for="importarArchivo">
+                                <i class="bi bi-upload" aria-hidden="true"></i> Importar copia
+                            </label>
+                            <input type="file" id="importarArchivo" accept="application/json,.json" class="sr-only">
+                            <button type="button" class="btn btn-outline-danger" id="restablecerAjustes">
+                                <i class="bi bi-arrow-counterclockwise" aria-hidden="true"></i> Restablecer ajustes
+                            </button>
+                        </div>
+
+                        <p class="ajustes-nota">
+                            La copia incluye tus ajustes, Mi lista, el historial y el progreso en un archivo JSON.
+                            Importarla sustituye los datos actuales.
+                        </p>
+                    </section>
+
+                    <!-- Información -->
+                    <section class="ajustes-bloque" aria-labelledby="tituloInformacion">
+                        <div class="ajustes-bloque-cabecera">
+                            <h2 id="tituloInformacion"><i class="bi bi-info-circle" aria-hidden="true"></i> Información del sitio</h2>
+                            <p>Estado de las fuentes de datos y enlaces legales.</p>
+                        </div>
+
+                        <ul class="ajustes-estado">
+                            <li>
+                                <span>Servidor local</span>
+                                <span class="estado-pastilla" id="estadoServidor">Comprobando…</span>
+                            </li>
+                            <li>
+                                <span>TMDB</span>
+                                <span class="estado-pastilla" id="estadoTmdb">Comprobando…</span>
+                            </li>
+                            <li>
+                                <span>OMDb</span>
+                                <span class="estado-pastilla" id="estadoOmdb">Comprobando…</span>
+                            </li>
+                        </ul>
+
+                        <p class="ajustes-nota" id="notaServidor">
+                            Sin el servidor local, CINEMA funciona en modo reducido con OMDb.
+                        </p>
+
+                        <div class="ajustes-enlaces">
+                            <a href="legal.html">Aviso legal</a>
+                            <a href="legal.html#privacidad">Privacidad</a>
+                            <a href="legal.html#dmca">DMCA</a>
+                        </div>
+                    </section>
+
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer class="text-light pt-4" style="background: rgb(20 22 25 / var(--tw-bg-opacity, 1));">
+        <div class="container py-4">
+            <div class="row text-start text-md-start text-sm-start align-items-start mt-4">
+
+                <div class="col-md-3 mb-4 mb-lg-2" style="line-height: 30px; font-size: 18px;">
+                    <h5 class="fw-bold">Explora</h5>
+                    <a href="index.html" class="d-block text-light text-decoration-none">Inicio</a>
+                    <a href="pelicula.html" class="d-block text-light text-decoration-none">Películas</a>
+                    <a href="serie.html" class="d-block text-light text-decoration-none">Series</a>
+                    <a href="anime.html" class="d-block text-light text-decoration-none">Anime</a>
+                    <a href="dominio-publico.html" class="d-block text-light text-decoration-none">Dominio público</a>
+                    <a href="favoritos.html" class="d-block text-light text-decoration-none">Mi lista</a>
+                    <a href="ajustes.html" class="d-block text-light text-decoration-none">Ajustes</a>
+                </div>
+
+                <div class="col-md-3 mb-4 mb-lg-2" style="line-height: 30px; font-size: 18px;">
+                    <h5 class="fw-bold">Legal</h5>
+                    <a href="legal.html" class="d-block text-light text-decoration-none">Aviso legal</a>
+                    <a href="legal.html#dmca" class="d-block text-light text-decoration-none">DMCA</a>
+                    <a href="legal.html#privacidad" class="d-block text-light text-decoration-none">Privacidad</a>
+                    <a href="legal.html#publicidad" class="d-block text-light text-decoration-none">Publicidad</a>
+                </div>
+
+                <div class="col-md-3 mb-4 mb-lg-2">
+                    <h5 class="fw-bold mb-3">Contáctanos</h5>
+                    <p class="mb-1" style="line-height: 10px;">support@peliculas.com</p>
+                    <small class="text-secondary">Actualizado el 12 de noviembre de 2026, 14:39 <br> GMT-5</small>
+                </div>
+
+                <div class="col-md-3 mb-4 mb-lg-2" style="line-height: 30px; font-size: 18px;">
+                    <h5 class="fw-bold">Síguenos</h5>
+                    <a href="https://facebook.com" target="_blank" rel="noopener noreferrer"
+                        class="btn btn-outline-light btn-md rounded-3 me-2">
+                        <i class="bi bi-facebook"></i>
+                    </a>
+                    <a href="https://x.com" target="_blank" rel="noopener noreferrer"
+                        class="btn btn-outline-light btn-md rounded-3 me-2">
+                        <i class="bi bi-twitter"></i>
+                    </a>
+                    <a href="https://t.me" target="_blank" rel="noopener noreferrer"
+                        class="btn btn-outline-light btn-md rounded-3">
+                        <i class="bi bi-telegram"></i>
+                    </a>
+                </div>
+
+            </div>
+
+            <hr class="border-secondary">
+
+            <div class="text-center">
+                <p class="mb-1">&copy; 2025 CINEMA</p>
+                <small class="d-block"><i class="bi bi-explicit-fill"></i> El sitio contiene contenido 18+</small>
+                <small class="d-block mt-1">Este producto usa la API de TMDB pero no está respaldado ni certificado por TMDB.</small>
+                <small class="d-block mt-1">CINEMA no aloja contenido audiovisual: enlaza a plataformas oficiales y reproduce cine de dominio público desde Internet Archive. Datos de TMDB y OMDb.</small>
+            </div>
+        </div>
+    </footer>
+
+    <script src="vendor/bootstrap/bootstrap.bundle.min.js"></script>
+    <script src="js/almacen.js"></script>
+    <script src="js/historial.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/favoritos.js"></script>
+    <script src="js/progreso.js"></script>
+    <script src="js/buscador.js"></script>
+    <script src="js/ajustes.js"></script>
+</body>
+
+</html>

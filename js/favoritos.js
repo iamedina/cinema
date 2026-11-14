@@ -128,6 +128,14 @@
     notificar("local");
   }
 
+  /** Sustituye la lista completa (importación de una copia de seguridad). */
+  function reemplazar(valor) {
+    lista = limpiar(valor);
+    guardar();
+    aplicarEstado(document);
+    notificar("local");
+  }
+
   /* ============================================================
    * Botones del corazón
    * ========================================================== */
@@ -226,6 +234,7 @@
     quitar,
     alternar,
     vaciar,
+    reemplazar,
     aplicarEstado,
     alCambiar,
   };

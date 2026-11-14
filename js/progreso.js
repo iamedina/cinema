@@ -178,6 +178,13 @@
     notificar("local");
   }
 
+  /** Sustituye el progreso completo (importación de una copia de seguridad). */
+  function reemplazar(valor) {
+    lista = limpiar(valor);
+    guardarEnDisco();
+    notificar("local");
+  }
+
   function alCambiar(callback) {
     if (typeof callback !== "function") return () => {};
     oyentes.push(callback);
@@ -209,6 +216,7 @@
     guardar,
     quitar,
     vaciar,
+    reemplazar,
     alCambiar,
   };
 })();

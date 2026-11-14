@@ -26,6 +26,13 @@
   const PAGINAS_POR_VISTA = 3;
   const TIMEOUT_MS = 15000;
 
+  /** Preferencias actuales; si el módulo no está, se usan los valores por defecto. */
+  function prefsActuales() {
+    return window.CINEMA && window.CINEMA.preferencias
+      ? window.CINEMA.preferencias.leer()
+      : {};
+  }
+
   /* Solo usamos el servidor si la página no se abrió con doble clic. */
   const USAR_SERVIDOR = location.protocol !== "file:";
 
@@ -183,28 +190,48 @@
 
   /*
    * Prioridad de tráilers:
-   *   1. Oficiales. Dentro de ellos, español latino > España > inglés > otros.
-   *   2. Si no hay ninguno oficial, se acepta el mejor de YouTube, prefiriendo
-   *      el español.
+   *   1. Oficiales (salvo en el modo «solo oficiales», que descarta el resto).
+   *   2. Dentro de ellos manda el orden elegido en Ajustes:
+   *      latino → España → inglés, o el que prefiera el usuario.
+   *   3. Si no hay oficiales, se acepta el mejor de YouTube.
    * Los subtitulados pierden puntos: se busca audio, no subtítulos.
    * TMDB solo marca el idioma como «es»; «latino» se detecta por el
    * nombre del vídeo, que es la única señal disponible.
    */
-  function puntuarTrailer(video) {
+  const ORDEN_IDIOMAS = {
+    latino: ["latino", "espana", "ingles", "otro"],
+    espana: ["espana", "latino", "ingles", "otro"],
+    ingles: ["ingles", "latino", "espana", "otro"],
+    "solo-oficial": ["latino", "espana", "ingles", "otro"],
+  };
+
+  function categoriaIdioma(video) {
     const nombre = String(video.name || "").toLowerCase();
+
+    if (video.iso_639_1 === "es") {
+      return /latino|latinoam|hispanoam|m[eé]xico|espa[ñn]ol latino/.test(nombre)
+        ? "latino"
+        : "espana";
+    }
+    if (video.iso_639_1 === "en") return "ingles";
+    return "otro";
+  }
+
+  function puntuarTrailer(video, modo) {
+    const nombre = String(video.name || "").toLowerCase();
+    const orden = ORDEN_IDIOMAS[modo] || ORDEN_IDIOMAS.latino;
     let puntos = 0;
 
-    if (video.official === true) puntos += 100;
+    if (video.official === true) puntos += 1000;
     if (video.type === "Trailer") puntos += 20;
     else if (video.type === "Teaser") puntos += 6;
     else puntos -= 10;
 
-    if (video.iso_639_1 === "es") puntos += 40;
-    else if (video.iso_639_1 === "en") puntos += 10;
+    /* El idioma pesa más que el tipo: entre oficiales manda el orden elegido. */
+    const indice = orden.indexOf(categoriaIdioma(video));
+    puntos += (3 - (indice < 0 ? 3 : indice)) * 100;
 
-    if (/latino|latinoam|hispanoam|m[eé]xico|espa[ñn]ol latino/.test(nombre)) puntos += 35;
-    if (/espa[ñn]a|castellano/.test(nombre)) puntos -= 5;
-    if (/subt[ií]tul|subtitled|sub esp/.test(nombre)) puntos -= 30;
+    if (/subt[ií]tul|subtitled|sub esp/.test(nombre)) puntos -= 300;
 
     return puntos;
   }
@@ -212,12 +239,15 @@
   function elegirTrailer(videos) {
     if (!Array.isArray(videos) || !videos.length) return null;
 
-    return (
-      videos
-        .filter((v) => v && v.site === "YouTube" && v.key)
-        .slice()
-        .sort((a, b) => puntuarTrailer(b) - puntuarTrailer(a))[0] || null
-    );
+    const prefs = prefsActuales();
+    const modo = ORDEN_IDIOMAS[prefs.ordenTrailer] ? prefs.ordenTrailer : "latino";
+
+    let candidatos = videos.filter((v) => v && v.site === "YouTube" && v.key);
+    if (modo === "solo-oficial") {
+      candidatos = candidatos.filter((v) => v.official === true);
+    }
+
+    return candidatos.slice().sort((a, b) => puntuarTrailer(b, modo) - puntuarTrailer(a, modo))[0] || null;
   }
 
   function etiquetaTrailer(video) {
@@ -322,14 +352,17 @@
 
   function urlJustwatch(titulo) {
     if (!titulo) return "";
-    return "https://www.justwatch.com/es/buscar?q=" + encodeURIComponent(titulo);
+    const region = String(prefsActuales().region || "MX").toLowerCase();
+    return "https://www.justwatch.com/" + region + "/buscar?q=" + encodeURIComponent(titulo);
   }
 
   function proveedoresTmdb(json) {
     const bloque = json["watch/providers"] && json["watch/providers"].results;
     if (!bloque) return null;
-    /* España primero; si no hay, el catálogo de EE. UU. como referencia. */
-    const region = bloque.ES || bloque.US || Object.values(bloque)[0];
+
+    /* Región elegida en Ajustes; si no hay datos, España y EE. UU. */
+    const preferida = prefsActuales().region || "MX";
+    const region = bloque[preferida] || bloque.ES || bloque.US || Object.values(bloque)[0];
     if (!region) return null;
 
     const titulo = json.title || json.name || "";
