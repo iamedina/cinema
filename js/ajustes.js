@@ -9,13 +9,14 @@
   "use strict";
 
   const CINEMA = (window.CINEMA = window.CINEMA || {});
-  const { preferencias, favoritos, historial, progreso, buscador } = CINEMA;
+  const { preferencias, favoritos, historial, progreso, buscador, perfiles, ui } = CINEMA;
 
   const form = document.getElementById("formAjustes");
   if (!form || !preferencias) return;
 
   if (buscador) buscador.init();
 
+  const escapeHtml = ui ? ui.escapeHtml : (valor) => String(valor ?? "");
   const estado = document.getElementById("ajustesEstado");
   const reducirAnimaciones = document.getElementById("reducirAnimaciones");
   const cargarTrailer = document.getElementById("cargarTrailer");
@@ -28,6 +29,11 @@
   const exportar = document.getElementById("exportarDatos");
   const importar = document.getElementById("importarArchivo");
   const restablecer = document.getElementById("restablecerAjustes");
+  const listaPerfiles = document.getElementById("listaPerfiles");
+  const nuevoPerfil = document.getElementById("nuevoPerfil");
+  const crearPerfil = document.getElementById("crearPerfil");
+  const coloresPerfil = Array.from(document.querySelectorAll('input[name="colorPerfil"]'));
+  const notaPerfilDatos = document.getElementById("notaPerfilDatos");
 
   let temporizadorAviso = 0;
 
@@ -179,14 +185,163 @@
   if (progreso) progreso.alCambiar(actualizarContadores);
 
   /* ============================================================
+   * Perfiles locales
+   * ========================================================== */
+
+  function colorSeleccionado() {
+    const marcado = coloresPerfil.find((radio) => radio.checked);
+    return marcado ? marcado.value : "azul";
+  }
+
+  function actualizarNotaPerfil() {
+    if (!notaPerfilDatos || !perfiles) return;
+    notaPerfilDatos.textContent =
+      "Estás viendo los datos del perfil «" + perfiles.actual().nombre + "».";
+  }
+
+  function pintarPerfiles() {
+    if (!listaPerfiles || !perfiles) return;
+
+    const actual = perfiles.actual();
+    const lista = perfiles.listar();
+
+    listaPerfiles.innerHTML = lista
+      .map((perfil) => {
+        const activo = perfil.id === actual.id;
+        const color = perfiles.colorDe(perfil);
+
+        return (
+          '<div class="perfil-fila' + (activo ? " perfil-fila-activo" : "") + '">' +
+          '<span class="perfil-mini" style="--perfil-color:' +
+          color.hex +
+          '" aria-hidden="true">' +
+          escapeHtml(perfiles.inicial(perfil.nombre)) +
+          "</span>" +
+          '<span class="perfil-fila-texto"><strong>' +
+          escapeHtml(perfil.nombre) +
+          "</strong><small>" +
+          (activo ? "Perfil activo" : "Cambiar a este perfil") +
+          "</small></span>" +
+          (activo
+            ? '<span class="perfil-activo-pastilla">Activo</span>'
+            : '<button type="button" class="btn btn-outline-light btn-sm" data-perfil-cambiar="' +
+              escapeHtml(perfil.id) +
+              '">Usar</button>') +
+          '<button type="button" class="btn btn-outline-light btn-sm" data-perfil-renombrar="' +
+          escapeHtml(perfil.id) +
+          '" aria-label="Renombrar ' +
+          escapeHtml(perfil.nombre) +
+          '"><i class="bi bi-pencil" aria-hidden="true"></i></button>' +
+          '<button type="button" class="btn btn-outline-danger btn-sm" data-perfil-eliminar="' +
+          escapeHtml(perfil.id) +
+          '" aria-label="Eliminar ' +
+          escapeHtml(perfil.nombre) +
+          '"' +
+          (lista.length <= 1 ? " disabled" : "") +
+          '><i class="bi bi-trash" aria-hidden="true"></i></button>' +
+          "</div>"
+        );
+      })
+      .join("");
+
+    actualizarNotaPerfil();
+  }
+
+  function crearPerfilDesdeFormulario() {
+    if (!perfiles || !nuevoPerfil) return;
+
+    const resultado = perfiles.crear(nuevoPerfil.value, colorSeleccionado());
+    if (!resultado.ok) {
+      avisar(resultado.error, true);
+      nuevoPerfil.focus();
+      return;
+    }
+
+    nuevoPerfil.value = "";
+    pintarPerfiles();
+    avisar("Perfil «" + resultado.perfil.nombre + "» creado. Pulsa «Usar» para entrar en él.");
+  }
+
+  if (crearPerfil) crearPerfil.addEventListener("click", crearPerfilDesdeFormulario);
+
+  if (nuevoPerfil) {
+    nuevoPerfil.addEventListener("keydown", (evento) => {
+      if (evento.key !== "Enter") return;
+      evento.preventDefault();
+      crearPerfilDesdeFormulario();
+    });
+  }
+
+  if (listaPerfiles) {
+    listaPerfiles.addEventListener("click", (evento) => {
+      const cambiar = evento.target.closest("[data-perfil-cambiar]");
+      if (cambiar) {
+        const resultado = perfiles.cambiar(cambiar.getAttribute("data-perfil-cambiar"));
+        if (!resultado.ok) avisar(resultado.error, true);
+        return;
+      }
+
+      const renombrar = evento.target.closest("[data-perfil-renombrar]");
+      if (renombrar) {
+        const id = renombrar.getAttribute("data-perfil-renombrar");
+        const perfil = perfiles.buscar(id);
+        if (!perfil) return;
+
+        const nombre = window.prompt("Nuevo nombre para «" + perfil.nombre + "»:", perfil.nombre);
+        if (nombre === null) return;
+
+        const resultado = perfiles.renombrar(id, nombre);
+        if (!resultado.ok) {
+          avisar(resultado.error, true);
+          return;
+        }
+
+        pintarPerfiles();
+        avisar("Perfil renombrado a «" + resultado.perfil.nombre + "».");
+        return;
+      }
+
+      const eliminar = evento.target.closest("[data-perfil-eliminar]");
+      if (eliminar) {
+        const id = eliminar.getAttribute("data-perfil-eliminar");
+        const perfil = perfiles.buscar(id);
+        if (!perfil) return;
+
+        const confirmado = window.confirm(
+          "¿Eliminar el perfil «" +
+            perfil.nombre +
+            "»? Se borrarán su Mi lista, historial y progreso."
+        );
+        if (!confirmado) return;
+
+        const resultado = perfiles.eliminar(id);
+        if (!resultado.ok) {
+          avisar(resultado.error, true);
+          return;
+        }
+        if (resultado.recarga) return;
+
+        pintarPerfiles();
+        actualizarContadores();
+        avisar("Perfil «" + perfil.nombre + "» eliminado.");
+      }
+    });
+  }
+
+  if (perfiles) perfiles.alCambiar(pintarPerfiles);
+
+  /* ============================================================
    * Exportar e importar
    * ========================================================== */
 
   function copiaDeSeguridad() {
+    const actual = perfiles ? perfiles.actual() : null;
+
     return {
       sitio: "CINEMA",
       version: 1,
       exportado: new Date().toISOString(),
+      perfil: actual ? { id: actual.id, nombre: actual.nombre, color: actual.color } : undefined,
       ajustes: preferencias.leer(),
       favoritos: favoritos ? favoritos.lista() : [],
       historial: historial ? historial.leer() : [],
@@ -358,6 +513,7 @@
    * Arranque
    * ========================================================== */
 
+  pintarPerfiles();
   sincronizarControles();
   actualizarContadores();
   comprobarServidor();

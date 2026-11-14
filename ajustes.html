@@ -17,6 +17,7 @@
     <link rel="icon" type="image/png" href="img/image-cinema.png">
     <link rel="stylesheet" href="css/style.css">
     <script src="js/preferencias.js"></script>
+    <script src="js/almacen.js"></script>
 </head>
 
 <body>
@@ -99,12 +100,76 @@
             <div class="contenedor ajustes-contenedor">
                 <header class="ajustes-cabecera">
                     <h1>Ajustes</h1>
-                    <p>Tus preferencias se guardan solo en este navegador. No hay cuentas ni datos en servidores.</p>
+                    <p>Tus preferencias y perfiles se guardan solo en este navegador. No hay cuentas ni datos en servidores.</p>
                 </header>
 
                 <p class="ajustes-aviso" id="ajustesEstado" role="status" aria-live="polite" hidden></p>
 
                 <form class="ajustes-form" id="formAjustes" novalidate>
+
+                    <!-- Perfiles locales -->
+                    <section class="ajustes-bloque" id="perfiles" aria-labelledby="tituloPerfiles">
+                        <div class="ajustes-bloque-cabecera">
+                            <h2 id="tituloPerfiles"><i class="bi bi-people" aria-hidden="true"></i> Perfiles locales</h2>
+                            <p>Cada perfil guarda su propia Mi lista, historial y progreso. Los ajustes de esta página se comparten entre todos.</p>
+                        </div>
+
+                        <div class="perfiles-lista" id="listaPerfiles"></div>
+
+                        <div class="perfil-crear">
+                            <div class="perfil-crear-campo">
+                                <label class="ajuste-texto" for="nuevoPerfil">
+                                    <strong>Nuevo perfil</strong>
+                                    <small>Hasta 20 caracteres y 8 perfiles en total.</small>
+                                </label>
+                                <input type="text" id="nuevoPerfil" class="perfil-input" maxlength="20"
+                                    autocomplete="off" placeholder="Nombre del perfil">
+                            </div>
+
+                            <fieldset class="perfil-colores">
+                                <legend>Color del avatar</legend>
+                                <label class="perfil-color">
+                                    <input type="radio" name="colorPerfil" value="azul" checked>
+                                    <span class="perfil-color-muestra" style="--perfil-color: #0d6efd"></span>
+                                    <span class="sr-only">Azul</span>
+                                </label>
+                                <label class="perfil-color">
+                                    <input type="radio" name="colorPerfil" value="verde">
+                                    <span class="perfil-color-muestra" style="--perfil-color: #198754"></span>
+                                    <span class="sr-only">Verde</span>
+                                </label>
+                                <label class="perfil-color">
+                                    <input type="radio" name="colorPerfil" value="ambar">
+                                    <span class="perfil-color-muestra" style="--perfil-color: #a16207"></span>
+                                    <span class="sr-only">Ámbar</span>
+                                </label>
+                                <label class="perfil-color">
+                                    <input type="radio" name="colorPerfil" value="rosa">
+                                    <span class="perfil-color-muestra" style="--perfil-color: #c2185b"></span>
+                                    <span class="sr-only">Rosa</span>
+                                </label>
+                                <label class="perfil-color">
+                                    <input type="radio" name="colorPerfil" value="violeta">
+                                    <span class="perfil-color-muestra" style="--perfil-color: #6f42c1"></span>
+                                    <span class="sr-only">Violeta</span>
+                                </label>
+                                <label class="perfil-color">
+                                    <input type="radio" name="colorPerfil" value="turquesa">
+                                    <span class="perfil-color-muestra" style="--perfil-color: #0f766e"></span>
+                                    <span class="sr-only">Turquesa</span>
+                                </label>
+                            </fieldset>
+
+                            <button type="button" class="btn btn-primary" id="crearPerfil">
+                                <i class="bi bi-person-plus" aria-hidden="true"></i> Crear perfil
+                            </button>
+                        </div>
+
+                        <p class="ajustes-nota">
+                            Al cambiar de perfil la página se recarga para cargar sus datos. Eliminar un perfil
+                            borra su Mi lista, historial y progreso; no se puede borrar el único perfil.
+                        </p>
+                    </section>
 
                     <!-- Apariencia -->
                     <section class="ajustes-bloque" aria-labelledby="tituloApariencia">
@@ -236,6 +301,8 @@
                             <p>Todo lo que CINEMA guarda vive únicamente en este navegador.</p>
                         </div>
 
+                        <p class="ajustes-nota" id="notaPerfilDatos">Estás viendo los datos del perfil «Principal».</p>
+
                         <div class="ajuste-dato">
                             <div class="ajuste-dato-texto">
                                 <strong>Mi lista</strong>
@@ -280,8 +347,8 @@
                         </div>
 
                         <p class="ajustes-nota">
-                            La copia incluye tus ajustes, Mi lista, el historial y el progreso en un archivo JSON.
-                            Importarla sustituye los datos actuales.
+                            La copia incluye los ajustes y los datos del perfil activo (Mi lista, historial y
+                            progreso) en un archivo JSON. Importarla sustituye esos datos en el perfil activo.
                         </p>
                     </section>
 
@@ -382,7 +449,8 @@
     </footer>
 
     <script src="vendor/bootstrap/bootstrap.bundle.min.js"></script>
-    <script src="js/almacen.js"></script>
+    
+    <script src="js/perfiles.js"></script>
     <script src="js/historial.js"></script>
     <script src="js/ui.js"></script>
     <script src="js/favoritos.js"></script>

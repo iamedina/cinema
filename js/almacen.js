@@ -33,6 +33,10 @@
   }
 
   function clave(nombre, version) {
+    const perfiles = CINEMA.perfiles;
+    if (perfiles && typeof perfiles.clave === "function") {
+      return perfiles.clave(nombre, version);
+    }
     return PREFIJO + nombre + ":v" + (version || 1);
   }
 
@@ -73,7 +77,7 @@
 
   /**
    * Escucha cambios de cualquier clave del sitio hechos en OTRA pestaña.
-   * El callback recibe { nombre, version, valor }.
+   * El callback recibe { nombre, version, valor } del perfil activo.
    */
   function alCambiar(callback) {
     if (typeof callback !== "function") return;
@@ -81,7 +85,17 @@
     window.addEventListener("storage", (evento) => {
       if (!evento.key || evento.key.indexOf(PREFIJO) !== 0) return;
 
-      const partes = /^cinema:([^:]+):v(\d+)$/.exec(evento.key);
+      /* Ignora los datos de otros perfiles. */
+      const perfiles = CINEMA.perfiles;
+      if (
+        perfiles &&
+        typeof perfiles.aceptaClave === "function" &&
+        !perfiles.aceptaClave(evento.key)
+      ) {
+        return;
+      }
+
+      const partes = /^cinema:(?:[a-z0-9-]+:)?([^:]+):v(\d+)$/.exec(evento.key);
       let valor = null;
       try {
         valor = evento.newValue ? JSON.parse(evento.newValue) : null;
