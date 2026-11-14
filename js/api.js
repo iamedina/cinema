@@ -233,6 +233,17 @@
     return directores.length ? directores.join(", ") : null;
   }
 
+  /** Ids de director/creador para poder enlazar su ficha de persona. */
+  function directoresTmdb(json) {
+    const serie = Boolean(json.name && !json.title);
+    const personas = serie ? json.created_by || [] : (json.credits && json.credits.crew) || [];
+
+    return personas
+      .filter((p) => p && p.id && p.name && (serie || p.job === "Director"))
+      .map((p) => ({ id: p.id, nombre: p.name }))
+      .slice(0, 4);
+  }
+
   /*
    * Búsqueda oficial por plataforma, por provider_id de TMDB. Si no
    * está la plataforma, se usa el enlace de JustWatch del título.
@@ -368,9 +379,60 @@
       imdbId: (json.external_ids && json.external_ids.imdb_id) || null,
       reparto: repartoTmdb(json),
       director: directorTmdb(json),
+      directores: directoresTmdb(json),
       proveedores: proveedoresTmdb(json),
       similares: similaresTmdb(json),
       galeria: galeriaTmdb(json),
+    };
+  }
+
+  /**
+   * Ficha de persona con su filmografía. TMDB devuelve el reparto y el
+   * equipo en dos listas; las unimos, quitamos duplicados y ordenamos
+   * de más reciente a más antigua.
+   */
+  function normalizarPersonaTmdb(json) {
+    const cast = (json.combined_credits && json.combined_credits.cast) || [];
+    const crew = (json.combined_credits && json.combined_credits.crew) || [];
+    const vistos = new Set();
+    const items = [];
+
+    const anadir = (p) => {
+      if (!p || !p.id) return;
+      const serie = p.media_type === "tv" || Boolean(p.first_air_date) || Boolean(p.name && !p.title);
+      const tipo = serie ? "tv" : "movie";
+      const clave = tipo + "-" + p.id;
+      if (vistos.has(clave)) return;
+      vistos.add(clave);
+
+      items.push({
+        id: "tmdb-" + tipo + "-" + p.id,
+        titulo: p.title || p.name || "Sin título",
+        anio: String(p.release_date || p.first_air_date || "").slice(0, 4) || "—",
+        tipo: serie ? "series" : "movie",
+        poster: p.poster_path ? POSTER_BASE + p.poster_path : null,
+        papel: p.character || p.job || null,
+        departamento: p.department || null,
+      });
+    };
+
+    cast.forEach(anadir);
+    crew.forEach(anadir);
+
+    items.sort((a, b) => (parseInt(b.anio, 10) || 0) - (parseInt(a.anio, 10) || 0));
+
+    return {
+      id: "tmdb-person-" + json.id,
+      tmdbId: json.id,
+      nombre: json.name || "Sin nombre",
+      departamento: json.known_for_department || null,
+      biografia: json.biography || null,
+      nacimiento: json.birthday || null,
+      fallecimiento: json.deathday || null,
+      lugar: json.place_of_birth || null,
+      foto: json.profile_path ? PERFIL_BASE + json.profile_path : null,
+      imdbId: (json.external_ids && json.external_ids.imdb_id) || null,
+      filmografia: items,
     };
   }
 
@@ -484,6 +546,20 @@
     if (!json) return null;
 
     return normalizarDetalleTmdb(json);
+  }
+
+  async function persona(id) {
+    const coincidencia = /^(?:tmdb-person-)?(\d+)$/.exec(String(id || ""));
+    if (!coincidencia) return null;
+
+    const json = await tmdb(
+      "/person/" +
+        coincidencia[1] +
+        "?append_to_response=combined_credits,external_ids,images&include_image_language=es,en,null"
+    );
+    if (!json) return null;
+
+    return normalizarPersonaTmdb(json);
   }
 
   /* ============================================================
@@ -799,6 +875,7 @@
     listar,
     recientes,
     detalle,
+    persona,
     esLimiteOmdb,
     tmdbListo: tmdbDisponible,
     SEMILLAS_HOME,

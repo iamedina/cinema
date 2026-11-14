@@ -210,6 +210,8 @@ opciones), **galería** de imágenes con lightbox y **títulos similares**
   plataforma con la búsqueda del título (Netflix, Prime Video, Disney+, Max,
   Apple TV+, Paramount+, Filmin, Movistar+, Crunchyroll…). Las que no tienen
   búsqueda oficial llevan a JustWatch. Se abren en pestaña nueva.
+- El **reparto** y el **director/creador** son clicables: cada nombre abre su
+  ficha de persona con biografía y filmografía.
 
 - Solo se muestra lo que la API devuelve: si un título no tiene plataformas
   registradas, esa sección no aparece.
@@ -217,6 +219,19 @@ opciones), **galería** de imágenes con lightbox y **títulos similares**
   no deje huecos.
 - Con OMDb (doble clic, sin servidor) se muestra el reparto en texto y el
   resto de secciones se omite.
+
+## Ficha de persona
+
+`persona.html?id=tmdb-person-...` reúne el retrato, los datos personales
+(nacimiento, fallecimiento, lugar y departamento), la biografía con
+**«Leer más»** y la **filmografía** completa.
+
+- La filmografía mezcla cine y series, elimina duplicados y se ordena de más
+  reciente a más antigua.
+- Se pagina en el navegador, de 24 en 24, sin peticiones extra. La página
+  queda en la URL (`&page=2`).
+- Cada título lleva a su ficha y mantiene el corazón de Mi lista.
+- Necesita TMDB (servidor local); con `file://` muestra un aviso claro.
 
 ## Accesibilidad y metadatos
 
@@ -255,6 +270,7 @@ pelicula.html       Listado de películas  (body data-tipo="movie")
 serie.html          Listado de series     (body data-tipo="series")
 anime.html          Listado de anime      (body data-tipo="anime")
 descripcion.html    Ficha de un título    (?id=...)
+persona.html        Ficha de una persona  (?id=tmdb-person-...)
 favoritos.html      Mi lista (favoritos guardados en el navegador)
 legal.html          Aviso legal, DMCA, privacidad y fuentes
 dominio-publico.html  Catálogo de cine de dominio público con reproductor
@@ -272,8 +288,9 @@ js/home.js          Carruseles de la portada
 js/busqueda.js      Búsqueda + paginación + avisos
 js/listado.js       Listados por tipo, filtros y paginación
 js/detalle.js       Ficha: tráiler, reparto, plataformas, galería y similares
+js/persona.js       Ficha de persona: biografía y filmografía paginada
 js/dominio-publico.js  Catálogo local de cine de dominio público
-js/progreso.js      Posición de reproducción y «Seguir viendo»
+js/progreso.js      Posición de reproducción (catálogo y reproductor)
 js/reproductor.js   Reproductor modal (Internet Archive)
 js/pagina-dominio.js  Pinta el catálogo de dominio público
 js/mi-lista.js      Página Mi lista

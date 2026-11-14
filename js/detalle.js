@@ -29,6 +29,28 @@
     return '<li class="mb-2"><strong>' + escapeHtml(etiqueta) + ":</strong> <br> " + escapeHtml(valor) + "</li>";
   }
 
+  /** Fila con enlaces a la ficha de cada persona. */
+  function filaPersonas(etiqueta, personas, respaldo) {
+    if (!personas || !personas.length) return fila(etiqueta, respaldo);
+
+    const enlaces = personas
+      .map(
+        (p) =>
+          '<a class="enlace-persona" href="' +
+          escapeHtml(urlPersona(p.id)) +
+          '">' +
+          escapeHtml(p.nombre) +
+          "</a>"
+      )
+      .join(", ");
+
+    return '<li class="mb-2"><strong>' + escapeHtml(etiqueta) + ":</strong> <br> " + enlaces + "</li>";
+  }
+
+  function urlPersona(id) {
+    return "persona.html?id=tmdb-person-" + encodeURIComponent(id);
+  }
+
   function seccion(titulo, contenido, clase) {
     if (!contenido) return "";
     return (
@@ -236,17 +258,21 @@
     const items = datos.reparto
       .map((p) => {
         const foto = p.foto
-          ? '<img src="' + escapeHtml(p.foto) + '" alt="Foto de ' + escapeHtml(p.nombre) + '" ' +
+          ? '<img src="' + escapeHtml(p.foto) + '" alt="" ' +
             'class="reparto-foto" loading="lazy" decoding="async">'
-          : '<span class="reparto-foto reparto-sin-foto"><i class="bi bi-person-fill" aria-hidden="true"></i></span>';
+          : '<span class="reparto-foto reparto-sin-foto" aria-hidden="true"><i class="bi bi-person-fill"></i></span>';
 
-        return (
-          '<li class="reparto-item">' +
+        const contenido =
           foto +
           '<p class="reparto-nombre">' + escapeHtml(p.nombre) + "</p>" +
-          (p.personaje ? '<p class="reparto-personaje">' + escapeHtml(p.personaje) + "</p>" : "") +
-          "</li>"
-        );
+          (p.personaje ? '<p class="reparto-personaje">' + escapeHtml(p.personaje) + "</p>" : "");
+
+        const interior = p.id
+          ? '<a class="reparto-enlace" href="' + escapeHtml(urlPersona(p.id)) + '" ' +
+            'title="Ver la filmografía de ' + escapeHtml(p.nombre) + '">' + contenido + "</a>"
+          : contenido;
+
+        return '<li class="reparto-item">' + interior + "</li>";
       })
       .join("");
 
@@ -408,7 +434,7 @@
 
     const columnaIzquierda = [
       fila("Título original", datos.titulo),
-      fila(etiquetaDirector, datos.director),
+      filaPersonas(etiquetaDirector, datos.directores, datos.director),
       fila("Duración", datos.duracion),
       fila("Géneros", datos.generos),
       fila("Idiomas", datos.idiomas),
