@@ -234,6 +234,18 @@ etiquetas `og:` para compartirse bien en redes y buscadores.
 - Se respeta «reducir movimiento»: sin parpadeos ni scrolls suaves.
 - En pantallas táctiles el corazón crece a 40px.
 
+## Rendimiento
+
+- `preconnect` y `dns-prefetch` a TMDB, YouTube y Archive.org en las páginas
+  que los usan, para empezar antes las conexiones.
+- Pósters, reparto, galería, proveedores y el catálogo de dominio público se
+  cargan con `loading="lazy"` y `decoding="async"`; el póster principal de la
+  ficha usa `fetchpriority="high"`.
+- El servidor sirve `vendor/` e `img/` con caché larga e inmutable; el HTML y
+  los JS siguen revalidando (`no-cache`).
+- Los módulos solo se cargan donde se usan (por ejemplo, la portada ya no
+  carga el reproductor ni el progreso).
+
 ## Estructura
 
 ```

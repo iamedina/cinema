@@ -61,8 +61,14 @@ test("servidor: OMDb por proxy, archivos estáticos y rutas permitidas", async (
     /* El sitio se sirve y conserva el landmark principal. */
     const inicio = await fetch(base + "/");
     assert.equal(inicio.status, 200);
+    assert.equal(inicio.headers.get("cache-control"), "no-cache");
     const html = await inicio.text();
     assert.match(html, /<main id="contenido"/);
+
+    /* Vendor e imágenes locales: caché larga e inmutable. */
+    const css = await fetch(base + "/vendor/bootstrap/bootstrap.min.css");
+    assert.equal(css.status, 200);
+    assert.match(css.headers.get("cache-control"), /immutable/);
 
     /* Rutas de TMDB no permitidas. */
     const prohibido = await fetch(base + "/api/tmdb/account");

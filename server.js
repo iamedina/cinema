@@ -409,7 +409,11 @@ const servidor = http.createServer(async (req, res) => {
   }
 
   const tipo = MIME[path.extname(absoluto).toLowerCase()] || "application/octet-stream";
-  res.writeHead(200, { "Content-Type": tipo, "Cache-Control": "no-cache" });
+  /* Vendor e imágenes locales casi nunca cambian: se cachean con tiempo largo. */
+  const cache = /^(vendor|img)\//.test(relativo)
+    ? "public, max-age=31536000, immutable"
+    : "no-cache";
+  res.writeHead(200, { "Content-Type": tipo, "Cache-Control": cache });
   res.end(datos);
 });
 

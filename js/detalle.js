@@ -446,6 +446,7 @@
       '" alt="Póster de ' +
       escapeHtml(datos.titulo) +
       '" class="img-fluid rounded mb-3 poster-detalle" ' +
+      'fetchpriority="high" decoding="async" ' +
       "onerror=\"this.onerror=null;this.src='" +
       POSTER_PLACEHOLDER +
       "'\">" +
