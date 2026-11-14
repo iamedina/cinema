@@ -264,15 +264,23 @@
     const items = proveedores.items
       .map((p) => {
         const logo = p.logo
-          ? '<img src="' + escapeHtml(p.logo) + '" alt="" class="proveedor-logo" loading="lazy">'
+          ? '<img src="' + escapeHtml(p.logo) + '" alt="" class="proveedor-logo" loading="lazy" decoding="async">'
           : "";
-        return (
-          '<li class="proveedor-item">' +
+
+        const contenido =
           logo +
           '<span class="proveedor-nombre">' + escapeHtml(p.nombre) + "</span>" +
-          '<span class="proveedor-tipo">' + escapeHtml(p.tipo) + "</span>" +
-          "</li>"
-        );
+          '<span class="proveedor-tipo">' + escapeHtml(p.tipo) + "</span>";
+
+        const enlace = p.enlace
+          ? '<a class="proveedor-item-enlace" href="' + escapeHtml(p.enlace) + '" ' +
+            'target="_blank" rel="noopener noreferrer" ' +
+            'title="Abrir ' + escapeHtml(p.nombre) + ' con la búsqueda de esta película">' +
+            contenido +
+            "</a>"
+          : contenido;
+
+        return '<li class="proveedor-item">' + enlace + "</li>";
       })
       .join("");
 
@@ -287,7 +295,8 @@
       '<ul class="proveedores-lista">' + items + "</ul>" +
         enlace +
         '<p class="proveedores-fuente">Disponibilidades de JustWatch a través de TMDB. ' +
-          "CINEMA no aloja el contenido: los enlaces abren la plataforma oficial.</p>"
+          "Pulsa una plataforma para abrirla en su página oficial con la búsqueda de esta película. " +
+          "CINEMA no aloja el contenido.</p>"
     );
   }
 

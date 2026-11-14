@@ -233,12 +233,57 @@
     return directores.length ? directores.join(", ") : null;
   }
 
+  /*
+   * Búsqueda oficial por plataforma, por provider_id de TMDB. Si no
+   * está la plataforma, se usa el enlace de JustWatch del título.
+   * TMDB no expone enlaces profundos por película, así que la búsqueda
+   * con el título es la vía oficial más estable.
+   */
+  const BUSQUEDAS_PROVEEDORES = {
+    8: "https://www.netflix.com/search?q=",
+    9: "https://www.primevideo.com/search/ref=atv_nb_sr?phrase=",
+    119: "https://www.primevideo.com/search/ref=atv_nb_sr?phrase=",
+    2: "https://tv.apple.com/es/search?term=",
+    350: "https://tv.apple.com/es/search?term=",
+    337: "https://www.disneyplus.com/es-es/search?q=",
+    384: "https://www.max.com/search?q=",
+    1899: "https://www.max.com/search?q=",
+    531: "https://www.paramountplus.com/search/?q=",
+    386: "https://www.peacocktv.com/search?q=",
+    15: "https://www.hulu.com/search?q=",
+    283: "https://www.crunchyroll.com/search?q=",
+    619: "https://www.starplus.com/es-419/search?q=",
+    63: "https://www.filmin.es/buscar?q=",
+    149: "https://www.movistarplus.es/buscar?q=",
+    35: "https://rakuten.tv/es/search?q=",
+    192: "https://www.youtube.com/results?search_query=",
+    3: "https://play.google.com/store/search?q=&c=movies",
+    102: "https://www.microsoft.com/es-es/search?q=",
+    1773: "https://www.skyshowtime.com/es/search?q=",
+    62: "https://www.atresplayer.com/buscador/?q=",
+    118: "https://www.mitele.es/buscador/?q=",
+  };
+
+  function urlProveedor(id, titulo, respaldo) {
+    const base = BUSQUEDAS_PROVEEDORES[Number(id)];
+    if (!base || !titulo) return respaldo || "";
+    return base + encodeURIComponent(titulo);
+  }
+
+  function urlJustwatch(titulo) {
+    if (!titulo) return "";
+    return "https://www.justwatch.com/es/buscar?q=" + encodeURIComponent(titulo);
+  }
+
   function proveedoresTmdb(json) {
     const bloque = json["watch/providers"] && json["watch/providers"].results;
     if (!bloque) return null;
     /* España primero; si no hay, el catálogo de EE. UU. como referencia. */
     const region = bloque.ES || bloque.US || Object.values(bloque)[0];
     if (!region) return null;
+
+    const titulo = json.title || json.name || "";
+    const respaldo = urlJustwatch(titulo) || region.link || "";
 
     const grupos = [
       ["flatrate", "Suscripción"],
@@ -262,6 +307,7 @@
           nombre: p.provider_name,
           logo: p.logo_path ? LOGO_BASE + p.logo_path : null,
           tipo: etiqueta,
+          enlace: urlProveedor(p.provider_id, titulo, respaldo),
         });
       }
     }
@@ -758,5 +804,6 @@
     SEMILLAS_HOME,
     SEMILLAS_LISTADO,
     USAR_SERVIDOR,
+    urlProveedor,
   };
 })();

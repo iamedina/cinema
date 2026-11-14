@@ -176,9 +176,9 @@ El reproductor recuerda dónde te quedaste, en el navegador
 - En `dominio-publico.html` cada póster muestra una barra de progreso y el
   botón pasa a **Continuar**.
 - Al pasar del **90 %** la película se marca como **Vista** (sello sobre el
-  póster) y deja de aparecer en «Seguir viendo», pero conserva la posición.
-- La portada añade un carrusel **«Seguir viendo»** solo cuando hay algo
-  empezado, con acceso directo al reproductor.
+  póster) y deja de contarse como «en curso», pero conserva la posición.
+- El progreso vive en el reproductor y en el catálogo: la portada no lo
+  muestra para no repetir en la portada las películas que estás viendo.
 - Se sincroniza entre pestañas del mismo navegador. Si el navegador bloquea el
   almacenamiento, el sitio sigue funcionando sin recordar el progreso.
 
@@ -206,6 +206,10 @@ opciones), **galería** de imágenes con lightbox y **títulos similares**
 - El tráiler tiene un botón **«Pantalla completa»** que lo abre en un diálogo
   amplio. Se cierra con **Escape**, con la X o pulsando el fondo, pausa el
   vídeo incrustado y devuelve el foco al botón.
+- Cada **plataforma** de «Dónde verla» es un enlace a la página oficial de esa
+  plataforma con la búsqueda del título (Netflix, Prime Video, Disney+, Max,
+  Apple TV+, Paramount+, Filmin, Movistar+, Crunchyroll…). Las que no tienen
+  búsqueda oficial llevan a JustWatch. Se abren en pestaña nueva.
 
 - Solo se muestra lo que la API devuelve: si un título no tiene plataformas
   registradas, esa sección no aparece.
