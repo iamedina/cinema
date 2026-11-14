@@ -198,11 +198,28 @@ un hueco al final.
 
 ## Ficha de detalle
 
-`descripcion.html?id=...` muestra el tráiler, **reparto** (con foto y personaje),
-**plataformas de streaming** (JustWatch vía TMDB, con enlace a todas las
-opciones), **galería** de imágenes con lightbox y **títulos similares**
-(clicables y con corazón para guardar en Mi lista).
+`descripcion.html?id=...` muestra el tráiler, **temporadas y episodios** (solo
+series de TMDB), **reparto** (con foto y personaje), **plataformas de
+streaming** (JustWatch vía TMDB, con enlace a todas las opciones), **galería**
+de imágenes con lightbox y **títulos similares** (clicables y con corazón para
+guardar en Mi lista).
 
+- El tráiler se elige por prioridad: **oficial en español latino**, después
+  **oficial en España**, después **oficial en otro idioma** y, por último,
+  cualquier tráiler de YouTube. La etiqueta junto a «Tráiler» indica el audio
+  (`Tráiler oficial (latino)`, `(España)`, `(inglés)` o `Tráiler`). Los
+  subtitulados pierden prioridad porque se busca audio, no subtítulos.
+- Los **títulos similares** de una película empiezan por su **saga o trilogía**
+  (colección de TMDB, en orden cronológico), siguen con las recomendaciones y
+  terminan con los similares, sin duplicados y con un máximo de 12. Si hay
+  saga, la sección lo avisa («Incluye la saga …»). Las series usan
+  recomendaciones y similares de TMDB.
+- Las **series** muestran la sección **«Temporadas y episodios»** entre el
+  tráiler y el reparto: selector de temporada (la 0 se llama «Especiales»),
+  lista de episodios con imagen, título, fecha, duración, nota y sinopsis
+  recortada a 3 líneas con **«Leer más»**. Abre en la temporada 1 (o la primera
+  disponible), la temporada elegida queda en la URL (`&temporada=8`) y el
+  cambio no recarga la página. Con `file://` u OMDb la sección no aparece.
 - El tráiler tiene un botón **«Pantalla completa»** que lo abre en un diálogo
   amplio. Se cierra con **Escape**, con la X o pulsando el fondo, pausa el
   vídeo incrustado y devuelve el foco al botón.
@@ -287,7 +304,7 @@ js/buscador.js      Buscador de la cabecera + historial
 js/home.js          Carruseles de la portada
 js/busqueda.js      Búsqueda + paginación + avisos
 js/listado.js       Listados por tipo, filtros y paginación
-js/detalle.js       Ficha: tráiler, reparto, plataformas, galería y similares
+js/detalle.js       Ficha: tráiler, temporadas, reparto, plataformas, galería y similares
 js/persona.js       Ficha de persona: biografía y filmografía paginada
 js/dominio-publico.js  Catálogo local de cine de dominio público
 js/progreso.js      Posición de reproducción (catálogo y reproductor)

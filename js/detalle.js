@@ -70,7 +70,12 @@
       return (
         '<section class="detalle-seccion">' +
         '<div class="trailer-cabecera">' +
+        '<div class="trailer-titulo">' +
         "<h2>Tráiler</h2>" +
+        (datos.trailerEtiqueta
+          ? '<span class="trailer-etiqueta">' + escapeHtml(datos.trailerEtiqueta) + "</span>"
+          : "") +
+        "</div>" +
         '<button type="button" class="btn btn-outline-light btn-sm trailer-pantalla" ' +
         'data-trailer-abrir data-trailer-key="' + escapeHtml(datos.trailerKey) + '" ' +
         'data-trailer-titulo="' + escapeHtml(datos.titulo) + '" ' +
@@ -207,6 +212,180 @@
         cerrar.focus();
       }
     });
+  }
+
+  /* ============================================================
+   * Temporadas y episodios
+   * ========================================================== */
+
+  function formatoDuracion(minutos) {
+    const n = Number(minutos);
+    if (!Number.isFinite(n) || n <= 0) return null;
+    if (n < 60) return n + " min";
+    const horas = Math.floor(n / 60);
+    const resto = n % 60;
+    return horas + " h" + (resto ? " " + resto + " min" : "");
+  }
+
+  function fechaCorta(valor) {
+    const partes = /^(\d{4})-(\d{2})-(\d{2})$/.exec(valor || "");
+    if (!partes) return valor || null;
+    return parseInt(partes[3], 10) + "/" + parseInt(partes[2], 10) + "/" + partes[1];
+  }
+
+  function bloqueTemporadas(datos) {
+    if (!datos.temporadas || !datos.temporadas.length) return "";
+
+    const opciones = datos.temporadas
+      .map((t) => {
+        const etiqueta = t.nombre + (t.episodios ? " (" + t.episodios + " episodios)" : "");
+        return '<option value="' + t.numero + '">' + escapeHtml(etiqueta) + "</option>";
+      })
+      .join("");
+
+    return (
+      '<section class="detalle-seccion" id="seccionTemporadas">' +
+      '<div class="temporadas-cabecera">' +
+      "<h2>Temporadas y episodios</h2>" +
+      '<label class="temporadas-selector">' +
+      "<span>Temporada</span>" +
+      '<select id="selectorTemporada">' + opciones + "</select>" +
+      "</label>" +
+      "</div>" +
+      '<div id="episodios" class="episodios" aria-live="polite" aria-busy="false"></div>' +
+      "</section>"
+    );
+  }
+
+  function activarTemporadas(datos) {
+    const selector = document.getElementById("selectorTemporada");
+    const contenedorEpisodios = document.getElementById("episodios");
+    if (!selector || !contenedorEpisodios || !datos.temporadas || !datos.temporadas.length) {
+      return;
+    }
+
+    const parametros = new URLSearchParams(location.search);
+    const pedida = parseInt(parametros.get("temporada"), 10);
+    const existe = datos.temporadas.some((t) => t.numero === pedida);
+    const preferida = datos.temporadas.find((t) => t.numero === 1) || datos.temporadas[0];
+    const inicial = existe ? pedida : preferida.numero;
+
+    let peticion = 0;
+
+    const pintarCargando = () => {
+      contenedorEpisodios.setAttribute("aria-busy", "true");
+      contenedorEpisodios.innerHTML = "";
+      for (let i = 0; i < 6; i += 1) {
+        const esqueleto = document.createElement("div");
+        esqueleto.className = "esqueleto episodio-esqueleto";
+        esqueleto.setAttribute("aria-hidden", "true");
+        contenedorEpisodios.appendChild(esqueleto);
+      }
+    };
+
+    const pintarError = () => {
+      contenedorEpisodios.setAttribute("aria-busy", "false");
+      contenedorEpisodios.innerHTML =
+        '<p class="estado-vacio estado-error" role="status">No pudimos cargar esta temporada.</p>' +
+        '<button type="button" class="estado-accion" id="reintentarTemporada">Reintentar</button>';
+      const boton = document.getElementById("reintentarTemporada");
+      if (boton) boton.addEventListener("click", () => cargar(Number(selector.value)));
+    };
+
+    const pintarEpisodios = (temporada) => {
+      contenedorEpisodios.setAttribute("aria-busy", "false");
+
+      if (!temporada.episodios.length) {
+        contenedorEpisodios.innerHTML =
+          '<p class="estado-vacio">Esta temporada no tiene episodios registrados.</p>';
+        return;
+      }
+
+      contenedorEpisodios.innerHTML =
+        '<ol class="episodios-lista">' +
+        temporada.episodios
+          .map((e) => {
+            const still = e.still
+              ? '<img src="' + escapeHtml(e.still) + '" alt="" class="episodio-still" ' +
+                'loading="lazy" decoding="async">'
+              : '<span class="episodio-still episodio-sin-still" aria-hidden="true">' +
+                '<i class="bi bi-film"></i></span>';
+
+            const meta = [
+              e.fecha ? fechaCorta(e.fecha) : null,
+              formatoDuracion(e.duracion),
+              e.rating ? "★ " + Number(e.rating).toFixed(1) : null,
+            ]
+              .filter(Boolean)
+              .join(" · ");
+
+            const larga = Boolean(e.sinopsis && e.sinopsis.length > 220);
+
+            return (
+              '<li class="episodio">' +
+              still +
+              '<div class="episodio-cuerpo">' +
+              '<p class="episodio-numero">T' + temporada.numero + " E" + e.numero + "</p>" +
+              '<h3 class="episodio-titulo">' + escapeHtml(e.titulo) + "</h3>" +
+              (meta ? '<p class="episodio-meta">' + escapeHtml(meta) + "</p>" : "") +
+              (e.sinopsis
+                ? '<p class="episodio-sinopsis' +
+                  (larga ? " episodio-sinopsis-larga" : "") +
+                  '">' +
+                  escapeHtml(e.sinopsis) +
+                  "</p>" +
+                  (larga
+                    ? '<button type="button" class="episodio-toggle" aria-expanded="false">Leer más</button>'
+                    : "")
+                : "") +
+              "</div>" +
+              "</li>"
+            );
+          })
+          .join("") +
+        "</ol>";
+
+      contenedorEpisodios.querySelectorAll(".episodio-toggle").forEach((boton) => {
+        boton.addEventListener("click", () => {
+          const sinopsis = boton.previousElementSibling;
+          const abierta = boton.getAttribute("aria-expanded") === "true";
+          boton.setAttribute("aria-expanded", String(!abierta));
+          boton.textContent = abierta ? "Leer más" : "Leer menos";
+          if (sinopsis) sinopsis.classList.toggle("episodio-sinopsis-abierta", !abierta);
+        });
+      });
+    };
+
+    const actualizarUrl = (numero) => {
+      const params = new URLSearchParams(location.search);
+      params.set("temporada", String(numero));
+      history.replaceState(null, "", location.pathname + "?" + params.toString());
+    };
+
+    const cargar = async (numero) => {
+      const token = ++peticion;
+      actualizarUrl(numero);
+      pintarCargando();
+
+      try {
+        const temporada = await api.temporada(datos.id, numero);
+        if (token !== peticion) return;
+
+        if (!temporada) {
+          pintarError();
+          return;
+        }
+        pintarEpisodios(temporada);
+      } catch (error) {
+        if (token !== peticion) return;
+        console.error("Error al cargar la temporada:", error);
+        pintarError();
+      }
+    };
+
+    selector.value = String(inicial);
+    selector.addEventListener("change", () => cargar(Number(selector.value)));
+    cargar(inicial);
   }
 
   /* ============================================================
@@ -407,7 +586,12 @@
 
   function bloqueSimilares(datos) {
     if (!datos.similares || !datos.similares.length) return "";
-    return seccion("Títulos similares", '<div id="similares" class="grid-similares"></div>');
+
+    const nota = datos.saga
+      ? '<p class="similares-nota">Incluye la saga «' + escapeHtml(datos.saga) + "».</p>"
+      : "";
+
+    return seccion("Títulos similares", nota + '<div id="similares" class="grid-similares"></div>');
   }
 
   /* ============================================================
@@ -446,7 +630,7 @@
       fila("Fecha de estreno", datos.estreno),
       fila("País", datos.paises),
       fila("Clasificación", datos.clasificacion),
-      fila("Temporadas", datos.temporadas),
+      fila("Temporadas", datos.numeroTemporadas),
     ].join("");
 
     return (
@@ -503,6 +687,7 @@
       "</div>" +
       bloqueTrailer(datos) +
       bloqueTrailerModal(datos) +
+      bloqueTemporadas(datos) +
       bloqueVerAhora(datos, publico) +
       bloqueReparto(datos) +
       bloqueProveedores(datos) +
@@ -536,6 +721,7 @@
 
       activarGaleria();
       activarTrailer();
+      activarTemporadas(datos);
       reproductor.activar();
     } catch (error) {
       console.error("Error al cargar la ficha:", error);

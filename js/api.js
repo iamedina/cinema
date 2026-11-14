@@ -21,6 +21,7 @@
   const LOGO_BASE = "https://image.tmdb.org/t/p/w92";
   const BACKDROP_BASE = "https://image.tmdb.org/t/p/w780";
   const BACKDROP_ORIGINAL = "https://image.tmdb.org/t/p/original";
+  const STILL_BASE = "https://image.tmdb.org/t/p/w300";
   /* TMDB devuelve 20 por página: fusionamos 3 para mostrar 60. */
   const PAGINAS_POR_VISTA = 3;
   const TIMEOUT_MS = 15000;
@@ -180,21 +181,59 @@
     };
   }
 
+  /*
+   * Prioridad de tráilers:
+   *   1. Oficiales. Dentro de ellos, español latino > España > inglés > otros.
+   *   2. Si no hay ninguno oficial, se acepta el mejor de YouTube, prefiriendo
+   *      el español.
+   * Los subtitulados pierden puntos: se busca audio, no subtítulos.
+   * TMDB solo marca el idioma como «es»; «latino» se detecta por el
+   * nombre del vídeo, que es la única señal disponible.
+   */
+  function puntuarTrailer(video) {
+    const nombre = String(video.name || "").toLowerCase();
+    let puntos = 0;
+
+    if (video.official === true) puntos += 100;
+    if (video.type === "Trailer") puntos += 20;
+    else if (video.type === "Teaser") puntos += 6;
+    else puntos -= 10;
+
+    if (video.iso_639_1 === "es") puntos += 40;
+    else if (video.iso_639_1 === "en") puntos += 10;
+
+    if (/latino|latinoam|hispanoam|m[eé]xico|espa[ñn]ol latino/.test(nombre)) puntos += 35;
+    if (/espa[ñn]a|castellano/.test(nombre)) puntos -= 5;
+    if (/subt[ií]tul|subtitled|sub esp/.test(nombre)) puntos -= 30;
+
+    return puntos;
+  }
+
   function elegirTrailer(videos) {
     if (!Array.isArray(videos) || !videos.length) return null;
 
-    const deYoutube = videos.filter((v) => v.site === "YouTube");
-    const espanol = deYoutube.filter((v) => v.iso_639_1 === "es");
-    const ingles = deYoutube.filter((v) => v.iso_639_1 === "en");
-
     return (
-      espanol.find((v) => v.type === "Trailer") ||
-      espanol.find((v) => v.type === "Teaser") ||
-      ingles.find((v) => v.type === "Trailer") ||
-      ingles.find((v) => v.type === "Teaser") ||
-      deYoutube[0] ||
-      null
+      videos
+        .filter((v) => v && v.site === "YouTube" && v.key)
+        .slice()
+        .sort((a, b) => puntuarTrailer(b) - puntuarTrailer(a))[0] || null
     );
+  }
+
+  function etiquetaTrailer(video) {
+    if (!video) return null;
+
+    const nombre = String(video.name || "").toLowerCase();
+    const base = video.official === true ? "Tráiler oficial" : "Tráiler";
+
+    if (video.iso_639_1 === "es") {
+      if (/latino|latinoam|hispanoam|m[eé]xico|espa[ñn]ol latino/.test(nombre)) {
+        return base + " (latino)";
+      }
+      return base + " (España)";
+    }
+    if (video.iso_639_1 === "en") return base + " (inglés)";
+    return base;
   }
 
   function certificacionTmdb(json) {
@@ -327,12 +366,72 @@
     return { enlace: region.link || null, items };
   }
 
-  function similaresTmdb(json) {
-    const lista =
-      (json.similar && json.similar.results) ||
-      (json.recommendations && json.recommendations.results) ||
-      [];
-    return lista.filter((i) => i && i.media_type !== "person").slice(0, 12).map(normalizarTmdb);
+  function similaresTmdb(json, coleccion) {
+    const vistos = new Set([json.id]);
+    const items = [];
+
+    const anadir = (p) => {
+      if (!p || !p.id || p.media_type === "person" || vistos.has(p.id)) return;
+      vistos.add(p.id);
+      items.push(normalizarTmdb(p));
+    };
+
+    /* 1. Saga o trilogía: la señal más fuerte para películas. */
+    if (coleccion && Array.isArray(coleccion.parts)) {
+      coleccion.parts
+        .filter((p) => p && p.id !== json.id)
+        .slice()
+        .sort((a, b) => String(a.release_date || "").localeCompare(String(b.release_date || "")))
+        .forEach(anadir);
+    }
+
+    /* 2. Recomendaciones de TMDB: mejor señal que «similar». */
+    const recomendaciones = (json.recommendations && json.recommendations.results) || [];
+    recomendaciones.forEach(anadir);
+
+    /* 3. Similares de TMDB como relleno. */
+    const similares = (json.similar && json.similar.results) || [];
+    similares.forEach(anadir);
+
+    return items.slice(0, 12);
+  }
+
+  function temporadasTmdb(json) {
+    const lista = Array.isArray(json.seasons) ? json.seasons : [];
+
+    return lista
+      .filter((s) => s && Number.isFinite(Number(s.season_number)))
+      .map((s) => {
+        const numero = Number(s.season_number);
+        return {
+          numero,
+          nombre: s.name || (numero === 0 ? "Especiales" : "Temporada " + numero),
+          episodios: Number(s.episode_count) || 0,
+          anio: String(s.air_date || "").slice(0, 4) || "—",
+          poster: s.poster_path ? POSTER_BASE + s.poster_path : null,
+          sinopsis: s.overview || null,
+        };
+      })
+      .sort((a, b) => a.numero - b.numero);
+  }
+
+  function normalizarTemporadaTmdb(json) {
+    const numero = Number(json.season_number);
+
+    return {
+      numero: Number.isFinite(numero) ? numero : 0,
+      nombre: json.name || "Temporada " + (json.season_number || ""),
+      sinopsis: json.overview || null,
+      episodios: (Array.isArray(json.episodes) ? json.episodes : []).map((e) => ({
+        numero: Number(e.episode_number) || 0,
+        titulo: e.name || "Episodio " + (e.episode_number || ""),
+        sinopsis: e.overview || null,
+        fecha: e.air_date || null,
+        duracion: e.runtime || null,
+        still: e.still_path ? STILL_BASE + e.still_path : null,
+        rating: e.vote_average || null,
+      })),
+    };
   }
 
   function galeriaTmdb(json) {
@@ -344,7 +443,7 @@
     }));
   }
 
-  function normalizarDetalleTmdb(json) {
+  function normalizarDetalleTmdb(json, coleccion) {
     const serie = Boolean(json.name && !json.title);
     const trailer = elegirTrailer(json.videos && json.videos.results);
     const titulo = json.title || json.name || "Sin título";
@@ -367,9 +466,11 @@
       estreno: fecha || null,
       sinopsis: json.overview || null,
       clasificacion: certificacionTmdb(json),
-      temporadas: json.number_of_seasons || null,
+      numeroTemporadas: json.number_of_seasons || null,
+      temporadas: serie ? temporadasTmdb(json) : [],
       trailerKey: trailer ? trailer.key : null,
       trailerTipo: trailer ? trailer.type : null,
+      trailerEtiqueta: etiquetaTrailer(trailer),
       trailerOficial: trailer
         ? "https://www.youtube.com/watch?v=" + trailer.key
         : null,
@@ -381,7 +482,8 @@
       director: directorTmdb(json),
       directores: directoresTmdb(json),
       proveedores: proveedoresTmdb(json),
-      similares: similaresTmdb(json),
+      saga: coleccion && coleccion.name ? coleccion.name : null,
+      similares: similaresTmdb(json, coleccion),
       galeria: galeriaTmdb(json),
     };
   }
@@ -541,11 +643,35 @@
         coincidencia[1] +
         "/" +
         coincidencia[2] +
-        "?append_to_response=videos,external_ids,content_ratings,release_dates,credits,similar,recommendations,images,watch/providers&include_image_language=es,en,null"
+        "?append_to_response=videos,external_ids,content_ratings,release_dates,credits,similar,recommendations,images,watch/providers" +
+        "&include_image_language=es,en,null&include_video_language=es,en,null"
     );
     if (!json) return null;
 
-    return normalizarDetalleTmdb(json);
+    /* Las películas de una saga comparten colección en TMDB. */
+    let coleccion = null;
+    if (
+      coincidencia[1] === "movie" &&
+      json.belongs_to_collection &&
+      json.belongs_to_collection.id
+    ) {
+      coleccion = await tmdb("/collection/" + json.belongs_to_collection.id);
+    }
+
+    return normalizarDetalleTmdb(json, coleccion);
+  }
+
+  async function temporada(id, numero) {
+    const coincidencia = /^tmdb-tv-(\d+)$/.exec(String(id || ""));
+    if (!coincidencia) return null;
+
+    const n = parseInt(numero, 10);
+    if (!Number.isFinite(n) || n < 0) return null;
+
+    const json = await tmdb("/tv/" + coincidencia[1] + "/season/" + n);
+    if (!json) return null;
+
+    return normalizarTemporadaTmdb(json);
   }
 
   async function persona(id) {
@@ -821,9 +947,11 @@
       estreno: datos.Released,
       sinopsis: datos.Plot,
       clasificacion: datos.Rated,
-      temporadas: numero(datos.totalSeasons),
+      numeroTemporadas: numero(datos.totalSeasons),
+      temporadas: [],
       trailerKey: null,
       trailerTipo: null,
+      trailerEtiqueta: null,
       trailerOficial: null,
       busquedaTrailer:
         "https://www.youtube.com/results?search_query=" +
@@ -836,7 +964,9 @@
         foto: null,
       })),
       director: datos.Director && datos.Director !== "N/A" ? datos.Director : null,
+      directores: [],
       proveedores: null,
+      saga: null,
       similares: [],
       galeria: [],
     };
@@ -876,6 +1006,7 @@
     recientes,
     detalle,
     persona,
+    temporada,
     esLimiteOmdb,
     tmdbListo: tmdbDisponible,
     SEMILLAS_HOME,
