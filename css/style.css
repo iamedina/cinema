@@ -147,17 +147,13 @@ input::placeholder {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 6px 22px;
-  border: 2px solid #fff;
+  padding: 8px;
+  border: none;
   border-radius: 8px;
   transition: background-color 0.3s, border-color 0.3s;
 }
 
-.login:hover {
-  background-color: rgba(51, 51, 51, 0.75);
-  border-color: rgba(82, 82, 82, 0.9);
-}
-
+/* El botón es solo el icono: sin caja visible, pero con foco de teclado. */
 .login:focus-visible {
   outline: 2px solid var(--primario-suave);
   outline-offset: 2px;
@@ -1824,7 +1820,7 @@ footer a:hover {
   }
 
   .login {
-    padding: 4px 14px;
+    padding: 6px;
   }
 
   nav .mover,
