@@ -472,11 +472,11 @@ nav .mover {
 
 .pelicula-card {
   width: 100%;
-  transition: transform 0.35s cubic-bezier(0.22, 0.61, 0.36, 1);
+  transition: transform 0.3s ease;
 }
 
 .pelicula-card:hover {
-  transform: translateY(-8px);
+  transform: translateY(-4px);
 }
 
 .imagen-container {
@@ -484,16 +484,9 @@ nav .mover {
   aspect-ratio: 2 / 3;
   overflow: hidden;
   border-radius: 10px;
-  border: 1px solid transparent;
   background-color: #1b1e23;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35);
   cursor: pointer;
-  transition: box-shadow 0.35s ease, border-color 0.35s ease;
-}
-
-.pelicula-card:hover .imagen-container {
-  border-color: rgba(255, 255, 255, 0.18);
-  box-shadow: 0 16px 30px rgba(0, 0, 0, 0.55);
 }
 
 .imagen-container:focus-visible {
@@ -506,12 +499,12 @@ nav .mover {
   height: 100%;
   object-fit: cover;
   border-radius: 10px;
-  transition: opacity 0.35s ease, transform 0.35s ease;
+  transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
 .pelicula-card:hover .img-pelicula {
-  opacity: 0.82;
-  transform: scale(1.06);
+  opacity: 0.75;
+  transform: scale(1.03);
 }
 
 .info-extra {
