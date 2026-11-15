@@ -4,8 +4,8 @@
  * Guarda la ficha completa de cada título, no solo el id: así la
  * página de favoritos funciona al instante y sin pedir nada a la API.
  *
- * El corazón de cada tarjeta se pinta desde js/ui.js y este módulo
- * solo se encarga de su estado, del contador y de los cambios.
+ * El botón de guardar vive en la ficha de cada título (js/detalle.js);
+ * este módulo solo se encarga de su estado, del contador y de los cambios.
  */
 (function () {
   "use strict";
@@ -152,6 +152,9 @@
 
     const icono = boton.querySelector("i");
     if (icono) icono.className = activo ? "bi bi-heart-fill" : "bi bi-heart";
+
+    const texto = boton.querySelector("[data-fav-texto]");
+    if (texto) texto.textContent = activo ? "En Mi lista" : "Añadir a Mi lista";
   }
 
   /** Marca todos los corazones dentro de un contenedor (o del documento). */

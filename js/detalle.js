@@ -669,6 +669,24 @@
    * Plantilla principal
    * ========================================================== */
 
+  /** Botón de Mi lista: vive en la ficha, no en las tarjetas. */
+  function botonFavorito(datos) {
+    const titulo = escapeHtml(datos.titulo);
+    return (
+      '<button type="button" class="fav-btn detalle-fav-btn" ' +
+      'data-fav-id="' + escapeHtml(datos.id) + '" ' +
+      'data-titulo="' + titulo + '" ' +
+      'data-anio="' + escapeHtml(datos.anio) + '" ' +
+      'data-tipo="' + escapeHtml(datos.tipo) + '" ' +
+      'data-poster="' + escapeHtml(datos.poster || "") + '" ' +
+      'aria-pressed="false" aria-label="Añadir ' + titulo + ' a Mi lista" ' +
+      'title="Añadir a Mi lista">' +
+      '<i class="bi bi-heart" aria-hidden="true"></i>' +
+      '<span data-fav-texto>Añadir a Mi lista</span>' +
+      "</button>"
+    );
+  }
+
   function plantilla(datos) {
     const sinopsis =
       datos.sinopsis && datos.sinopsis !== "N/A" ? datos.sinopsis : "Sin sinopsis disponible.";
@@ -676,6 +694,7 @@
     const botonTrailer = datos.trailerOficial || datos.busquedaTrailer;
     const etiquetaDirector = datos.tipoRaw === "tv" ? "Creador" : "Director";
     const publico = dominioPublico.buscar(datos.id, datos.titulo, datos.anio);
+    const guardar = botonFavorito(datos);
 
     const accionPrincipal = publico
       ? '<button type="button" class="btn btn-primary fw-semibold detalle-ver-ahora" ' +
@@ -753,6 +772,7 @@
       "</div>" +
       "</article>" +
       '<div class="detalle-accion">' +
+      guardar +
       accionPrincipal +
       "</div>" +
       "</div>" +
@@ -783,6 +803,7 @@
       const datos = await api.detalle(id);
       document.title = datos.titulo + " (" + datos.anio + ") | CINEMA";
       contenedor.innerHTML = plantilla(datos);
+      if (window.CINEMA.favoritos) window.CINEMA.favoritos.aplicarEstado(contenedor);
 
       const similares = document.getElementById("similares");
       if (similares) {

@@ -58,25 +58,12 @@
            aria-label="Ver detalles de ${titulo}">
         <img src="${escapeHtml(poster)}" alt="Póster de ${titulo}"
              class="img-pelicula rounded" loading="lazy" decoding="async">
-        <button type="button" class="fav-btn"
-                data-fav-id="${escapeHtml(item.id)}"
-                data-titulo="${escapeHtml(item.titulo)}"
-                data-anio="${escapeHtml(item.anio)}"
-                data-tipo="${escapeHtml(item.tipo)}"
-                data-poster="${escapeHtml(item.poster || "")}"
-                aria-pressed="false" aria-label="Añadir ${titulo} a Mi lista"
-                title="Añadir a Mi lista">
-          <i class="bi bi-heart" aria-hidden="true"></i>
-        </button>
         <p class="info-extra">${escapeHtml(item.anio)} · ${etiquetaTipo(item.tipo)}</p>
       </div>
       <div class="titulo-container text-center mt-2">
         <p class="titulo-pelicula">${titulo}</p>
       </div>
     `;
-
-    /* El módulo de favoritos puede no estar cargado (páginas futuras). */
-    if (CINEMA.favoritos) CINEMA.favoritos.aplicarEstado(article);
 
     return article;
   }

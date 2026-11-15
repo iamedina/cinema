@@ -23,7 +23,7 @@
     vacio.innerHTML =
       '<i class="bi bi-heart" aria-hidden="true"></i>' +
       "<h2>Todavía no has guardado nada</h2>" +
-      "<p>Pulsa el corazón de cualquier póster para añadirlo a tu lista. Se guarda en este navegador.</p>" +
+      "<p>Abre cualquier título y pulsa «Añadir a Mi lista». Se guarda en este navegador.</p>" +
       '<a class="btn btn-primary px-4 rounded-5" href="index.html">Explorar títulos</a>';
     return vacio;
   }

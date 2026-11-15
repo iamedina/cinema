@@ -83,6 +83,38 @@ test("Ajustes carga los módulos que usa para contadores y datos", () => {
   );
 });
 
+test("todas las páginas cargan el almacén antes de los módulos que lo usan", () => {
+  for (const pagina of paginas) {
+    const lista = scripts(leer(pagina));
+
+    assert.ok(lista.includes("js/almacen.js"), pagina + " debe cargar js/almacen.js");
+
+    for (const modulo of [
+      "js/perfiles.js",
+      "js/historial.js",
+      "js/favoritos.js",
+      "js/progreso.js",
+    ]) {
+      if (!lista.includes(modulo)) continue;
+      assert.ok(
+        lista.indexOf("js/almacen.js") < lista.indexOf(modulo),
+        pagina + " debe cargar js/almacen.js antes que " + modulo
+      );
+    }
+  }
+});
+
+test("Mi lista solo se enlaza desde Ajustes", () => {
+  for (const pagina of paginas) {
+    if (pagina === "ajustes.html") continue;
+    assert.doesNotMatch(
+      leer(pagina),
+      /href="favoritos\.html"/,
+      pagina + " no debe enlazar Mi lista fuera de Ajustes"
+    );
+  }
+});
+
 test("todos los scripts locales referenciados existen", () => {
   for (const pagina of paginas) {
     for (const ruta of scripts(leer(pagina))) {
