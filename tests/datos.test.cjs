@@ -41,6 +41,30 @@ test("favoritos.reemplazar sanea la copia importada y la persiste", () => {
   );
 });
 
+test("favoritos.restaurar devuelve el título a su posición original", () => {
+  const almacenamiento = crearLocalStorage();
+  const favoritos = crearFavoritos(almacenamiento).CINEMA.favoritos;
+
+  favoritos.reemplazar([
+    { id: "antigua", titulo: "Antigua", agregado: 1 },
+    { id: "reciente", titulo: "Reciente", agregado: 3 },
+  ]);
+
+  const quitado = favoritos.lista().find((item) => item.id === "antigua");
+  assert.equal(favoritos.quitar("antigua"), true);
+  assert.equal(favoritos.total(), 1);
+
+  assert.equal(favoritos.restaurar(quitado), true);
+  assert.deepEqual(
+    favoritos.lista().map((item) => item.id),
+    ["reciente", "antigua"]
+  );
+
+  /* No se puede restaurar dos veces el mismo título. */
+  assert.equal(favoritos.restaurar(quitado), false);
+  assert.equal(favoritos.total(), 2);
+});
+
 test("progreso.reemplazar sanea, ordena y persiste", () => {
   const almacenamiento = crearLocalStorage();
   const { CINEMA } = cargar(["js/almacen.js", "js/progreso.js"], {

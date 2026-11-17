@@ -110,6 +110,26 @@
     return true;
   }
 
+  /**
+   * Reinserta un título con su fecha original. Lo usa «Deshacer» en
+   * Mi lista para que el título vuelva a su posición, no al principio.
+   */
+  function restaurar(item) {
+    if (!esItemValido(item) || esFavorito(item.id)) return false;
+    lista.push({
+      id: item.id,
+      titulo: item.titulo,
+      anio: item.anio || "—",
+      tipo: item.tipo || "movie",
+      poster: item.poster || null,
+      agregado: Number(item.agregado) || Date.now(),
+    });
+    lista = limpiar(lista);
+    guardar();
+    notificar("local");
+    return true;
+  }
+
   /** Devuelve true si el título queda guardado tras la operación. */
   function alternar(item) {
     if (!esItemValido(item)) return false;
@@ -235,6 +255,7 @@
     lista: listaFavoritos,
     agregar,
     quitar,
+    restaurar,
     alternar,
     vaciar,
     reemplazar,
