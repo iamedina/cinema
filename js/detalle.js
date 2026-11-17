@@ -818,7 +818,7 @@
     } catch (error) {
       console.error("Error al cargar la ficha:", error);
       mostrarEstado(
-        api.esLimiteOmdb(error)
+        api.esAvisoOmdb(error)
           ? error.message
           : "No pudimos encontrar ese título.",
         true

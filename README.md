@@ -83,14 +83,24 @@ OMDB_API_KEY=tu_clave node server.js
 
 Con `OMDB_API_KEY` configurada, el navegador pide `/api/omdb` y el servidor
 añade la clave, filtra los parámetros permitidos y cachea las respuestas.
-`/api/health` lo confirma con `"omdb":true`. Si el servidor no tiene clave (o
-abres el HTML con doble clic), el cliente usa la clave pública incrustada en
-`js/api.js` y llama a OMDb directamente.
+`/api/health` lo confirma con `"omdb":true`. **La clave no se incluye nunca en
+el código del cliente**: si el servidor no tiene clave (o abres el HTML con
+doble clic), el respaldo OMDb se desactiva y las páginas muestran un aviso claro
+en lugar de llamar a OMDb.
 
-La clave pública tiene un límite de unas 1.000 peticiones al día. Si se agota,
-las páginas muestran un aviso claro («OMDb alcanzó su límite diario…») en lugar
-de un error técnico y recuerdan que con `npm start` el catálogo usa TMDB y no
-depende de OMDb.
+La clave gratuita tiene un límite de unas 1.000 peticiones al día. Si se agota,
+las páginas muestran un aviso claro («OMDb alcanzó su límite diario…») y
+recuerdan que con `npm start` el catálogo usa TMDB y no depende de OMDb.
+
+## Claves y secretos
+
+Este repositorio es público. Ninguna clave vive en el código:
+
+- TMDB y OMDb se configuran en `config.local.js` (ignorado por Git) o con las
+  variables de entorno `TMDB_API_KEY` y `OMDB_API_KEY`.
+- `js/` no contiene claves ni llama a OMDb directamente: todo pasa por
+  `/api/tmdb` y `/api/omdb`, que añaden la credencial en el servidor.
+- Las pruebas fallan si aparece una clave en `js/` o en la plantilla.
 
 ## Pruebas automáticas
 

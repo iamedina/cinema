@@ -25,8 +25,8 @@
  *
  * Con OMDB_API_KEY configurada, el navegador pide los datos al servidor
  * (/api/omdb) y la clave de OMDb nunca se envía al cliente. Si la dejas
- * vacía, el sitio sigue funcionando con la clave de respaldo que lleva
- * el JS para cuando se abre el HTML con doble clic (file://).
+ * vacía, el respaldo OMDb queda desactivado: el sitio usa TMDB y muestra
+ * un aviso claro cuando no hay clave (también con file://).
  */
 module.exports = {
   TMDB_API_KEY: "PON_AQUI_TU_CREDENCIAL_DE_TMDB",

@@ -110,7 +110,7 @@
       ocultarAviso();
       ui.pintarEstado(
         resultado,
-        api.esLimiteOmdb(error)
+        api.esAvisoOmdb(error)
           ? error.message
           : "No se pudo conectar con el servicio. Revisa tu conexión e inténtalo de nuevo."
       );

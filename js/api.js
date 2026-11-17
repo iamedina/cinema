@@ -5,7 +5,10 @@
  *   1. TMDB a través del servidor local (/api/tmdb/*) — la clave
  *      nunca se expone en el navegador. Catálogo amplio, español,
  *      tráilers y 60 resultados por página.
- *   2. OMDb directo — respaldo si no hay servidor o no hay clave.
+ *   2. OMDb a través del proxy del servidor (/api/omdb) — respaldo
+ *      cuando TMDB no está configurado o falla. El navegador nunca
+ *      lleva una clave: si el servidor no tiene OMDB_API_KEY, se
+ *      muestra un aviso claro.
  *
  * Todo se normaliza al mismo objeto interno, así que la UI no
  * cambia según la fuente.
@@ -725,14 +728,11 @@
    * OMDb (respaldo)
    * ========================================================== */
 
-  const API_OMDB = "https://www.omdbapi.com/";
   /*
-   * Clave de respaldo: solo se usa al abrir el sitio con doble clic
-   * (file://) o si el servidor no tiene OMDB_API_KEY configurada.
-   * Con el servidor en marcha, la clave viaja desde el servidor y el
-   * navegador nunca la ve.
+   * OMDb solo se consulta a través del servidor (/api/omdb). El
+   * navegador nunca lleva una clave: si el servidor no tiene
+   * OMDB_API_KEY, se muestra un aviso claro.
    */
-  const API_KEY_OMDB = "CLAVE_ELIMINADA";
 
   /** Error claro cuando OMDb agota su cuota diaria (401 / «limit»). */
   function errorLimiteOmdb() {
@@ -748,24 +748,43 @@
     return Boolean(error && error.codigo === "omdb-limite");
   }
 
+  /** Error claro cuando OMDb no está disponible (sin servidor o sin clave). */
+  function errorOmdbNoConfigurado() {
+    const error = new Error(
+      "OMDb no está configurado. Abre el sitio con «npm start» y añade " +
+        "OMDB_API_KEY en config.local.js para activar el respaldo."
+    );
+    error.codigo = "omdb-no-configurado";
+    return error;
+  }
+
+  /** Cualquier aviso de OMDb que conviene mostrar tal cual al usuario. */
+  function esAvisoOmdb(error) {
+    return Boolean(
+      error &&
+        (error.codigo === "omdb-limite" || error.codigo === "omdb-no-configurado")
+    );
+  }
+
   async function pedirOmdb(params) {
     const clave = JSON.stringify(params);
     const cacheado = cacheLeer("omdb:" + clave);
     if (cacheado) return cacheado;
     if (enVuelo.has(clave)) return enVuelo.get(clave);
 
-    const usarProxy = await omdbDisponible();
+    if (!(await omdbDisponible())) throw errorOmdbNoConfigurado();
 
     const promesa = limitar(async () => {
-      const url = usarProxy ? new URL("/api/omdb", location.origin) : new URL(API_OMDB);
+      const url = new URL("/api/omdb", location.origin);
       for (const [k, v] of Object.entries(params)) {
         if (v !== undefined && v !== null && v !== "") url.searchParams.set(k, v);
       }
-      if (!usarProxy) url.searchParams.set("apikey", API_KEY_OMDB);
 
       const res = await fetch(url.toString(), { signal: AbortSignal.timeout(12000) });
       const json = await res.json().catch(() => null);
       const detalle = json && json.Error ? String(json.Error) : "";
+
+      if (res.status === 503) throw errorOmdbNoConfigurado();
 
       if (!res.ok || !json) {
         if (res.status === 401 || /limit/i.test(detalle)) throw errorLimiteOmdb();
@@ -1041,6 +1060,7 @@
     persona,
     temporada,
     esLimiteOmdb,
+    esAvisoOmdb,
     tmdbListo: tmdbDisponible,
     SEMILLAS_HOME,
     SEMILLAS_LISTADO,

@@ -38,7 +38,7 @@
       console.error("Error al cargar el carrusel:", tipo, error);
       ui.pintarEstado(
         elemento,
-        api.esLimiteOmdb(error)
+        api.esAvisoOmdb(error)
           ? error.message
           : "Error al cargar. Inténtalo de nuevo más tarde."
       );
