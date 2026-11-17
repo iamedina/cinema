@@ -325,13 +325,53 @@ async function proxyOmdb(searchParams) {
  * Servidor HTTP
  * ---------------------------------------------------------- */
 
+/*
+ * Cabeceras comunes a toda respuesta. No cambian el contenido: evitan
+ * que el navegador adivine tipos, filtren el Referer y bloquean el
+ * encuadre del sitio en otras páginas.
+ */
+const CABECERAS_SEGURIDAD = {
+  "X-Content-Type-Options": "nosniff",
+  "Referrer-Policy": "strict-origin-when-cross-origin",
+  "X-Frame-Options": "SAMEORIGIN",
+};
+
 function responder(res, status, cuerpo, cabeceras = {}) {
   res.writeHead(status, {
+    ...CABECERAS_SEGURIDAD,
     "Content-Type": "application/json; charset=utf-8",
     "Cache-Control": "no-store",
     ...cabeceras,
   });
   res.end(typeof cuerpo === "string" ? cuerpo : JSON.stringify(cuerpo));
+}
+
+/** 404: sirve la página propia del sitio y, si falta, una respuesta mínima. */
+function responder404(res) {
+  let html = null;
+  try {
+    html = fs.readFileSync(path.join(RAIZ, "404.html"));
+  } catch {
+    html = null;
+  }
+
+  res.writeHead(404, {
+    ...CABECERAS_SEGURIDAD,
+    "Content-Type": "text/html; charset=utf-8",
+    "Cache-Control": "no-cache",
+  });
+
+  if (html) return res.end(html);
+
+  res.end(
+    '<!DOCTYPE html><html lang="es"><head><meta charset="utf-8">' +
+      "<title>No encontrado | CINEMA</title>" +
+      '<meta name="viewport" content="width=device-width, initial-scale=1"></head>' +
+      '<body style="background:#000;color:#fff;font-family:sans-serif;display:flex;min-height:100vh;' +
+      'align-items:center;justify-content:center;flex-direction:column;gap:16px">' +
+      "<h1>404</h1><p>La página que buscas no existe.</p>" +
+      '<a style="color:#0d6efd" href="/">Volver al inicio</a></body></html>'
+  );
 }
 
 const servidor = http.createServer(async (req, res) => {
@@ -395,25 +435,14 @@ const servidor = http.createServer(async (req, res) => {
     datos = null;
   }
 
-  if (!datos) {
-    res.writeHead(404, { "Content-Type": "text/html; charset=utf-8" });
-    return res.end(
-      '<!DOCTYPE html><html lang="es"><head><meta charset="utf-8">' +
-        "<title>No encontrado | CINEMA</title>" +
-        '<meta name="viewport" content="width=device-width, initial-scale=1"></head>' +
-        '<body style="background:#000;color:#fff;font-family:sans-serif;display:flex;min-height:100vh;' +
-        'align-items:center;justify-content:center;flex-direction:column;gap:16px">' +
-        "<h1>404</h1><p>La página que buscas no existe.</p>" +
-        '<a style="color:#0d6efd" href="/">Volver al inicio</a></body></html>'
-    );
-  }
+  if (!datos) return responder404(res);
 
   const tipo = MIME[path.extname(absoluto).toLowerCase()] || "application/octet-stream";
   /* Vendor e imágenes locales casi nunca cambian: se cachean con tiempo largo. */
   const cache = /^(vendor|img)\//.test(relativo)
     ? "public, max-age=31536000, immutable"
     : "no-cache";
-  res.writeHead(200, { "Content-Type": tipo, "Cache-Control": cache });
+  res.writeHead(200, { ...CABECERAS_SEGURIDAD, "Content-Type": tipo, "Cache-Control": cache });
   res.end(datos);
 });
 

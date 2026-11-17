@@ -62,6 +62,9 @@ test("servidor: OMDb por proxy, archivos estáticos y rutas permitidas", async (
     const inicio = await fetch(base + "/");
     assert.equal(inicio.status, 200);
     assert.equal(inicio.headers.get("cache-control"), "no-cache");
+    assert.equal(inicio.headers.get("x-content-type-options"), "nosniff");
+    assert.equal(inicio.headers.get("referrer-policy"), "strict-origin-when-cross-origin");
+    assert.equal(inicio.headers.get("x-frame-options"), "SAMEORIGIN");
     const html = await inicio.text();
     assert.match(html, /<main id="contenido"/);
 
@@ -74,9 +77,11 @@ test("servidor: OMDb por proxy, archivos estáticos y rutas permitidas", async (
     const prohibido = await fetch(base + "/api/tmdb/account");
     assert.equal(prohibido.status, 403);
 
-    /* 404 propio. */
+    /* 404 propio, con la página del sitio y las mismas cabeceras. */
     const noExiste = await fetch(base + "/no-existe.html");
     assert.equal(noExiste.status, 404);
+    assert.equal(noExiste.headers.get("x-content-type-options"), "nosniff");
+    assert.match(await noExiste.text(), /Esta página no existe/);
   } finally {
     await cerrar(servidor);
     await cerrar(falsoOmdb);

@@ -108,12 +108,14 @@ módulo o archivo referenciado.
 
 ## Mi lista (favoritos)
 
-Cada póster tiene un corazón que guarda el título en el navegador
-(`localStorage`), sin cuenta ni servidor. La lista se puede ver en
-`favoritos.html` y el contador aparece en la cabecera.
+Se guarda desde la ficha de cada título con el botón **«Añadir a Mi lista»**
+(`localStorage`), sin cuenta ni servidor. La lista se abre desde **Ajustes →
+Ver Mi lista**; no hay enlace en la cabecera ni en el pie.
 
 - Se guarda la **ficha completa** (id, título, año, tipo y póster), así la
   página funciona al instante y sin pedir nada a la API.
+- En `favoritos.html` cada tarjeta tiene **«Quitar»**, con un aviso para
+  **deshacer** durante unos segundos.
 - Se sincroniza entre pestañas del mismo navegador.
 - Si el navegador bloquea el almacenamiento, el sitio sigue funcionando: solo
   no recuerda la lista.
@@ -239,9 +241,10 @@ un hueco al final.
 `descripcion.html?id=...` muestra el tráiler, **temporadas y episodios** (solo
 series de TMDB), **reparto** (con foto y personaje), **plataformas de
 streaming** (JustWatch vía TMDB, con enlace a todas las opciones), **galería**
-de imágenes con lightbox y **títulos similares** (clicables y con corazón para
-guardar en Mi lista).
+de imágenes con lightbox y **títulos similares** (clicables).
 
+- El botón **«Añadir a Mi lista»** vive en la ficha, junto a «Ver ahora»; los
+  listados no muestran corazones.
 - El tráiler se elige por prioridad: **oficial en español latino**, después
   **oficial en España**, después **oficial en otro idioma** y, por último,
   cualquier tráiler de YouTube. El orden se puede cambiar en Ajustes (por
@@ -289,7 +292,7 @@ guardar en Mi lista).
   reciente a más antigua.
 - Se pagina en el navegador, de 24 en 24, sin peticiones extra. La página
   queda en la URL (`&page=2`).
-- Cada título lleva a su ficha y mantiene el corazón de Mi lista.
+- Cada título lleva a su ficha.
 - Necesita TMDB (servidor local); con `file://` muestra un aviso claro.
 
 ## Accesibilidad y metadatos
@@ -301,12 +304,11 @@ etiquetas `og:` para compartirse bien en redes y buscadores.
 - `<main id="contenido">` como región principal y enlace **«Saltar al
   contenido»** para ir con el teclado sin recorrer la cabecera.
 - Foco visible en todos los controles (campo de búsqueda, filtros,
-  paginación, corazones, galería, botones).
+  paginación, galería, botones).
 - Los SVGs decorativos se ocultan a los lectores de pantalla y el menú marca
   la página actual con `aria-current="page"`.
-- Contraste corregido en textos secundarios, paginación y contador de Mi lista.
+- Contraste corregido en textos secundarios y paginación.
 - Se respeta «reducir movimiento»: sin parpadeos ni scrolls suaves.
-- En pantallas táctiles el corazón crece a 40px.
 
 ## Rendimiento
 
@@ -334,12 +336,13 @@ favoritos.html      Mi lista (favoritos guardados en el navegador)
 ajustes.html        Preferencias: apariencia, tráilers, región, datos y estado
 legal.html          Aviso legal, DMCA, privacidad y fuentes
 dominio-publico.html  Catálogo de cine de dominio público con reproductor
+404.html            Página no encontrada (la sirve server.js con estado 404)
 
 css/style.css       Todos los estilos
 js/api.js           Datos: TMDB vía proxy, OMDb de respaldo, caché
 js/preferencias.js  Preferencias globales y clases de apariencia
 js/almacen.js       Acceso seguro a localStorage (claves versionadas)
-js/favoritos.js     Corazón, contador y lista de favoritos
+js/favoritos.js     Estado de Mi lista: contador y cambios
 js/historial.js     Historial de búsquedas recientes
 js/ajustes.js       Controles de Ajustes, contadores y copias de seguridad
 js/generos.js       Géneros fijos de TMDB (sin petición extra)
@@ -355,7 +358,7 @@ js/dominio-publico.js  Catálogo local de cine de dominio público
 js/progreso.js      Posición de reproducción (catálogo y reproductor)
 js/reproductor.js   Reproductor modal (Internet Archive)
 js/pagina-dominio.js  Pinta el catálogo de dominio público
-js/mi-lista.js      Página Mi lista
+js/mi-lista.js      Página Mi lista: quitar títulos con deshacer
 
 tests/              Pruebas con node:test (npm test)
 server.js           Estático + proxy TMDB/OMDb + fusión de páginas
