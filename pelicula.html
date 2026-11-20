@@ -94,16 +94,43 @@
     <main id="contenido" tabindex="-1">
         <h1 class="sr-only">Películas</h1>
 
-    <section class="nuevas" style="margin-top: 50px;">
-        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
-            <div>
-                <p class="section-subtitle">Catálogo CINEMA</p>
-                <h2 class="section-title text-start mb-1" id="tituloListado">Películas</h2>
-                <p class="resumen-listado mb-4" id="resumenListado" aria-live="polite"></p>
+    <section class="listado-hero" aria-labelledby="tituloListado">
+        <div id="heroPosterFondo" aria-hidden="true"></div>
+        <div class="container listado-hero-contenido">
+            <p class="section-subtitle">Catálogo CINEMA</p>
+            <h2 class="section-title" id="tituloListado">Películas</h2>
+            <p class="listado-hero-texto">Estrenos, clásicos y todo lo que merece la pantalla grande.</p>
+            <ul class="listado-pistas" aria-label="Características del catálogo">
+                <li><i class="bi bi-list-check" aria-hidden="true"></i> 60 títulos por página</li>
+                <li><i class="bi bi-link-45deg" aria-hidden="true"></i> Filtros en la URL</li>
+                <li><i class="bi bi-camera-video" aria-hidden="true"></i> Tráilers y fichas</li>
+            </ul>
+            <p class="resumen-listado" id="resumenListado" aria-live="polite"></p>
+            <div class="listado-hero-enlaces">
+                <a class="ver-todo" href="index.html"><i class="bi bi-house" aria-hidden="true"></i> Volver al inicio</a>
+                <a class="ver-todo" href="#destacados"><i class="bi bi-arrow-down" aria-hidden="true"></i> Ver imprescindibles</a>
             </div>
         </div>
-        <div id="filtros"></div>
-        <div id="resultado" aria-busy="false"></div>
+    </section>
+
+    <section class="seccion-destacados" aria-labelledby="tituloDestacados">
+        <div class="container">
+            <div class="cabecera-seccion">
+                <div>
+                    <p class="section-subtitle">Selección CINEMA</p>
+                    <h2 class="section-title" id="tituloDestacados">Imprescindibles del cine</h2>
+                </div>
+                <a class="ver-todo" href="pelicula.html?orden=nota">Ver todo</a>
+            </div>
+            <div id="destacados" class="top-10-grid" aria-busy="false"></div>
+        </div>
+    </section>
+
+    <section class="listado-contenido">
+        <div class="container">
+            <div id="filtros"></div>
+            <div id="resultado" aria-busy="false"></div>
+        </div>
     </section>
 
     <section id="chevron" class="mb-4 oculto">

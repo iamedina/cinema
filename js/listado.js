@@ -19,11 +19,15 @@
   const paginacion = document.getElementById("paginacion");
   const resumen = document.getElementById("resumenListado");
   const contenedorFiltros = document.getElementById("filtros");
+  const destacados = document.getElementById("destacados");
+  const heroPoster = document.getElementById("heroPosterFondo");
 
   let page = parseInt(new URLSearchParams(location.search).get("page"), 10) || 1;
   let totalPaginas = 0;
   let tokenActual = 0;
   let filtros = moduloFiltros ? moduloFiltros.leer() : {};
+  let destacadosPintados = false;
+  let heroPosterPintado = false;
 
   ui.activarNavegacion(resultado);
   buscador.init();
@@ -52,6 +56,33 @@
   function actualizarResumen(cantidad) {
     if (!resumen) return;
     resumen.textContent = cantidad ? cantidad + " títulos en esta página" : "";
+  }
+
+  /* El póster del hero reutiliza la URL que ya pidió la primera tarjeta,
+     así que no añade peticiones ni contenido interactivo. */
+  function pintarHeroPoster(item) {
+    if (!heroPoster || heroPosterPintado || !item || !item.poster) return;
+    const poster = String(item.poster);
+    if (!/^https?:\/\//i.test(poster)) return;
+    heroPosterPintado = true;
+    heroPoster.style.backgroundImage = 'url("' + poster.replace(/["\\]/g, "") + '")';
+  }
+
+  /* Se pinta una sola vez con la primera página cargada: así el bloque
+     no salta al paginar ni al cambiar los filtros. */
+  function pintarDestacados(items) {
+    if (!destacados || destacadosPintados) return;
+    destacados.setAttribute("aria-busy", "true");
+
+    if (!items || !items.length) {
+      ui.pintarEstado(destacados, "No hay imprescindibles disponibles ahora mismo.");
+    } else {
+      destacadosPintados = true;
+      ui.activarNavegacion(destacados);
+      ui.pintarTop10(destacados, items, 5);
+    }
+
+    destacados.setAttribute("aria-busy", "false");
   }
 
   async function cargar(pagina, { scroll = true } = {}) {
@@ -88,8 +119,11 @@
               }
             : undefined
         );
+        pintarDestacados(datos.items);
       } else {
         ui.pintarTarjetas(resultado, datos.items);
+        pintarDestacados(datos.items);
+        pintarHeroPoster(datos.items[0]);
         actualizarResumen(datos.items.length);
       }
     } catch (error) {

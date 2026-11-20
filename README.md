@@ -35,6 +35,13 @@ La portada añade un **Top 10** con números grandes, accesos rápidos por
 datos que ya cargan los carruseles, así que no hace peticiones extra a la API.
 Los títulos de los pósters miden 15 px en los carruseles y 17 px en el Top 10.
 
+Las páginas de `pelicula.html`, `serie.html` y `anime.html` comparten una
+cabecera con póster decorativo y un bloque de **5 imprescindibles** que también
+se calcula con los datos ya cargados. Los filtros son un panel con atajos de
+género, iconos por campo y chips de los filtros activos que se pueden quitar
+uno a uno. La URL (`?genero=…&anio=…&orden=…&nota=…`), la paginación y los
+nombres de los campos no han cambiado.
+
 ## Activar TMDB (catálogo amplio y tráilers)
 
 Sin clave de TMDB, el sitio solo usa OMDb si además configuraste

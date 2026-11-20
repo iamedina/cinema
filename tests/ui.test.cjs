@@ -32,3 +32,35 @@ test("el póster de respaldo es un SVG en data URI", () => {
 
   assert.match(CINEMA.ui.POSTER_PLACEHOLDER, /^data:image\/svg\+xml;charset=utf-8,/);
 });
+
+test("ordenarPorNota prioriza la valoración y respeta el límite", () => {
+  const { CINEMA } = cargar(["js/ui.js"]);
+
+  const items = [
+    { titulo: "baja", rating: 4 },
+    { titulo: "alta", rating: 9.1 },
+    { titulo: "media", rating: 7 },
+    { titulo: "sin nota" },
+  ];
+
+  assert.deepEqual(
+    CINEMA.ui.ordenarPorNota(items, 3).map((item) => item.titulo),
+    ["alta", "media", "baja"]
+  );
+});
+
+test("ordenarPorNota desempata por orden original y tolera datos raros", () => {
+  const { CINEMA } = cargar(["js/ui.js"]);
+
+  const items = [
+    { titulo: "primero", rating: 8 },
+    { titulo: "segundo", rating: 8 },
+    { titulo: "roto", rating: "no es un número" },
+  ];
+
+  assert.deepEqual(
+    CINEMA.ui.ordenarPorNota(items, 5).map((item) => item.titulo),
+    ["primero", "segundo", "roto"]
+  );
+  assert.equal(CINEMA.ui.ordenarPorNota(null, 5).length, 0);
+});

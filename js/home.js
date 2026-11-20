@@ -52,11 +52,6 @@
 
   Promise.allSettled(RAILS.map(cargarRail)).then(pintarTop10);
 
-  function nota(item) {
-    const valor = Number(item && item.rating);
-    return Number.isFinite(valor) ? valor : 0;
-  }
-
   /** Reordena lo que ya cargaron los carruseles y pinta el bloque destacado. */
   function pintarTop10() {
     const contenedor = document.getElementById("top10");
@@ -78,13 +73,7 @@
       return;
     }
 
-    const top = candidatos
-      .map((item, indice) => ({ item, indice }))
-      .sort((a, b) => nota(b.item) - nota(a.item) || a.indice - b.indice)
-      .slice(0, 10)
-      .map((entrada) => entrada.item);
-
-    ui.pintarTop10(contenedor, top);
+    ui.pintarTop10(contenedor, candidatos);
     contenedor.setAttribute("aria-busy", "false");
   }
 

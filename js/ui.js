@@ -91,14 +91,31 @@
     contenedor.appendChild(fragmento);
   }
 
-  /** Top 10 destacado: reutiliza la tarjeta y añade el puesto decorativo. */
-  function pintarTop10(contenedor, items) {
+  /**
+   * Ordena por valoración y devuelve como máximo `limite` elementos.
+   * Función pura: también la usan los listados y se prueba sin DOM.
+   */
+  function ordenarPorNota(items, limite = 10) {
+    const nota = (item) => {
+      const valor = Number(item && item.rating);
+      return Number.isFinite(valor) ? valor : 0;
+    };
+
+    return (items || [])
+      .map((item, indice) => ({ item, indice }))
+      .sort((a, b) => nota(b.item) - nota(a.item) || a.indice - b.indice)
+      .slice(0, limite)
+      .map((entrada) => entrada.item);
+  }
+
+  /** Bloque destacado: reutiliza la tarjeta y añade el puesto decorativo. */
+  function pintarTop10(contenedor, items, limite = 10) {
     if (!contenedor) return;
 
     contenedor.innerHTML = "";
     const fragmento = document.createDocumentFragment();
 
-    (items || []).slice(0, 10).forEach((item, indice) => {
+    ordenarPorNota(items, limite).forEach((item, indice) => {
       const tarjeta = crearTarjeta(item);
       tarjeta.classList.add("top10-card");
 
@@ -245,6 +262,7 @@
     reduceMovimiento,
     crearTarjeta,
     pintarTarjetas,
+    ordenarPorNota,
     pintarTop10,
     pintarCargando,
     pintarPaginacion,
