@@ -27,8 +27,12 @@ El sistema visual está inspirado en [FilmLane](https://codewithsadee.github.io/
 de [codewithsadee](https://github.com/codewithsadee) (© 2022, uso libre):
 estructura de portada, tarjetas con póster 2:3 y componentes como badges,
 botones y pie de página. CINEMA mantiene su identidad propia: acento azul
-`#0d6efd`, tipografía Poppins, logo e imágenes de TMDB, y el hover original
-de las tarjetas (`translateY(-4px)`, `scale(1.03)`, opacidad `0.75`, `0.3s`).
+`#0d6efd`, tipografía Poppins, logo e imágenes de TMDB. El hover de las
+tarjetas eleva la tarjeta (`scale(1.02)`), acerca el póster (`scale(1.03)`) y
+baja su opacidad a `0.75`; **todos los pósters comparten una transición suave
+de `0.6s`** para `transform` y `opacity` (también al salir), y aparecen con un
+fundido de la misma duración al pintarse. El ajuste «Reducir animaciones» y la
+preferencia del sistema siguen desactivando estas transiciones.
 
 La portada añade un **Top 10** con números grandes, accesos rápidos por
 **género** y una franja **«¿Por qué CINEMA?»**. El Top 10 se construye con los

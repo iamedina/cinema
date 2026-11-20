@@ -629,11 +629,14 @@ nav .mover {
   height: 100%;
   display: flex;
   flex-direction: column;
-  transition: transform 0.3s ease;
+  /* Duración única para todas las tarjetas y pósters del sitio. */
+  transition: transform 0.6s ease;
+  animation: tarjeta-aparecer 0.6s ease both;
 }
 
-.pelicula-card:hover {
-  transform: translateY(-4px);
+@keyframes tarjeta-aparecer {
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 .pelicula-card .card-banner {
@@ -645,11 +648,15 @@ nav .mover {
   background-color: var(--gunmetal-1);
   box-shadow: var(--sombra);
   margin-bottom: 12px;
-  transition: box-shadow var(--transition-1);
+  transition: box-shadow 0.6s ease;
 }
 
 .pelicula-card:hover .card-banner {
   box-shadow: 0 10px 24px rgb(0 0 0 / 0.5);
+}
+
+.pelicula-card:hover {
+  transform: scale(1.02);
 }
 
 .pelicula-card .card-banner:focus-visible {
@@ -662,7 +669,9 @@ nav .mover {
   height: 100%;
   object-fit: cover;
   border-radius: var(--radio);
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  /* opacity y transform comparten duración: si transform queda fuera,
+     el zoom del póster salta de golpe mientras la opacidad se desvanece. */
+  transition: opacity 0.6s ease, transform 0.6s ease;
 }
 
 .pelicula-card:hover .img-pelicula {
@@ -4041,6 +4050,7 @@ html.reducir-animaciones .esqueleto {
   opacity: 0.16;
   filter: saturate(0.8);
   pointer-events: none;
+  transition: opacity 0.6s ease;
 }
 
 .listado-hero::after {
