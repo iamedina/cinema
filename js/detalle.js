@@ -729,6 +729,7 @@
       '<article class="articleDetalle">' +
       '<div class="text-white espacio">' +
       '<div class="text-start border-0 ps-3">' +
+      '<p class="section-subtitle">Ficha CINEMA</p>' +
       '<h1 class="fw-bold">' +
       escapeHtml(datos.titulo) +
       " (" +

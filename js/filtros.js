@@ -133,6 +133,12 @@
     const boton = form.querySelector("#limpiarFiltros");
     if (!boton) return;
     boton.disabled = Object.keys(leerFormulario(form)).length === 0;
+
+    form.querySelectorAll(".filtro").forEach((etiqueta) => {
+      const select = etiqueta.querySelector("select");
+      const activo = Boolean(select && select.value && !(select.name === "orden" && select.value === "popularidad"));
+      if (etiqueta.classList) etiqueta.classList.toggle("activo", activo);
+    });
   }
 
   /* ============================================================

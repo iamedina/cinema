@@ -21,6 +21,15 @@ No hace falta `npm install`: el servidor solo usa módulos nativos de Node
 Bootstrap y los iconos se sirven desde `vendor/`, así que la interfaz se ve
 igual sin conexión a internet.
 
+## Diseño
+
+El sistema visual está inspirado en [FilmLane](https://codewithsadee.github.io/filmlane/),
+de [codewithsadee](https://github.com/codewithsadee) (© 2022, uso libre):
+estructura de portada, tarjetas con póster 2:3 y componentes como badges,
+botones y pie de página. CINEMA mantiene su identidad propia: acento azul
+`#0d6efd`, tipografía Poppins, logo e imágenes de TMDB, y el hover original
+de las tarjetas (`translateY(-4px)`, `scale(1.03)`, opacidad `0.75`, `0.3s`).
+
 ## Activar TMDB (catálogo amplio y tráilers)
 
 Sin clave de TMDB, el sitio solo usa OMDb si además configuraste

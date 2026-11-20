@@ -188,6 +188,7 @@
       anio: String(item.release_date || item.first_air_date || "").slice(0, 4) || "—",
       tipo: serie ? "series" : "movie",
       poster: item.poster_path ? POSTER_BASE + item.poster_path : null,
+      rating: item.vote_average || null,
     };
   }
 

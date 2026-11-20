@@ -10,7 +10,7 @@
     <link href="vendor/bootstrap/bootstrap.min.css" rel="stylesheet">
     <title>CINEMA · Películas, series y anime</title>
     <meta name="description" content="Catálogo de películas, series y anime con estrenos, valoraciones y tráilers.">
-    <meta name="theme-color" content="#000000">
+    <meta name="theme-color" content="#171d21">
     <meta name="color-scheme" content="dark">
     <meta property="og:type" content="website">
     <meta property="og:title" content="CINEMA · Películas, series y anime">
@@ -93,37 +93,71 @@
     <main id="contenido" tabindex="-1">
         <h1 class="sr-only">CINEMA: películas, series y anime</h1>
 
+    <section class="hero-cine" id="heroCine" aria-labelledby="heroTitulo">
+        <div class="hero-fondo" id="heroFondo" aria-hidden="true"></div>
+        <div class="hero-capa" aria-hidden="true"></div>
+        <div class="container hero-contenido">
+            <p class="section-subtitle hero-subtitulo" id="heroSubtitulo">Destacado CINEMA</p>
+            <h2 class="h1 hero-titulo" id="heroTitulo">Historias que merecen la pantalla grande</h2>
+            <div class="hero-meta" id="heroMeta" aria-live="polite"></div>
+            <p class="hero-sinopsis" id="heroSinopsis">Descubre estrenos, clásicos y series para cada noche de cine. Explora el catálogo y guarda tus títulos favoritos.</p>
+            <a class="btn btn-primary hero-accion" id="heroBoton" href="descripcion.html?id=tmdb-movie-603">
+                <i class="bi bi-play-fill" aria-hidden="true"></i> Ver ficha
+            </a>
+        </div>
+    </section>
+
     <section class="nuevas" style="margin-top: 50px;">
         <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
-            <h2 class="text-white text-start mb-4">Películas recién añadidas</h2>
-            <a class="btn btn-primary px-4 rounded-5" href="pelicula.html">Ver más</a>
+            <div>
+                <p class="section-subtitle">Recién llegados</p>
+                <h2 class="section-title text-start mb-4">Películas recién añadidas</h2>
+            </div>
+            <a class="btn btn-primary px-4" href="pelicula.html">Ver más</a>
         </div>
         <div id="resultadoRecientes"></div>
     </section>
 
     <section class="nuevas">
         <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
-            <h2 class="text-white text-start mb-4">Series recién añadidas</h2>
-            <a class="btn btn-primary px-4 rounded-5" href="serie.html">Ver más</a>
+            <div>
+                <p class="section-subtitle">Lo mejor de la televisión</p>
+                <h2 class="section-title text-start mb-4">Series recién añadidas</h2>
+            </div>
+            <a class="btn btn-primary px-4" href="serie.html">Ver más</a>
         </div>
         <div id="resultadoRecientesSeries"></div>
     </section>
 
     <section class="nuevas nuevas-final">
         <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
-            <h2 class="text-white text-start mb-4">Anime recién añadido</h2>
-            <a class="btn btn-primary px-4 rounded-5" href="anime.html">Ver más</a>
+            <div>
+                <p class="section-subtitle">Animación japonesa</p>
+                <h2 class="section-title text-start mb-4">Anime recién añadido</h2>
+            </div>
+            <a class="btn btn-primary px-4" href="anime.html">Ver más</a>
         </div>
         <div id="resultadoRecientesAnime"></div>
     </section>
 
+    <section class="cta-cine">
+        <div class="container cta-contenido">
+            <div>
+                <p class="section-subtitle">CINEMA</p>
+                <h2 class="h2 cta-titulo">Tu próxima historia empieza aquí</h2>
+                <p class="cta-texto">Explora el catálogo completo y guarda lo que quieras ver en tu lista.</p>
+            </div>
+            <a class="btn btn-primary" href="pelicula.html">Explorar catálogo</a>
+        </div>
+    </section>
+
 </main>
 
-    <footer class="text-light pt-4" style="background: rgb(20 22 25 / var(--tw-bg-opacity, 1));">
+    <footer class="text-light pt-4 cine-footer">
         <div class="container py-4">
             <div class="row text-start text-md-start text-sm-start align-items-start mt-4">
 
-                <div class="col-md-3 mb-4 mb-lg-3" style="line-height: 30px; font-size: 18px;">
+                <div class="col-md-3 mb-4 mb-lg-3">
                     <h5 class="fw-bold">Explora</h5>
                     <a href="index.html" class="d-block text-light text-decoration-none">Inicio</a>
                     <a href="pelicula.html" class="d-block text-light text-decoration-none">Películas</a>
@@ -133,7 +167,7 @@
                     <a href="ajustes.html" class="d-block text-light text-decoration-none">Ajustes</a>
                 </div>
 
-                <div class="col-md-3 mb-4 mb-lg-3" style="line-height: 30px; font-size: 18px;">
+                <div class="col-md-3 mb-4 mb-lg-3">
                     <h5 class="fw-bold">Legal</h5>
                     <a href="legal.html" class="d-block text-light text-decoration-none">Aviso legal</a>
                     <a href="legal.html#dmca" class="d-block text-light text-decoration-none">DMCA</a>
@@ -143,11 +177,11 @@
 
                 <div class="col-md-3 mb-4 mb-lg-3">
                     <h5 class="fw-bold mb-3">Contáctanos</h5>
-                    <p class="mb-1" style="line-height: 10px;">support@peliculas.com</p>
+                    <p class="mb-1">support@peliculas.com</p>
                     <small class="text-secondary">Actualizado el 12 de noviembre de 2026, 14:39 <br> GMT-5</small>
                 </div>
 
-                <div class="col-md-3 mb-4 mb-lg-3" style="line-height: 30px; font-size: 18px;">
+                <div class="col-md-3 mb-4 mb-lg-3">
                     <h5 class="fw-bold">Síguenos</h5>
                     <a href="https://facebook.com" target="_blank" rel="noopener noreferrer"
                         class="btn btn-outline-light btn-md rounded-3 me-2">
@@ -185,6 +219,7 @@
     <script src="js/favoritos.js"></script>
     <script src="js/buscador.js"></script>
     <script src="js/home.js"></script>
+    <script src="js/tema.js"></script>
 </body>
 
 </html>

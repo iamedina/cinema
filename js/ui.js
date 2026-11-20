@@ -52,16 +52,31 @@
 
     const poster = item.poster || POSTER_PLACEHOLDER;
     const titulo = escapeHtml(item.titulo);
+    const anio = escapeHtml(item.anio || "—");
+    const etiqueta = escapeHtml(etiquetaTipo(item.tipo));
+    const nota =
+      typeof item.rating === "number" && item.rating > 0
+        ? item.rating.toFixed(1)
+        : null;
+    const destino = "descripcion.html?id=" + encodeURIComponent(item.id);
 
     article.innerHTML = `
-      <div class="imagen-container" data-id="${escapeHtml(item.id)}" role="link" tabindex="0"
-           aria-label="Ver detalles de ${titulo}">
+      <a class="card-banner" href="${destino}" data-id="${escapeHtml(item.id)}"
+         aria-label="Ver detalles de ${titulo}">
         <img src="${escapeHtml(poster)}" alt="Póster de ${titulo}"
-             class="img-pelicula rounded" loading="lazy" decoding="async">
-        <p class="info-extra">${escapeHtml(item.anio)} · ${etiquetaTipo(item.tipo)}</p>
+             class="img-pelicula" loading="lazy" decoding="async">
+      </a>
+      <div class="title-wrapper">
+        <a class="card-title-enlace" href="${destino}">
+          <h3 class="card-title">${titulo}</h3>
+        </a>
+        <time class="card-anio">${anio}</time>
       </div>
-      <div class="titulo-container text-center mt-2">
-        <p class="titulo-pelicula">${titulo}</p>
+      <div class="card-meta">
+        <span class="badge badge-outline">${etiqueta}</span>
+        ${nota
+          ? `<span class="rating"><i class="bi bi-star-fill" aria-hidden="true"></i><data value="${nota}">${nota}</data></span>`
+          : `<span class="rating rating-vacio">Sin nota</span>`}
       </div>
     `;
 
@@ -115,6 +130,47 @@
     contenedor.querySelector(".estado-vacio").appendChild(boton);
   }
 
+  /** Paginación numérica compacta con el mismo estilo que los filtros. */
+  function pintarPaginacion(contenedor, opciones) {
+    if (!contenedor) return;
+
+    const pagina = Number(opciones && opciones.pagina) || 1;
+    const total = Number(opciones && opciones.total) || 0;
+    const alIr = opciones && opciones.alIr;
+
+    if (total <= 1) {
+      contenedor.innerHTML = "";
+      return;
+    }
+
+    const inicio = Math.max(1, Math.min(pagina - 2, total - 4));
+    const fin = Math.min(total, Math.max(5, inicio + 4));
+    const numeros = [];
+    for (let numero = inicio; numero <= fin; numero += 1) numeros.push(numero);
+
+    contenedor.innerHTML = numeros
+      .map(
+        (numero) =>
+          '<button type="button" class="pagina-num" data-pagina="' +
+          numero +
+          '"' +
+          (numero === pagina ? ' aria-current="page"' : "") +
+          ' aria-label="Página ' +
+          numero +
+          '">' +
+          numero +
+          "</button>"
+      )
+      .join("");
+
+    contenedor.querySelectorAll(".pagina-num").forEach((boton) => {
+      boton.addEventListener("click", () => {
+        const destino = Number(boton.dataset.pagina);
+        if (destino !== pagina && typeof alIr === "function") alIr(destino);
+      });
+    });
+  }
+
   /** Un solo listener por contenedor: soporta ratón, Enter y Espacio. */
   function activarNavegacion(contenedor) {
     if (!contenedor) return;
@@ -166,6 +222,7 @@
     crearTarjeta,
     pintarTarjetas,
     pintarCargando,
+    pintarPaginacion,
     pintarEstado,
     activarNavegacion,
   };

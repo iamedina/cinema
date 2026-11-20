@@ -39,9 +39,11 @@
     chevron.classList.toggle("oculto", !hayPaginas);
     if (anterior) anterior.disabled = estado.page <= 1;
     if (siguiente) siguiente.disabled = estado.page >= estado.totalPaginas;
-    if (paginacion) {
-      paginacion.textContent = hayPaginas ? "Página " + estado.page + " de " + estado.totalPaginas : "";
-    }
+    ui.pintarPaginacion(paginacion, {
+      pagina: estado.page,
+      total: estado.totalPaginas,
+      alIr: (destino) => ejecutar(estado.query, destino),
+    });
   }
 
   function sincronizarUrl() {

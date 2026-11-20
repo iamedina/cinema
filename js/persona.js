@@ -107,6 +107,7 @@
       '<div class="persona-cabecera">' +
       '<div class="persona-retrato">' + retrato + "</div>" +
       '<div class="persona-datos">' +
+      '<p class="section-subtitle">CINEMA · Personas</p>' +
       (datos.departamento
         ? '<p class="persona-departamento">' + escapeHtml(datos.departamento) + "</p>"
         : "") +
@@ -154,8 +155,22 @@
     if (controles) controles.classList.toggle("oculto", !hayPaginas);
     if (anterior) anterior.disabled = pagina <= 1;
     if (siguiente) siguiente.disabled = pagina >= totalPaginas;
-    if (paginacion) {
-      paginacion.textContent = hayPaginas ? "Página " + pagina + " de " + totalPaginas : "";
+    ui.pintarPaginacion(paginacion, {
+      pagina,
+      total: totalPaginas,
+      alIr: (destino) => irAPagina(destino),
+    });
+  }
+
+  function irAPagina(destino) {
+    const total = Math.max(1, Math.ceil(filmografia.length / POR_PAGINA));
+    if (destino < 1 || destino > total || destino === pagina) return;
+    pagina = destino;
+    actualizarUrl();
+    pintarPagina();
+    const titulo = document.getElementById("tituloFilmografia");
+    if (titulo) {
+      titulo.scrollIntoView({ behavior: ui.reduceMovimiento() ? "auto" : "smooth" });
     }
   }
 

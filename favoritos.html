@@ -10,7 +10,7 @@
     <link href="vendor/bootstrap/bootstrap.min.css" rel="stylesheet">
     <title>Mi lista | CINEMA</title>
     <meta name="description" content="Tus películas y series guardadas en este navegador.">
-    <meta name="theme-color" content="#000000">
+    <meta name="theme-color" content="#171d21">
     <meta name="color-scheme" content="dark">
     <meta property="og:type" content="website">
     <meta property="og:title" content="Mi lista | CINEMA">
@@ -96,7 +96,8 @@
 
     <section class="nuevas" style="margin-top: 50px;">
         <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-4">
-            <h2 class="text-white text-start mb-0" id="tituloListado">Mi lista</h2>
+            <p class="section-subtitle">Tu selección</p>
+            <h2 class="section-title text-start mb-0" id="tituloListado">Mi lista</h2>
             <div class="mi-lista-acciones oculto" id="accionesLista">
                 <button type="button" class="btn-vaciar" id="vaciarLista">
                     <i class="bi bi-trash3" aria-hidden="true"></i>
@@ -109,11 +110,11 @@
 
 </main>
 
-    <footer class="text-light pt-4" style="background: rgb(20 22 25 / var(--tw-bg-opacity, 1));">
+    <footer class="text-light pt-4 cine-footer">
         <div class="container py-4">
             <div class="row text-start text-md-start text-sm-start align-items-start mt-4">
 
-                <div class="col-md-3 mb-4 mb-lg-2" style="line-height: 30px; font-size: 18px;">
+                <div class="col-md-3 mb-4 mb-lg-2">
                     <h5 class="fw-bold">Explora</h5>
                     <a href="index.html" class="d-block text-light text-decoration-none">Inicio</a>
                     <a href="pelicula.html" class="d-block text-light text-decoration-none">Películas</a>
@@ -123,7 +124,7 @@
                     <a href="ajustes.html" class="d-block text-light text-decoration-none">Ajustes</a>
                 </div>
 
-                <div class="col-md-3 mb-4 mb-lg-2" style="line-height: 30px; font-size: 18px;">
+                <div class="col-md-3 mb-4 mb-lg-2">
                     <h5 class="fw-bold">Legal</h5>
                     <a href="legal.html" class="d-block text-light text-decoration-none">Aviso legal</a>
                     <a href="legal.html#dmca" class="d-block text-light text-decoration-none">DMCA</a>
@@ -133,11 +134,11 @@
 
                 <div class="col-md-3 mb-4 mb-lg-2">
                     <h5 class="fw-bold mb-3">Contáctanos</h5>
-                    <p class="mb-1" style="line-height: 10px;">support@peliculas.com</p>
+                    <p class="mb-1">support@peliculas.com</p>
                     <small class="text-secondary">Actualizado el 12 de noviembre de 2026, 14:39 <br> GMT-5</small>
                 </div>
 
-                <div class="col-md-3 mb-4 mb-lg-2" style="line-height: 30px; font-size: 18px;">
+                <div class="col-md-3 mb-4 mb-lg-2">
                     <h5 class="fw-bold">Síguenos</h5>
                     <a href="https://facebook.com" target="_blank" rel="noopener noreferrer"
                         class="btn btn-outline-light btn-md rounded-3 me-2">
@@ -175,6 +176,7 @@
     <script src="js/favoritos.js"></script>
     <script src="js/buscador.js"></script>
     <script src="js/mi-lista.js"></script>
+    <script src="js/tema.js"></script>
 </body>
 
 </html>
