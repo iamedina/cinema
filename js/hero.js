@@ -12,68 +12,20 @@
 
   const IMAGEN_BASE = "https://image.tmdb.org/t/p/w1280";
   const INTERVALO = 3000;
+  const TRANSICION = 350;
   const MAX_SINOPSIS = 210;
 
+  /** Diez estrenos recientes y bien valorados, uno por categoría. */
   const DESTACADOS = [
     {
-      id: "tmdb-movie-155",
-      titulo: "El caballero oscuro",
-      anio: "2008",
-      rating: 8.54,
-      generos: "Acción, Suspense",
+      id: "tmdb-movie-361743",
+      titulo: "Top Gun: Maverick",
+      anio: "2022",
+      rating: 8.154,
+      generos: "Acción, Drama",
       sinopsis:
-        "Batman y el teniente Gordon se alían con el fiscal Harvey Dent para acabar con el crimen organizado en Gotham, hasta que Joker sumerge la ciudad en el caos.",
-      backdrop: "/lQGlm2EuuNYbHbpuErelGQ2euAD.jpg",
-    },
-    {
-      id: "tmdb-movie-129",
-      titulo: "El viaje de Chihiro",
-      anio: "2001",
-      rating: 8.537,
-      generos: "Animación, Familia",
-      sinopsis:
-        "Una niña de diez años se adentra en un mundo de dioses, brujas y espíritus donde los humanos se convierten en bestias.",
-      backdrop: "/hCztoFf1TEpkj7iIdzgv129oBaS.jpg",
-    },
-    {
-      id: "tmdb-movie-122",
-      titulo: "El señor de los anillos: El retorno del rey",
-      anio: "2003",
-      rating: 8.508,
-      generos: "Aventura, Fantasía",
-      sinopsis:
-        "Mientras Aragorn reclama el trono de Gondor, Frodo y Sam avanzan hacia el Monte del Destino para poner fin a la sombra de Sauron.",
-      backdrop: "/pbucpT9eKhS0QXNgq7PS97AP5V2.jpg",
-    },
-    {
-      id: "tmdb-movie-27205",
-      titulo: "Origen",
-      anio: "2010",
-      rating: 8.373,
-      generos: "Acción, Ciencia ficción",
-      sinopsis:
-        "Dom Cobb roba secretos desde el subconsciente durante el sueño. Un último trabajo puede devolverle la vida que sacrificó.",
-      backdrop: "/z3BV9uxLIHgVv6ZgcA0n1IT2KiI.jpg",
-    },
-    {
-      id: "tmdb-movie-496243",
-      titulo: "Parásitos",
-      anio: "2019",
-      rating: 8.5,
-      generos: "Comedia, Suspense",
-      sinopsis:
-        "Dos familias de mundos opuestos se entrelazan cuando el hijo mayor de los Kim empieza a dar clases en casa de los Park.",
-      backdrop: "/rtsBa6lDZVfrwv28pedjE7Kk4c3.jpg",
-    },
-    {
-      id: "tmdb-movie-244786",
-      titulo: "Whiplash",
-      anio: "2014",
-      rating: 8.376,
-      generos: "Drama, Música",
-      sinopsis:
-        "Un joven baterista de jazz sueña con triunfar en un conservatorio de élite, pero su profesor lo empuja hasta el límite de sus fuerzas.",
-      backdrop: "/fRGxZuo7jJUWQsVg9PREb98Aclp.jpg",
+        "Treinta años después, Maverick entrena a una nueva generación de pilotos para una misión imposible mientras se reencuentra con el hijo de su difunto amigo Goose.",
+      backdrop: "/AaV1YIdWKnjAIAOe8UUKBFm327v.jpg",
     },
     {
       id: "tmdb-movie-569094",
@@ -82,38 +34,88 @@
       rating: 8.345,
       generos: "Animación, Acción",
       sinopsis:
-        "Miles Morales viaja por el Multiverso y se enfrenta a otros Spider-Man mientras redefine lo que significa ser un héroe.",
+        "Miles Morales viaja por el Multiverso y se enfrenta a otros Spider-Man mientras redefine lo que significa ser un héroe para salvar a los suyos.",
       backdrop: "/jtjBbGR2fOEwv74EkwW3hkyvIGl.jpg",
     },
     {
-      id: "tmdb-movie-598",
-      titulo: "Ciudad de Dios",
-      anio: "2002",
-      rating: 8.4,
-      generos: "Drama, Crimen",
+      id: "tmdb-movie-693134",
+      titulo: "Dune: Parte dos",
+      anio: "2024",
+      rating: 8.143,
+      generos: "Aventura, Ciencia ficción",
       sinopsis:
-        "Dos niños de una favela de Río toman caminos opuestos: uno sueña con ser fotógrafo, el otro con convertirse en el criminal más temido.",
-      backdrop: "/uvitbjFU4JqvMwIkMWHp69bmUzG.jpg",
+        "Paul Atreides se une a Chani y a los Fremen en una guerra de venganza, dividido entre el amor de su vida y el destino del universo.",
+      backdrop: "/oijm3iOjSapV87frEr6X4TGgGxZ.jpg",
     },
     {
-      id: "tmdb-movie-1124",
-      titulo: "El truco final (El prestigio)",
-      anio: "2006",
-      rating: 8.2,
-      generos: "Drama, Misterio",
+      id: "tmdb-movie-545611",
+      titulo: "Todo a la vez en todas partes",
+      anio: "2022",
+      rating: 7.713,
+      generos: "Ciencia ficción, Comedia",
       sinopsis:
-        "Dos ilusionistas rivales compiten por el truco definitivo, una obsesión que cambiará sus vidas para siempre.",
-      backdrop: "/yaExZh6qE2cfyK3o4kAMEq0mkgy.jpg",
+        "Una inmigrante china descubre que solo ella puede salvar el multiverso y debe canalizar sus nuevos poderes mientras el mundo pende de un hilo.",
+      backdrop: "/xsZXYbqVfgOQh7AjGWwb6euZmez.jpg",
     },
     {
-      id: "tmdb-movie-77",
-      titulo: "Memento",
-      anio: "2000",
-      rating: 8.175,
-      generos: "Misterio, Suspense",
+      id: "tmdb-movie-840430",
+      titulo: "Los que se quedan",
+      anio: "2023",
+      rating: 7.649,
+      generos: "Comedia, Drama",
       sinopsis:
-        "Leonard busca al asesino de su mujer, pero su pérdida de memoria a corto plazo le impide recordar qué ha pasado hace unos minutos.",
-      backdrop: "/7Wev9JMo6R5XAfz2KDvXb7oPMmy.jpg",
+        "Un profesor antipático, un alumno problemático y la cocinera del colegio forman una familia improbable durante unas Navidades nevadas.",
+      backdrop: "/t9NxL6LmhiUKALS07yH7kVxERUP.jpg",
+    },
+    {
+      id: "tmdb-movie-872585",
+      titulo: "Oppenheimer",
+      anio: "2023",
+      rating: 8,
+      generos: "Drama, Historia",
+      sinopsis:
+        "La historia de J. Robert Oppenheimer y su papel decisivo en el desarrollo de la bomba atómica, basada en «American Prometheus».",
+      backdrop: "/cUIqZd6jJCbO94Txt1CkTs7MSeP.jpg",
+    },
+    {
+      id: "tmdb-movie-933260",
+      titulo: "La sustancia",
+      anio: "2024",
+      rating: 7.131,
+      generos: "Terror, Ciencia ficción",
+      sinopsis:
+        "Un suero promete una versión más joven y perfecta de uno mismo, pero el alter ego empieza a escaparse al control de quien lo probó.",
+      backdrop: "/5ChQ84lkuix0Rl8PqOKXTQgjI8l.jpg",
+    },
+    {
+      id: "tmdb-movie-496243",
+      titulo: "Parásitos",
+      anio: "2019",
+      rating: 8.5,
+      generos: "Suspense, Comedia",
+      sinopsis:
+        "Dos familias de mundos opuestos se entrelazan cuando el hijo mayor de los Kim empieza a dar clases en casa de los Park.",
+      backdrop: "/rtsBa6lDZVfrwv28pedjE7Kk4c3.jpg",
+    },
+    {
+      id: "tmdb-movie-546554",
+      titulo: "Puñales por la espalda",
+      anio: "2019",
+      rating: 7.842,
+      generos: "Misterio, Crimen",
+      sinopsis:
+        "Un detective excéntrico investiga la muerte de un novelista de misterio entre pistas falsas, mentiras y una familia llena de secretos.",
+      backdrop: "/xQtniQMRG0BIyUcvtWTBRtLV65l.jpg",
+    },
+    {
+      id: "tmdb-movie-666277",
+      titulo: "Vidas pasadas",
+      anio: "2023",
+      rating: 7.7,
+      generos: "Romance, Drama",
+      sinopsis:
+        "Nora pierde el contacto con su amor de infancia al emigrar a Canadá; veinte años después, un reencuentro online lo cambia todo.",
+      backdrop: "/7HR38hMBl23lf38MAN63y4pKsHz.jpg",
     },
   ];
 
@@ -133,9 +135,6 @@
     ].filter(Boolean);
     const indicadores = document.getElementById("heroIndicadores");
     const barra = document.getElementById("heroProgresoBarra");
-    const anterior = document.getElementById("heroAnterior");
-    const siguiente = document.getElementById("heroSiguiente");
-    const pausa = document.getElementById("heroPausa");
 
     if (!titulo || !capas.length) return;
 
@@ -153,7 +152,7 @@
     let indice = 0;
     let capaActiva = 0;
     let temporizador = null;
-    let pausadoManualmente = false;
+    let transicion = null;
     let sobreHero = false;
     let conFoco = false;
     let paginaVisible = !document.hidden;
@@ -174,7 +173,8 @@
       barra.style.animation = "";
     }
 
-    function pintar(posicion, anunciar) {
+    /** Pinta un destacado ya resuelto, sin fundido previo. */
+    function aplicar(posicion, anunciar) {
       indice = (posicion + DESTACADOS.length) % DESTACADOS.length;
       const item = DESTACADOS[indice];
 
@@ -227,6 +227,20 @@
       reiniciarBarra();
     }
 
+    /** Apaga el contenido, lo cambia y lo enciende: nada salta de golpe. */
+    function pintar(posicion, anunciar) {
+      const destino = (posicion + DESTACADOS.length) % DESTACADOS.length;
+
+      if (transicion !== null) clearTimeout(transicion);
+      seccion.classList.add("hero-cambiando");
+
+      transicion = setTimeout(() => {
+        transicion = null;
+        aplicar(destino, anunciar);
+        seccion.classList.remove("hero-cambiando");
+      }, motion && motion.matches ? 0 : TRANSICION);
+    }
+
     function pausar() {
       if (temporizador !== null) {
         clearInterval(temporizador);
@@ -237,7 +251,6 @@
 
     function puedeReproducir() {
       return (
-        !pausadoManualmente &&
         !sobreHero &&
         !conFoco &&
         paginaVisible &&
@@ -266,27 +279,6 @@
       interaccion();
       pintar(indice + paso, true);
       reiniciar();
-    }
-
-    if (anterior) anterior.addEventListener("click", () => { interaccion(); mover(-1); });
-    if (siguiente) siguiente.addEventListener("click", () => { interaccion(); mover(1); });
-
-    if (pausa) {
-      pausa.addEventListener("click", () => {
-        pausadoManualmente = !pausadoManualmente;
-        interaccion();
-        if (pausadoManualmente) pausar();
-        else reanudar();
-
-        pausa.setAttribute(
-          "aria-label",
-          pausadoManualmente ? "Reanudar carrusel" : "Pausar carrusel"
-        );
-        pausa.setAttribute("aria-pressed", String(pausadoManualmente));
-        pausa.innerHTML = pausadoManualmente
-          ? '<i class="bi bi-play-fill" aria-hidden="true"></i>'
-          : '<i class="bi bi-pause-fill" aria-hidden="true"></i>';
-      });
     }
 
     if (indicadores) {
@@ -340,9 +332,9 @@
       });
     }
 
-    pintar(0, false);
+    aplicar(0, false);
     reanudar();
   }
 
-  CINEMA.heroCine = { DESTACADOS, INTERVALO, init };
+  CINEMA.heroCine = { DESTACADOS, INTERVALO, TRANSICION, init };
 })();

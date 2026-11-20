@@ -35,13 +35,18 @@ La portada añade un **Top 10** con números grandes, accesos rápidos por
 datos que ya cargan los carruseles, así que no hace peticiones extra a la API.
 Los títulos de los pósters miden 15 px en los carruseles y 17 px en el Top 10.
 
-El hero es un **carrusel de diez títulos muy valorados estrenados desde 2000**
-(acción, animación, aventura, ciencia ficción, drama, comedia, misterio…). Cambia
-cada **3 segundos** con fundido de backdrop, puntos navegables, flechas, pausa,
-barra de progreso y flechas del teclado. Se detiene al pasar el ratón, al enfocar
-un control, al cambiar de pestaña o si el sistema pide movimiento reducido. Los
-datos y las imágenes son de TMDB y ya están resueltos, así que el carrusel no
-lanza peticiones adicionales.
+El hero es un **carrusel de diez películas recientes y muy valoradas (2019–2024)**,
+una por categoría: acción, animación, aventura, ciencia ficción, comedia, drama,
+terror, suspense, misterio y romance. Cambia cada **3 segundos** con un fundido
+suave de fondo y contenido (nada aparece de golpe), puntos navegables, barra de
+progreso y flechas del teclado. Se ha eliminado el botón de pausa y las flechas;
+solo quedan los puntos para saber cuántas hay y por dónde va el carrusel. El hero
+mide **650 px de alto en escritorio** y se adapta a 540 px en móvil y 500 px en
+pantallas pequeñas, ocupando siempre todo el ancho. Las imágenes se muestran
+claras con un sombreado ligero (`brightness(1.12)`). Se detiene al pasar el ratón,
+al enfocar un punto, al cambiar de pestaña o si el sistema pide movimiento
+reducido. Los datos y las imágenes son de TMDB y ya están resueltos, así que el
+carrusel no lanza peticiones adicionales.
 
 Las páginas de `pelicula.html`, `serie.html` y `anime.html` comparten una
 cabecera con póster decorativo y un bloque de **5 imprescindibles** que también
@@ -398,7 +403,7 @@ js/filtros.js       Barra de filtros y estado en la URL
 js/ui.js            Tarjetas, escapado de HTML, navegación y foco
 js/buscador.js      Buscador de la cabecera + historial
 js/home.js          Carruseles de la portada
-js/hero.js          Hero rotativo: diez destacados, controles y pausa
+js/hero.js          Hero rotativo: diez estrenos recientes, fundido y puntos
 js/busqueda.js      Búsqueda + paginación + avisos
 js/listado.js       Listados por tipo, filtros y paginación
 js/detalle.js       Ficha: tráiler, temporadas, reparto, plataformas, galería y similares
