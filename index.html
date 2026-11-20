@@ -95,11 +95,12 @@
 
     <section class="hero-cine" id="heroCine" aria-labelledby="heroTitulo">
         <div class="hero-fondo" id="heroFondo" aria-hidden="true"></div>
+        <div class="hero-fondo" id="heroFondoSegundo" aria-hidden="true"></div>
         <div class="hero-capa" aria-hidden="true"></div>
         <div class="container hero-contenido">
             <p class="section-subtitle hero-subtitulo" id="heroSubtitulo">Destacado CINEMA</p>
             <h2 class="h1 hero-titulo" id="heroTitulo">Historias que merecen la pantalla grande</h2>
-            <div class="hero-meta" id="heroMeta" aria-live="polite"></div>
+            <div class="hero-meta" id="heroMeta" aria-live="off"></div>
             <p class="hero-sinopsis" id="heroSinopsis">Descubre estrenos, clásicos y series para cada noche de cine. Explora el catálogo y guarda tus títulos favoritos.</p>
             <div class="hero-acciones">
                 <a class="btn btn-primary hero-accion" id="heroBoton" href="descripcion.html?id=tmdb-movie-603">
@@ -109,7 +110,23 @@
                     <i class="bi bi-tv" aria-hidden="true"></i> Explorar series
                 </a>
             </div>
+            <div class="hero-carrusel">
+                <div class="hero-indicadores" id="heroIndicadores" role="group" aria-label="Elegir película destacada"></div>
+                <div class="hero-controles">
+                    <button type="button" class="hero-control" id="heroAnterior" aria-label="Película anterior">
+                        <i class="bi bi-chevron-left" aria-hidden="true"></i>
+                    </button>
+                    <button type="button" class="hero-control" id="heroPausa" aria-label="Pausar carrusel" aria-pressed="false">
+                        <i class="bi bi-pause-fill" aria-hidden="true"></i>
+                    </button>
+                    <button type="button" class="hero-control" id="heroSiguiente" aria-label="Película siguiente">
+                        <i class="bi bi-chevron-right" aria-hidden="true"></i>
+                    </button>
+                </div>
+            </div>
+            <span class="sr-only" id="heroAnuncio" aria-live="polite"></span>
         </div>
+        <div class="hero-progreso" aria-hidden="true"><span id="heroProgresoBarra"></span></div>
     </section>
 
     <section class="seccion-top10" aria-labelledby="tituloTop10">
@@ -276,6 +293,7 @@
     <script src="js/ui.js"></script>
     <script src="js/favoritos.js"></script>
     <script src="js/buscador.js"></script>
+    <script src="js/hero.js"></script>
     <script src="js/home.js"></script>
     <script src="js/tema.js"></script>
 </body>

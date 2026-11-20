@@ -77,51 +77,7 @@
     contenedor.setAttribute("aria-busy", "false");
   }
 
-  /** Hero destacado: reutiliza la ficha de un título conocido de TMDB. */
-  async function cargarHero() {
-    const titulo = document.getElementById("heroTitulo");
-    if (!titulo) return;
-
-    try {
-      const datos = await api.detalle("tmdb-movie-603");
-      const fondo = document.getElementById("heroFondo");
-      const meta = document.getElementById("heroMeta");
-      const sinopsis = document.getElementById("heroSinopsis");
-      const boton = document.getElementById("heroBoton");
-      const escapeHtml = ui.escapeHtml;
-
-      titulo.textContent = datos.titulo;
-      document.getElementById("heroSubtitulo").textContent =
-        "Destacado CINEMA · " + (datos.generos || "Película");
-
-      if (meta) {
-        const partes = [datos.anio];
-        if (datos.duracion) partes.push(datos.duracion + " min");
-        if (datos.clasificacion) partes.push(datos.clasificacion);
-        if (datos.rating) partes.push("★ " + Number(datos.rating).toFixed(1));
-        meta.innerHTML = partes
-          .map((parte) => '<span class="hero-meta-item">' + escapeHtml(parte) + "</span>")
-          .join("");
-      }
-
-      if (sinopsis) {
-        sinopsis.textContent = datos.sinopsis
-          ? datos.sinopsis.slice(0, 220) + (datos.sinopsis.length > 220 ? "…" : "")
-          : "Una historia imprescindible del catálogo.";
-      }
-
-      if (boton) {
-        boton.href = "descripcion.html?id=" + encodeURIComponent(datos.id);
-      }
-
-      if (fondo && datos.galeria && datos.galeria.length) {
-        const url = String(datos.galeria[0].url || "").replace(/["']/g, "");
-        if (url) fondo.style.backgroundImage = 'url("' + url + '")';
-      }
-    } catch (error) {
-      console.error("Error al cargar el destacado:", error);
-    }
-  }
-
-  cargarHero();
+  /* El destacado es un carrusel autocontenido: hero.js pinta los diez
+     títulos y gestiona el paso automático y los controles. */
+  if (window.CINEMA.heroCine) window.CINEMA.heroCine.init();
 })();
