@@ -455,8 +455,8 @@ function iniciar(puerto) {
 
     if (!TMDB_KEY) {
       console.log(
-        "Nota: no hay clave de TMDB. El sitio seguirá funcionando con OMDb,"
-        + " pero sin catálogo amplio ni tráilers. Crea config.local.js (mira config.example.js)."
+        "Nota: no hay clave de TMDB. Añade TMDB_API_KEY en config.local.js "
+        + "para activar el catálogo amplio y los tráilers (mira config.example.js)."
       );
     } else {
       console.log("Clave de TMDB detectada. Catálogo amplio y tráilers activados.");
@@ -464,8 +464,8 @@ function iniciar(puerto) {
 
     if (!OMDB_KEY) {
       console.log(
-        "Nota: OMDb no tiene clave en el servidor: el navegador usará su clave de respaldo."
-        + " Añade OMDB_API_KEY a config.local.js para ocultarla."
+        "Nota: OMDb no tiene clave en el servidor, así que el respaldo OMDb "
+        + "queda desactivado. Añade OMDB_API_KEY a config.local.js para activarlo."
       );
     }
   });

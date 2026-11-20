@@ -23,9 +23,10 @@ igual sin conexión a internet.
 
 ## Activar TMDB (catálogo amplio y tráilers)
 
-Sin clave, el sitio funciona con OMDb (10 resultados por página y sin
-tráilers). Con clave de TMDB pasa a mostrar **60 títulos por página**, listados
-reales por popularidad, fichas en español y tráiler embebido.
+Sin clave de TMDB, el sitio solo usa OMDb si además configuraste
+`OMDB_API_KEY` (10 resultados por página y sin tráilers). Sin ninguna clave
+no hay catálogo. Con clave de TMDB pasa a mostrar **60 títulos por página**,
+listados reales por popularidad, fichas en español y tráiler embebido.
 
 1. Crea una cuenta gratis en <https://www.themoviedb.org/signup>.
 2. Ve a **Ajustes → API** y solicita una clave de uso personal.

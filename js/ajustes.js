@@ -505,7 +505,11 @@
       nota.textContent =
         datos.tmdb && datos.omdb
           ? "TMDB y OMDb están configurados en el servidor."
-          : "Las fuentes sin clave siguen funcionando con el respaldo del navegador cuando es posible.";
+          : datos.tmdb
+            ? "OMDb no está configurado: el respaldo OMDb queda desactivado."
+            : datos.omdb
+              ? "TMDB no está configurado: el catálogo usa OMDb."
+              : "No hay claves configuradas. Añádelas en config.local.js para ver el catálogo.";
     }
   }
 
