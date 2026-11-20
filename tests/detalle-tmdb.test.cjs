@@ -302,3 +302,24 @@ test("rechaza temporadas de títulos que no son series o con número inválido",
   assert.equal(await api.temporada("tmdb-tv-1399", "uno"), null);
   assert.equal(await api.temporada("", 1), null);
 });
+
+test("la galería solo incluye backdrops, nunca pósters ni duplicados", async () => {
+  const { api } = crearApi({
+    "/api/tmdb/movie/603": pelicula({
+      images: {
+        backdrops: [
+          { file_path: "/bd1.jpg" },
+          { file_path: "/bd2.jpg" },
+          { file_path: "/bd1.jpg" },
+        ],
+        posters: [{ file_path: "/poster1.jpg" }],
+      },
+    }),
+  });
+
+  const datos = await api.detalle("tmdb-movie-603");
+
+  assert.equal(datos.galeria.length, 2);
+  assert.ok(datos.galeria.every((img) => img.url.includes("bd") && !img.url.includes("poster")));
+  assert.equal(new Set(datos.galeria.map((img) => img.url)).size, datos.galeria.length);
+});

@@ -24,9 +24,23 @@
       "</p>";
   }
 
+  /** Un dato en dos líneas cortas: etiqueta y valor, sin <br> entre ambos. */
+  function dato(etiqueta, valorHtml) {
+    return (
+      '<li class="detalle-dato">' +
+      '<span class="detalle-dato-etiqueta">' +
+      escapeHtml(etiqueta) +
+      "</span>" +
+      '<span class="detalle-dato-valor">' +
+      valorHtml +
+      "</span>" +
+      "</li>"
+    );
+  }
+
   function fila(etiqueta, valor) {
     if (!valor || valor === "N/A" || valor === "—") return "";
-    return '<li class="mb-2"><strong>' + escapeHtml(etiqueta) + ":</strong> <br> " + escapeHtml(valor) + "</li>";
+    return dato(etiqueta, escapeHtml(valor));
   }
 
   /** Fila con enlaces a la ficha de cada persona. */
@@ -44,7 +58,7 @@
       )
       .join(", ");
 
-    return '<li class="mb-2"><strong>' + escapeHtml(etiqueta) + ":</strong> <br> " + enlaces + "</li>";
+    return dato(etiqueta, enlaces);
   }
 
   function urlPersona(id) {
@@ -607,7 +621,12 @@
       '<div class="lightbox oculto" id="lightbox" role="dialog" aria-modal="true" aria-label="Imagen ampliada">' +
       '<button type="button" class="lightbox-cerrar" id="lightboxCerrar" aria-label="Cerrar">' +
       '<i class="bi bi-x-lg" aria-hidden="true"></i></button>' +
+      '<button type="button" class="lightbox-nav lightbox-anterior" id="lightboxAnterior" aria-label="Imagen anterior">' +
+      '<i class="bi bi-chevron-left" aria-hidden="true"></i></button>' +
       '<img id="lightboxImagen" alt="">' +
+      '<button type="button" class="lightbox-nav lightbox-siguiente" id="lightboxSiguiente" aria-label="Imagen siguiente">' +
+      '<i class="bi bi-chevron-right" aria-hidden="true"></i></button>' +
+      '<span class="lightbox-contador" id="lightboxContador" role="status"></span>' +
       "</div>"
     );
   }
@@ -617,12 +636,34 @@
     const imagen = document.getElementById("lightboxImagen");
     if (!lightbox || !imagen) return;
 
-    const cerrar = document.getElementById("lightboxCerrar");
-    const anterior = document.querySelector(".galeria-boton");
+    const botones = Array.from(document.querySelectorAll(".galeria-boton"));
+    if (!botones.length) return;
 
-    const mostrar = (url, alt) => {
-      imagen.src = url;
-      imagen.alt = alt;
+    const items = botones.map((boton) => {
+      const miniatura = boton.querySelector("img");
+      return {
+        url: boton.dataset.grande,
+        alt: miniatura ? miniatura.alt : "",
+      };
+    });
+
+    const cerrar = document.getElementById("lightboxCerrar");
+    const anteriorBoton = document.getElementById("lightboxAnterior");
+    const siguienteBoton = document.getElementById("lightboxSiguiente");
+    const contador = document.getElementById("lightboxContador");
+    let indice = 0;
+    let botonActivo = null;
+
+    const pintar = () => {
+      imagen.src = items[indice].url;
+      imagen.alt = items[indice].alt;
+      if (contador) contador.textContent = indice + 1 + " / " + items.length;
+    };
+
+    const abrir = (posicion, boton) => {
+      indice = posicion;
+      botonActivo = boton;
+      pintar();
       lightbox.classList.remove("oculto");
       document.body.classList.add("sin-scroll");
       if (cerrar) cerrar.focus();
@@ -632,22 +673,37 @@
       lightbox.classList.add("oculto");
       imagen.removeAttribute("src");
       document.body.classList.remove("sin-scroll");
-      if (anterior) anterior.focus();
+      if (botonActivo) botonActivo.focus();
     };
 
-    document.querySelectorAll(".galeria-boton").forEach((boton) => {
-      boton.addEventListener("click", () => {
-        const miniatura = boton.querySelector("img");
-        mostrar(boton.dataset.grande, miniatura ? miniatura.alt : "");
-      });
+    /** Avanza o retrocede en ciclo, para que las flechas nunca se queden quietas. */
+    const mover = (paso) => {
+      indice = (indice + paso + items.length) % items.length;
+      pintar();
+    };
+
+    botones.forEach((boton, i) => {
+      boton.addEventListener("click", () => abrir(i, boton));
     });
+
+    if (anteriorBoton) anteriorBoton.addEventListener("click", () => mover(-1));
+    if (siguienteBoton) siguienteBoton.addEventListener("click", () => mover(1));
 
     lightbox.addEventListener("click", (evento) => {
       if (evento.target === lightbox || evento.target.closest("#lightboxCerrar")) ocultar();
     });
 
     document.addEventListener("keydown", (evento) => {
-      if (evento.key === "Escape" && !lightbox.classList.contains("oculto")) ocultar();
+      if (lightbox.classList.contains("oculto")) return;
+
+      if (evento.key === "Escape") ocultar();
+      else if (evento.key === "ArrowLeft") {
+        evento.preventDefault();
+        mover(-1);
+      } else if (evento.key === "ArrowRight") {
+        evento.preventDefault();
+        mover(1);
+      }
     });
   }
 
@@ -687,10 +743,56 @@
     );
   }
 
+  /** Backdrop de la galería o, si no hay, el póster como imagen de cabecera. */
+  function fondoHero(datos) {
+    const imagen =
+      datos.galeria && datos.galeria[0]
+        ? datos.galeria[0].grande || datos.galeria[0].url
+        : null;
+    const url = imagen || datos.poster;
+    return url ? ' style="background-image: url(\'' + escapeHtml(url) + '\')"' : "";
+  }
+
+  /** Chips rápidos junto al título: nota, duración y hasta tres géneros. */
+  function chipsHero(datos) {
+    const chips = [];
+
+    if (datos.rating && datos.rating !== "N/A") {
+      chips.push(
+        '<li class="detalle-hero-chip detalle-hero-chip-nota">' +
+          '<i class="bi bi-star-fill" aria-hidden="true"></i> ' +
+          escapeHtml(datos.rating) +
+          " / 10</li>"
+      );
+    }
+    if (datos.duracion && datos.duracion !== "N/A") {
+      chips.push(
+        '<li class="detalle-hero-chip"><i class="bi bi-clock" aria-hidden="true"></i> ' +
+          escapeHtml(datos.duracion) +
+          "</li>"
+      );
+    }
+
+    const generos = (datos.generos || "")
+      .split(",")
+      .map((genero) => genero.trim())
+      .filter(Boolean)
+      .slice(0, 3);
+
+    for (const genero of generos) {
+      chips.push(
+        '<li class="detalle-hero-chip"><i class="bi bi-tags" aria-hidden="true"></i> ' +
+          escapeHtml(genero) +
+          "</li>"
+      );
+    }
+
+    return chips.length ? '<ul class="detalle-hero-chips">' + chips.join("") + "</ul>" : "";
+  }
+
   function plantilla(datos) {
     const sinopsis =
       datos.sinopsis && datos.sinopsis !== "N/A" ? datos.sinopsis : "Sin sinopsis disponible.";
-    const rating = datos.rating ? "★ " + escapeHtml(datos.rating) + " / 10" : "Sin calificación";
     const botonTrailer = datos.trailerOficial || datos.busquedaTrailer;
     const etiquetaDirector = datos.tipoRaw === "tv" ? "Creador" : "Director";
     const publico = dominioPublico.buscar(datos.id, datos.titulo, datos.anio);
@@ -706,15 +808,12 @@
         escapeHtml(botonTrailer) +
         '" target="_blank" rel="noopener noreferrer">Ver trailer</a>';
 
-    const columnaIzquierda = [
+    const datosFicha = [
       fila("Título original", datos.titulo),
       filaPersonas(etiquetaDirector, datos.directores, datos.director),
       fila("Duración", datos.duracion),
       fila("Géneros", datos.generos),
       fila("Idiomas", datos.idiomas),
-    ].join("");
-
-    const columnaDerecha = [
       fila("Rating", datos.rating ? datos.rating + " / 10" : null),
       fila("Votos", datos.votos),
       fila("Fecha de estreno", datos.estreno),
@@ -725,57 +824,56 @@
 
     return (
       '<div class="detalle-pagina">' +
-      '<div class="d-flex gap-4 contenedor">' +
-      '<article class="articleDetalle">' +
-      '<div class="text-white espacio">' +
-      '<div class="text-start border-0 ps-3">' +
+      '<header class="detalle-hero">' +
+      '<div class="detalle-hero-fondo"' +
+      fondoHero(datos) +
+      "></div>" +
+      '<div class="container detalle-hero-contenido">' +
       '<p class="section-subtitle">Ficha CINEMA</p>' +
-      '<h1 class="fw-bold">' +
+      '<h1 class="detalle-hero-titulo">' +
       escapeHtml(datos.titulo) +
-      " (" +
+      " <span>(" +
       escapeHtml(datos.anio) +
-      ")</h1>" +
+      ")</span></h1>" +
       '<p class="detalle-tipo-texto">' +
       etiquetaTipo(datos.tipo) +
       "</p>" +
+      chipsHero(datos) +
       "</div>" +
-      '<div class="container-fluid mt-4">' +
+      "</header>" +
+      '<div class="contenedor detalle-cuerpo">' +
+      '<article class="articleDetalle">' +
+      '<div class="text-white espacio">' +
       '<div class="row g-3">' +
-      '<div class="col-md-4 text-center text-lg-start">' +
+      '<div class="col-md-4">' +
+      '<div class="poster-detalle-marco">' +
       '<img src="' +
       escapeHtml(datos.poster || POSTER_PLACEHOLDER) +
       '" alt="Póster de ' +
       escapeHtml(datos.titulo) +
-      '" class="img-fluid rounded mb-3 poster-detalle" ' +
+      '" class="img-fluid poster-detalle" ' +
       'fetchpriority="high" decoding="async" ' +
       "onerror=\"this.onerror=null;this.src='" +
       POSTER_PLACEHOLDER +
       "'\">" +
+      '<span class="play-decorativo" aria-hidden="true"><i class="bi bi-play-fill"></i></span>' +
+      "</div>" +
       "</div>" +
       '<div class="col-md-8">' +
-      '<div class="row text-start">' +
-      '<ul class="list-unstyled col-6">' +
-      columnaIzquierda +
+      '<ul class="detalle-datos list-unstyled">' +
+      datosFicha +
       "</ul>" +
-      '<ul class="list-unstyled col-6">' +
-      columnaDerecha +
-      "</ul>" +
-      "</div>" +
-      '<div class="clasificacion mb-2">' +
-      rating +
-      "</div>" +
       '<div class="text-start fw-medium detalle-plot">' +
       escapeHtml(sinopsis) +
       "</div>" +
+      '<div class="detalle-accion">' +
+      guardar +
+      accionPrincipal +
       "</div>" +
       "</div>" +
       "</div>" +
       "</div>" +
       "</article>" +
-      '<div class="detalle-accion">' +
-      guardar +
-      accionPrincipal +
-      "</div>" +
       "</div>" +
       bloqueTrailer(datos) +
       bloqueTrailerModal(datos) +

@@ -275,6 +275,14 @@ series de TMDB), **reparto** (con foto y personaje), **plataformas de
 streaming** (JustWatch vía TMDB, con enlace a todas las opciones), **galería**
 de imágenes con lightbox y **títulos similares** (clicables).
 
+Visualmente, la ficha se abre con una cabecera que usa el primer backdrop de la
+galería (o el póster si no hay) y chips de nota, duración y géneros junto al
+título. El póster se muestra en 2:3 con un **botón de play decorativo** (no
+interactivo) y las acciones van justo bajo la sinopsis. La galería solo usa
+**backdrops** de TMDB (nunca pósters); el hover es suave, sin bordes azules ni
+cambios de tamaño, y el lightbox se recorre con flechas en pantalla o con las
+flechas del teclado.
+
 - El botón **«Añadir a Mi lista»** vive en la ficha, junto a «Ver ahora»; los
   listados no muestran corazones.
 - El tráiler se elige por prioridad: **oficial en español latino**, después

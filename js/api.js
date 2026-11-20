@@ -471,10 +471,19 @@
     };
   }
 
+  /** Solo fondos panorámicos: la galería nunca mezcla pósters ni otros recursos. */
   function galeriaTmdb(json) {
-    const imagenes = (json.images && json.images.backdrops) || [];
-    const lista = imagenes.length ? imagenes : ((json.images && json.images.posters) || []);
-    return lista.slice(0, 12).map((img) => ({
+    const backdrops = (json.images && json.images.backdrops) || [];
+    const vistos = new Set();
+    const unicos = [];
+
+    for (const img of backdrops) {
+      if (!img || !img.file_path || vistos.has(img.file_path)) continue;
+      vistos.add(img.file_path);
+      unicos.push(img);
+    }
+
+    return unicos.slice(0, 16).map((img) => ({
       url: BACKDROP_BASE + img.file_path,
       grande: BACKDROP_ORIGINAL + img.file_path,
     }));
