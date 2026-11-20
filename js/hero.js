@@ -12,7 +12,7 @@
 
   const IMAGEN_BASE = "https://image.tmdb.org/t/p/w1280";
   const INTERVALO = 3000;
-  const TRANSICION = 350;
+  const TRANSICION = 450;
   const MAX_SINOPSIS = 210;
 
   /** Diez estrenos recientes y bien valorados, uno por categoría. */
@@ -152,7 +152,6 @@
     let indice = 0;
     let capaActiva = 0;
     let temporizador = null;
-    let transicion = null;
     let sobreHero = false;
     let conFoco = false;
     let paginaVisible = !document.hidden;
@@ -171,6 +170,14 @@
       barra.style.animation = "none";
       void barra.offsetWidth;
       barra.style.animation = "";
+    }
+
+    /** Deja la imagen siguiente ya cargada en la capa inactiva. */
+    function prepararFondo(posicion) {
+      if (capas.length < 2) return;
+      const item = DESTACADOS[(posicion + DESTACADOS.length) % DESTACADOS.length];
+      capas[1 - capaActiva].style.backgroundImage =
+        'url("' + (IMAGEN_BASE + item.backdrop).replace(/["']/g, "") + '")';
     }
 
     /** Pinta un destacado ya resuelto, sin fundido previo. */
@@ -202,6 +209,7 @@
         const siguienteCapa = 1 - capaActiva;
         const destino = capas[siguienteCapa];
         const origen = capas[capaActiva];
+        // Asignar siempre la imagen evita un fondo vacío en el primer pintado.
         destino.style.backgroundImage =
           'url("' + (IMAGEN_BASE + item.backdrop).replace(/["']/g, "") + '")';
         destino.classList.add("activo");
@@ -227,18 +235,25 @@
       reiniciarBarra();
     }
 
-    /** Apaga el contenido, lo cambia y lo enciende: nada salta de golpe. */
+    /**
+     * Un único relevo sincronizado: en el mismo instante se cambian título,
+     * chips, sinopsis, enlace, puntos y fondo. Las dos capas de fondo se
+     * cruzan con la misma duración que la animación de entrada del texto, así
+     * que nada aparece antes que lo demás ni queda un hueco entre películas.
+     */
     function pintar(posicion, anunciar) {
       const destino = (posicion + DESTACADOS.length) % DESTACADOS.length;
 
-      if (transicion !== null) clearTimeout(transicion);
-      seccion.classList.add("hero-cambiando");
-
-      transicion = setTimeout(() => {
-        transicion = null;
+      if (motion && motion.matches) {
         aplicar(destino, anunciar);
-        seccion.classList.remove("hero-cambiando");
-      }, motion && motion.matches ? 0 : TRANSICION);
+        return;
+      }
+
+      prepararFondo(destino);
+      seccion.classList.remove("hero-cambiando");
+      void seccion.offsetWidth; // Reinicia la animación aunque se encadenen cambios.
+      aplicar(destino, anunciar); // El fundido de fondo y el del texto arrancan juntos.
+      seccion.classList.add("hero-cambiando");
     }
 
     function pausar() {

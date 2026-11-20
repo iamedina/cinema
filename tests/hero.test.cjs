@@ -35,10 +35,12 @@ test("el destacado reúne diez estrenos recientes, bien valorados y de categorí
 
 test("el carrusel avanza cada tres segundos con fundido y sin pedir datos", () => {
   assert.equal(INTERVALO, 3000);
-  assert.equal(TRANSICION, 350);
+  assert.equal(TRANSICION, 450);
   assert.match(hero, /setInterval\([\s\S]*?INTERVALO/);
+  assert.match(hero, /classList\.remove\("hero-cambiando"\)/);
+  assert.match(hero, /aplicar\(destino, anunciar\)/);
   assert.match(hero, /classList\.add\("hero-cambiando"\)/);
-  assert.match(hero, /setTimeout\([\s\S]*?TRANSICION/);
+  assert.doesNotMatch(hero, /setTimeout/);
   assert.doesNotMatch(hero, /\bfetch\s*\(|XMLHttpRequest|\bapi\./);
   assert.match(hero, /image\.tmdb\.org\/t\/p\/w1280/);
 });
@@ -88,13 +90,23 @@ test("el hero mide 650 px en escritorio y se adapta en pantallas pequeñas", () 
   assert.match(pequeno, /height:\s*500px/);
 });
 
-test("el fondo se ve claro con sombreado y el cambio no salta", () => {
-  const capa = css.slice(css.indexOf(".hero-fondo {"), css.indexOf(".hero-contenido {"));
+test("el fondo se ve claro y fondo y texto cambian en un solo relevo", () => {
+  const capa = css.slice(css.indexOf(".hero-fondo {"), css.indexOf(".hero-capa {"));
   assert.match(capa, /brightness\(1\.12\)/);
   assert.match(capa, /opacity:\s*0\.9/);
-  assert.match(capa, /transition:\s*opacity\s*0\.8s\s*ease/);
-  assert.match(css, /\.hero-cine\.hero-cambiando \.hero-contenido-dinamico/);
-  assert.match(css, /transition:\s*opacity\s*0\.35s\s*ease,\s*transform\s*0\.35s\s*ease/);
+  assert.match(capa, /transition:\s*opacity\s*0\.45s\s*ease/);
+  assert.doesNotMatch(css, /\.hero-fondo\.siguiente/);
+
+  const texto = css.slice(css.indexOf(".hero-contenido-dinamico {"), css.indexOf(".hero-subtitulo {"));
+  assert.match(texto, /\.hero-cine\.hero-cambiando \.hero-contenido-dinamico/);
+  assert.match(texto, /animation:\s*hero-texto-entrar\s*0\.45s\s*ease\s*both/);
+  assert.match(css, /@keyframes hero-texto-entrar/);
+  assert.match(texto, /from\s*\{\s*opacity:\s*0/);
+  assert.match(texto, /to\s*\{\s*opacity:\s*1/);
+
+  // Ambas duraciones coinciden: 0.45s en el fondo y 0.45s en el texto.
+  assert.equal((capa.match(/0\.45s/g) || []).length, (texto.match(/0\.45s/g) || []).length);
+  assert.match(hero, /prepararFondo\(destino\)/);
   assert.match(css, /\.hero-punto\.activo/);
   assert.match(css, /animation:\s*hero-barra\s*3s\s*linear\s*forwards/);
 });

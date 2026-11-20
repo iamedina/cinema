@@ -3549,9 +3549,12 @@ html.reducir-animaciones .esqueleto {
   background-size: cover;
   filter: brightness(1.12) saturate(1.05);
   opacity: 0;
-  transition: opacity 0.8s ease;
+  transition: opacity 0.45s ease;
+  will-change: opacity;
 }
 
+/* Las dos capas se cruzan al mismo tiempo: la saliente baja mientras la
+   entrante sube, así que siempre hay imagen visible (nunca un hueco negro). */
 .hero-fondo.activo {
   opacity: 0.9;
 }
@@ -3573,12 +3576,18 @@ html.reducir-animaciones .esqueleto {
 }
 
 .hero-contenido-dinamico {
-  transition: opacity 0.35s ease, transform 0.35s ease;
+  will-change: opacity, transform;
 }
 
+/* Arranca en el mismo instante en que se cruzan los fondos y dura lo mismo,
+   de modo que texto e imagen cambian como una sola pieza. */
 .hero-cine.hero-cambiando .hero-contenido-dinamico {
-  opacity: 0;
-  transform: translateY(10px);
+  animation: hero-texto-entrar 0.45s ease both;
+}
+
+@keyframes hero-texto-entrar {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .hero-subtitulo {
@@ -3758,9 +3767,12 @@ html.reducir-animaciones .esqueleto {
 
 @media (prefers-reduced-motion: reduce) {
   .hero-fondo,
-  .hero-contenido-dinamico,
   .hero-punto {
     transition: none;
+  }
+
+  .hero-cine.hero-cambiando .hero-contenido-dinamico {
+    animation: none;
   }
 
   .hero-progreso { display: none; }

@@ -37,8 +37,12 @@ Los títulos de los pósters miden 15 px en los carruseles y 17 px en el Top 10.
 
 El hero es un **carrusel de diez películas recientes y muy valoradas (2019–2024)**,
 una por categoría: acción, animación, aventura, ciencia ficción, comedia, drama,
-terror, suspense, misterio y romance. Cambia cada **3 segundos** con un fundido
-suave de fondo y contenido (nada aparece de golpe), puntos navegables, barra de
+terror, suspense, misterio y romance. Cambia cada **3 segundos** en un **único
+relevo sincronizado**: título, subtítulo, chips, sinopsis, enlace, puntos y
+backdrop se intercambian al mismo instante, con un fundido cruzado de **0,45 s**
+en las dos capas de fondo (la que sale baja mientras la que entra sube, sin
+huecos negros ni saltos) y la misma duración en la animación de entrada del
+texto. Puntos navegables, barra de
 progreso y flechas del teclado. Se ha eliminado el botón de pausa y las flechas;
 solo quedan los puntos para saber cuántas hay y por dónde va el carrusel. El hero
 mide **650 px de alto en escritorio** y se adapta a 540 px en móvil y 500 px en
