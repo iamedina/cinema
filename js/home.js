@@ -12,6 +12,10 @@
     { contenedor: "resultadoRecientesAnime", tipo: "anime" },
   ];
 
+  /* Los carruseles ya piden datos: el Top 10 se construye con ellos,
+     sin lanzar peticiones adicionales a la API. */
+  const datosPorTipo = {};
+
   buscador.init();
 
   async function cargarRail({ contenedor, tipo }) {
@@ -34,6 +38,7 @@
       }
 
       ui.pintarTarjetas(elemento, items);
+      datosPorTipo[tipo] = items;
     } catch (error) {
       console.error("Error al cargar el carrusel:", tipo, error);
       ui.pintarEstado(
@@ -45,7 +50,43 @@
     }
   }
 
-  Promise.allSettled(RAILS.map(cargarRail));
+  Promise.allSettled(RAILS.map(cargarRail)).then(pintarTop10);
+
+  function nota(item) {
+    const valor = Number(item && item.rating);
+    return Number.isFinite(valor) ? valor : 0;
+  }
+
+  /** Reordena lo que ya cargaron los carruseles y pinta el bloque destacado. */
+  function pintarTop10() {
+    const contenedor = document.getElementById("top10");
+    if (!contenedor) return;
+
+    contenedor.setAttribute("aria-busy", "true");
+    ui.activarNavegacion(contenedor);
+    ui.pintarCargando(contenedor, 10);
+
+    const candidatos = [
+      ...(datosPorTipo.movie || []),
+      ...(datosPorTipo.series || []),
+      ...(datosPorTipo.anime || []),
+    ];
+
+    if (!candidatos.length) {
+      ui.pintarEstado(contenedor, "No se pudo cargar el Top 10 ahora mismo.");
+      contenedor.setAttribute("aria-busy", "false");
+      return;
+    }
+
+    const top = candidatos
+      .map((item, indice) => ({ item, indice }))
+      .sort((a, b) => nota(b.item) - nota(a.item) || a.indice - b.indice)
+      .slice(0, 10)
+      .map((entrada) => entrada.item);
+
+    ui.pintarTop10(contenedor, top);
+    contenedor.setAttribute("aria-busy", "false");
+  }
 
   /** Hero destacado: reutiliza la ficha de un título conocido de TMDB. */
   async function cargarHero() {

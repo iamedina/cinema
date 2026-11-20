@@ -91,6 +91,30 @@
     contenedor.appendChild(fragmento);
   }
 
+  /** Top 10 destacado: reutiliza la tarjeta y añade el puesto decorativo. */
+  function pintarTop10(contenedor, items) {
+    if (!contenedor) return;
+
+    contenedor.innerHTML = "";
+    const fragmento = document.createDocumentFragment();
+
+    (items || []).slice(0, 10).forEach((item, indice) => {
+      const tarjeta = crearTarjeta(item);
+      tarjeta.classList.add("top10-card");
+
+      const numero = document.createElement("span");
+      numero.className = "top10-numero";
+      numero.setAttribute("aria-hidden", "true");
+      numero.textContent = String(indice + 1);
+
+      const banner = tarjeta.querySelector(".card-banner");
+      if (banner) banner.prepend(numero);
+      fragmento.appendChild(tarjeta);
+    });
+
+    contenedor.appendChild(fragmento);
+  }
+
   function pintarCargando(contenedor, cantidad = 8) {
     if (!contenedor) return;
     contenedor.innerHTML = "";
@@ -221,6 +245,7 @@
     reduceMovimiento,
     crearTarjeta,
     pintarTarjetas,
+    pintarTop10,
     pintarCargando,
     pintarPaginacion,
     pintarEstado,

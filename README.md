@@ -30,6 +30,11 @@ botones y pie de página. CINEMA mantiene su identidad propia: acento azul
 `#0d6efd`, tipografía Poppins, logo e imágenes de TMDB, y el hover original
 de las tarjetas (`translateY(-4px)`, `scale(1.03)`, opacidad `0.75`, `0.3s`).
 
+La portada añade un **Top 10** con números grandes, accesos rápidos por
+**género** y una franja **«¿Por qué CINEMA?»**. El Top 10 se construye con los
+datos que ya cargan los carruseles, así que no hace peticiones extra a la API.
+Los títulos de los pósters miden 15 px en los carruseles y 17 px en el Top 10.
+
 ## Activar TMDB (catálogo amplio y tráilers)
 
 Sin clave de TMDB, el sitio solo usa OMDb si además configuraste
