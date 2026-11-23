@@ -372,6 +372,24 @@ etiquetas `og:` para compartirse bien en redes y buscadores.
   la página actual con `aria-current="page"`.
 - Contraste corregido en textos secundarios y paginación.
 - Se respeta «reducir movimiento»: sin parpadeos ni scrolls suaves.
+- `--color-enlace` usa `#6ea8fe` para texto e iconos azules sobre fondos
+  oscuros (7,76:1 en lugar de 4,17:1). El azul `#0d6efd` se reserva para
+  rellenos de botón y bordes.
+
+Cada página lleva además `canonical` y `og:url` absolutos, y `og:image`
+también absoluta. La raíz publica `robots.txt` y `sitemap.xml` con las 12
+páginas. Si publicas el sitio en otro dominio, sustituye
+`http://127.0.0.1:8080` por tu URL base en esos archivos y en el HTML.
+
+El servidor añade una **Content-Security-Policy** que permite solo scripts
+propios, los orígenes concretos de imágenes, fuentes, vídeo y tráilers, y
+prohíbe manejadores inline y objetos incrustados. Las peticiones a TMDB y
+OMDb tienen un límite de 8 segundos y un reintento ante 429/5xx
+(`backend/servicios/red.js`).
+
+Los cortes responsive se unificaron en `480 / 560 / 576 / 600 / 768 / 900 /
+1199` px; antes había valores casi iguales (`767`, `559`, `575.98`) que
+cambiaban la maquetación según la página.
 
 ## Rendimiento
 
@@ -430,12 +448,16 @@ backend/                        Capa de servidor (nunca se sirve como estático)
 ├── servicios/
 │   ├── cache.js                Caché en memoria de los proxies
 │   ├── tmdb.js                 Proxy de TMDB + fusión de páginas
-│   └── omdb.js                 Proxy de respaldo OMDb
+│   ├── omdb.js                 Proxy de respaldo OMDb
+│   └── red.js                  Timeout de 8 s + un reintento (429/5xx)
 ├── config.example.js           Plantilla de configuración
 └── config.local.js             Credenciales reales (ignorado por Git)
 
 tests/                          Pruebas con node:test (npm test)
 server.js                       Envoltorio de compatibilidad: node server.js
+LICENSE                         Licencia MIT
+frontend/robots.txt             Instrucciones para rastreadores
+frontend/sitemap.xml            Las 12 páginas públicas
 ```
 
 Los parciales de CSS se importan en el mismo orden en que estaban las

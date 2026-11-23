@@ -17,6 +17,8 @@
   --texto-suave: var(--light-gray);
   --primario: #0d6efd;
   --primario-suave: #6ea8fe;
+  /* Texto e iconos sobre fondos oscuros: 7.76:1 frente a 4.17:1 del azul. */
+  --color-enlace: var(--primario-suave);
   --borde: hsl(0 0% 100% / 0.1);
   --borde-fuerte: hsl(0 0% 100% / 0.2);
   --sombra: 0 2px 8px rgb(0 0 0 / 0.35);

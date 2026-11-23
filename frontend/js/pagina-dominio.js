@@ -11,6 +11,13 @@
   const progreso = window.CINEMA.progreso;
   const escapeHtml = ui.escapeHtml;
 
+  /* Las miniaturas rotas se ocultan sin manejadores inline (CSP). */
+  document.addEventListener("error", (evento) => {
+    const imagen = evento.target;
+    if (!imagen || imagen.tagName !== "IMG" || !imagen.hasAttribute("data-miniatura-respaldo")) return;
+    imagen.classList.add("oculto");
+  }, true);
+
   const contenedor = document.getElementById("catalogoPublico");
   const contador = document.getElementById("contadorPublico");
   if (!contenedor) return;
@@ -48,7 +55,7 @@
       '<article class="pd-card" data-pd-id="' + escapeHtml(idFicha(item)) + '">' +
       '<a class="pd-poster" href="' + detalle + '" tabindex="-1" aria-hidden="true">' +
       '<img src="' + miniatura + '" alt="" loading="lazy" decoding="async" ' +
-      'onerror="this.classList.add(\'oculto\')">' +
+      'data-miniatura-respaldo>' +
       '<span class="pd-poster-respaldo"><i class="bi bi-film" aria-hidden="true"></i></span>' +
       '<span class="pd-vista" data-pd-vista' + (visto ? "" : " hidden") + ">Vista</span>" +
       '<span class="pd-progreso" data-pd-progreso aria-hidden="true"' +

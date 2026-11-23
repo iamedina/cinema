@@ -1,5 +1,8 @@
 /* ------------------------------------------------------------
    Responsive
+   Escala única de cortes: 480 / 560 / 576 / 600 / 768 / 900 / 1199.
+   Los valores que casi coincidían (767, 559, 575.98) se unificaron
+   para que una misma anchura no cambie de regla según la página.
    ---------------------------------------------------------- */
 
 @media (max-width: 900px) {
@@ -122,7 +125,7 @@
   }
 }
 
-@media (max-width: 559px) {
+@media (max-width: 560px) {
   #resultado,
   #resultadoRecientes,
   #resultadoRecientesSeries,

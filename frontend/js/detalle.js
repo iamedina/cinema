@@ -13,6 +13,18 @@
 
   buscador.init();
 
+  /* Respaldo del póster sin manejadores inline (la CSP los prohíbe). */
+  document.addEventListener(
+    "error",
+    (evento) => {
+      const imagen = evento.target;
+      if (!imagen || imagen.tagName !== "IMG" || !imagen.hasAttribute("data-poster-respaldo")) return;
+      imagen.removeAttribute("data-poster-respaldo");
+      imagen.src = POSTER_PLACEHOLDER;
+    },
+    true
+  );
+
   const contenedor = document.getElementById("detalles");
   const id = new URLSearchParams(location.search).get("id");
 
@@ -852,10 +864,7 @@
       '" alt="Póster de ' +
       escapeHtml(datos.titulo) +
       '" class="img-fluid poster-detalle" ' +
-      'fetchpriority="high" decoding="async" ' +
-      "onerror=\"this.onerror=null;this.src='" +
-      POSTER_PLACEHOLDER +
-      "'\">" +
+      'fetchpriority="high" decoding="async" data-poster-respaldo>' +
       '<span class="play-decorativo" aria-hidden="true"><i class="bi bi-play-fill"></i></span>' +
       "</div>" +
       "</div>" +

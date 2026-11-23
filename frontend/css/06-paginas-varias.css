@@ -65,7 +65,7 @@
 
 .error-404-codigo {
   margin: 0 0 6px;
-  color: var(--primario);
+  color: var(--color-enlace);
   font-size: clamp(4rem, 14vw, 7rem);
   font-weight: 800;
   line-height: 1;
@@ -495,7 +495,7 @@
   }
 }
 
-@media (max-width: 767px) {
+@media (max-width: 768px) {
   .pd-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -539,7 +539,7 @@
   }
 }
 
-@media (max-width: 559px) {
+@media (max-width: 560px) {
   .pd-grid {
     gap: 12px;
   }

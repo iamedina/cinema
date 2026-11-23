@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>http://127.0.0.1:8080/</loc></url>
+  <url><loc>http://127.0.0.1:8080/404.html</loc></url>
+  <url><loc>http://127.0.0.1:8080/ajustes.html</loc></url>
+  <url><loc>http://127.0.0.1:8080/anime.html</loc></url>
+  <url><loc>http://127.0.0.1:8080/busqueda.html</loc></url>
+  <url><loc>http://127.0.0.1:8080/descripcion.html</loc></url>
+  <url><loc>http://127.0.0.1:8080/dominio-publico.html</loc></url>
+  <url><loc>http://127.0.0.1:8080/favoritos.html</loc></url>
+  <url><loc>http://127.0.0.1:8080/legal.html</loc></url>
+  <url><loc>http://127.0.0.1:8080/pelicula.html</loc></url>
+  <url><loc>http://127.0.0.1:8080/persona.html</loc></url>
+  <url><loc>http://127.0.0.1:8080/serie.html</loc></url>
+</urlset>

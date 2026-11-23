@@ -74,7 +74,7 @@
 }
 
 .hero-titulo strong {
-  color: var(--primario);
+  color: var(--color-enlace);
 }
 
 .hero-meta {
@@ -129,7 +129,7 @@
   font-size: var(--fs-9);
 }
 
-@media (max-width: 767px) {
+@media (max-width: 768px) {
   .hero-cine {
     min-height: 100vh;
     padding: calc(56px + var(--header-alto)) 0 48px;
@@ -318,7 +318,7 @@
   left: 8px;
   bottom: 2px;
   z-index: 2;
-  color: var(--primario);
+  color: var(--color-enlace);
   font-size: 64px;
   font-weight: var(--fw-700);
   line-height: 0.85;
@@ -369,7 +369,7 @@
 }
 
 .chip-genero i {
-  color: var(--primario);
+  color: var(--color-enlace);
   font-size: 14px;
 }
 
@@ -455,7 +455,7 @@
   }
 }
 
-@media (max-width: 767px) {
+@media (max-width: 768px) {
   .seccion-top10 {
     padding: 52px 0;
   }

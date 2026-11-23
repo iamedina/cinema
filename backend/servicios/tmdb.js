@@ -6,6 +6,8 @@
  */
 "use strict";
 
+const { fetchConReintento } = require("./red");
+
 const PREFIJOS_PERMITIDOS = [
   "discover/",
   "search/",
@@ -82,7 +84,7 @@ function crearProxyTmdb({ config, cache, cabecerasTmdb }) {
     if (cacheado) return { status: 200, body: cacheado };
 
     const respuestas = await Promise.all(
-      urls.map((url) => fetch(url, { headers: cabecerasTmdb(config) }))
+      urls.map((url) => fetchConReintento(url, { headers: cabecerasTmdb(config) }))
     );
 
     const fallida = respuestas.find((r) => !r.ok);

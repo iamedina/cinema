@@ -5,6 +5,8 @@
  */
 "use strict";
 
+const { fetchConReintento } = require("./red");
+
 const PARAMS_OMDB = new Set([
   "s",
   "i",
@@ -51,7 +53,7 @@ function crearProxyOmdb({ config, cache }) {
       url.searchParams.set(clave, valor);
     }
 
-    const respuesta = await fetch(url, { headers: { accept: "application/json" } });
+    const respuesta = await fetchConReintento(url, { headers: { accept: "application/json" } });
     if (!respuesta.ok) {
       return {
         status: respuesta.status,

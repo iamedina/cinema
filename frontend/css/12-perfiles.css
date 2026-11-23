@@ -283,7 +283,7 @@
   }
 }
 
-@media (max-width: 575.98px) {
+@media (max-width: 576px) {
   .perfil-fila {
     flex-wrap: wrap;
   }
@@ -297,7 +297,7 @@
   }
 }
 
-@media (max-width: 575.98px) {
+@media (max-width: 576px) {
   .ajuste-fila,
   .ajuste-dato {
     flex-direction: column;

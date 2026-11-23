@@ -86,7 +86,7 @@
 }
 
 .pelicula-card .card-anio {
-  color: var(--primario);
+  color: var(--color-enlace);
   font-size: 12px;
   font-weight: var(--fw-500);
   white-space: nowrap;
@@ -115,7 +115,7 @@
 }
 
 .pelicula-card .rating i {
-  color: var(--primario);
+  color: var(--color-enlace);
   font-size: 12px;
 }
 
