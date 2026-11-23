@@ -12,14 +12,16 @@ npm start
 
 Abre <http://127.0.0.1:8080>.
 
-También sirve `node server.js` directamente. Para desarrollo, `npm run dev`
-reinicia el servidor solo al guardar cambios.
+El servidor real está en `backend/server.js`; en la raíz queda un pequeño
+`server.js` solo para que `node server.js` siga funcionando como antes.
+Para desarrollo, `npm run dev` reinicia el servidor solo al guardar cambios.
 
 No hace falta `npm install`: el servidor solo usa módulos nativos de Node
 (fetch incluido, Node 18 o superior).
 
-Bootstrap y los iconos se sirven desde `vendor/`, así que la interfaz se ve
-igual sin conexión a internet.
+Bootstrap y los iconos se sirven desde `frontend/vendor/`, así que la interfaz
+se ve igual sin conexión a internet. La raíz web del servidor es `frontend/`:
+las URLs públicas (`/`, `/pelicula.html`, `/css/style.css`, …) no cambiaron.
 
 ## Diseño
 
@@ -29,10 +31,10 @@ estructura de portada, tarjetas con póster 2:3 y componentes como badges,
 botones y pie de página. CINEMA mantiene su identidad propia: acento azul
 `#0d6efd`, tipografía Poppins, logo e imágenes de TMDB. El hover de las
 tarjetas eleva la tarjeta (`scale(1.02)`), acerca el póster (`scale(1.03)`) y
-baja su opacidad a `0.75`; **todos los pósters comparten una transición suave
-de `0.6s`** para `transform` y `opacity` (también al salir), y aparecen con un
-fundido de la misma duración al pintarse. El ajuste «Reducir animaciones» y la
-preferencia del sistema siguen desactivando estas transiciones.
+baja su opacidad a `0.60`; la tarjeta usa `transition: 0.4s` y todos los
+pósters comparten `0.6s` para `transform` y `opacity` (también al salir).
+El ajuste «Reducir animaciones» y la preferencia del sistema siguen
+desactivando estas transiciones.
 
 La portada añade un **Top 10** con números grandes, accesos rápidos por
 **género** y una franja **«¿Por qué CINEMA?»**. El Top 10 se construye con los
@@ -72,7 +74,7 @@ listados reales por popularidad, fichas en español y tráiler embebido.
 
 1. Crea una cuenta gratis en <https://www.themoviedb.org/signup>.
 2. Ve a **Ajustes → API** y solicita una clave de uso personal.
-3. Copia `config.example.js` como `config.local.js` y pega tu credencial:
+3. Copia `backend/config.example.js` como `backend/config.local.js` y pega tu credencial:
 
 ```js
 module.exports = {
@@ -95,10 +97,10 @@ Detecta automáticamente cuál es. Puedes comprobarlo en
 También puedes usar la variable de entorno:
 
 ```bash
-TMDB_API_KEY=tu_clave node server.js
+TMDB_API_KEY=tu_clave node backend/server.js
 ```
 
-`config.local.js` está en `.gitignore`: la clave no se sube al repositorio.
+`backend/config.local.js` está en `.gitignore`: la clave no se sube al repositorio.
 
 ## Abrir sin servidor
 
@@ -121,7 +123,7 @@ module.exports = {
 O con variables de entorno:
 
 ```bash
-OMDB_API_KEY=tu_clave node server.js
+OMDB_API_KEY=tu_clave node backend/server.js
 ```
 
 Con `OMDB_API_KEY` configurada, el navegador pide `/api/omdb` y el servidor
@@ -139,11 +141,11 @@ recuerdan que con `npm start` el catálogo usa TMDB y no depende de OMDb.
 
 Este repositorio es público. Ninguna clave vive en el código:
 
-- TMDB y OMDb se configuran en `config.local.js` (ignorado por Git) o con las
-  variables de entorno `TMDB_API_KEY` y `OMDB_API_KEY`.
-- `js/` no contiene claves ni llama a OMDb directamente: todo pasa por
-  `/api/tmdb` y `/api/omdb`, que añaden la credencial en el servidor.
-- Las pruebas fallan si aparece una clave en `js/` o en la plantilla.
+- TMDB y OMDb se configuran en `backend/config.local.js` (ignorado por Git) o
+  con las variables de entorno `TMDB_API_KEY` y `OMDB_API_KEY`.
+- `frontend/js/` no contiene claves ni llama a OMDb directamente: todo pasa
+  por `/api/tmdb` y `/api/omdb`, que añaden la credencial en el servidor.
+- Las pruebas fallan si aparece una clave en `frontend/js/` o en la plantilla.
 
 ## Pruebas automáticas
 
@@ -219,7 +221,7 @@ hay copias piratas ni servidores propios: el vídeo se carga desde la copia que
   botón de origen. Si el vídeo no carga, ofrece abrirlo en Internet Archive.
 - Funciona también con doble clic (`file://`): reconoce la película por su id de
   IMDb cuando la ficha viene de OMDb.
-- El catálogo vive en `js/dominio-publico.js`; cada entrada se verificó contra
+- El catálogo vive en `frontend/js/dominio-publico.js`; cada entrada se verificó contra
   Internet Archive y su licencia de dominio público.
 
 ## Ajustes y preferencias
@@ -378,54 +380,67 @@ etiquetas `og:` para compartirse bien en redes y buscadores.
 - Pósters, reparto, galería, proveedores y el catálogo de dominio público se
   cargan con `loading="lazy"` y `decoding="async"`; el póster principal de la
   ficha usa `fetchpriority="high"`.
-- El servidor sirve `vendor/` e `img/` con caché larga e inmutable; el HTML y
-  los JS siguen revalidando (`no-cache`).
+- El servidor sirve `frontend/vendor/` e `frontend/img/` con caché larga e
+  inmutable; el HTML y los JS siguen revalidando (`no-cache`).
 - Los módulos solo se cargan donde se usan (por ejemplo, la portada ya no
   carga el reproductor ni el progreso).
 
 ## Estructura
 
 ```
-index.html          Portada con tres carruseles
-busqueda.html       Resultados de búsqueda
-pelicula.html       Listado de películas  (body data-tipo="movie")
-serie.html          Listado de series     (body data-tipo="series")
-anime.html          Listado de anime      (body data-tipo="anime")
-descripcion.html    Ficha de un título    (?id=...)
-persona.html        Ficha de una persona  (?id=tmdb-person-...)
-favoritos.html      Mi lista (favoritos guardados en el navegador)
-ajustes.html        Preferencias: apariencia, tráilers, región, datos y estado
-legal.html          Aviso legal, DMCA, privacidad y fuentes
-dominio-publico.html  Catálogo de cine de dominio público con reproductor
-404.html            Página no encontrada (la sirve server.js con estado 404)
+frontend/                       Capa de presentación (raíz web del servidor)
+├── index.html                  Portada con tres carruseles
+├── busqueda.html               Resultados de búsqueda
+├── pelicula.html               Listado de películas  (body data-tipo="movie")
+├── serie.html                  Listado de series     (body data-tipo="series")
+├── anime.html                  Listado de anime      (body data-tipo="anime")
+├── descripcion.html            Ficha de un título    (?id=...)
+├── persona.html                Ficha de una persona  (?id=tmdb-person-...)
+├── favoritos.html              Mi lista (guardada en el navegador)
+├── ajustes.html                Preferencias, tráilers, región, datos y estado
+├── legal.html                  Aviso legal, DMCA, privacidad y fuentes
+├── dominio-publico.html        Catálogo de dominio público con reproductor
+├── 404.html                    Página no encontrada
+├── css/
+│   ├── style.css               Entrada: @charset, Poppins y @imports ordenados
+│   ├── 01-base.css             Tokens y paleta (acento #0d6efd)
+│   ├── 02-componentes.css      Botones, badges y accesibilidad
+│   ├── 03-layout.css           Cabecera, secciones y rejillas
+│   ├── 04-tarjetas.css         Tarjetas, carga y paginación (hover de póster)
+│   ├── 05-ficha.css            Ficha, tráiler, reparto, galería y similares
+│   ├── 06-paginas-varias.css   Legal, 404, dominio público, reproductor y pie
+│   ├── 07-responsive.css       Media queries generales
+│   ├── 08-mi-lista.css         Mi lista
+│   ├── 09-persona.css          Ficha de persona y movimiento
+│   ├── 10-apariencia.css       Preferencias y tráiler diferido
+│   ├── 11-ajustes.css          Página de Ajustes
+│   ├── 12-perfiles.css         Perfiles locales
+│   ├── 13-portada.css          Hero rotativo, Top 10 y géneros
+│   ├── 14-listados.css         Hero, destacados y filtros de los listados
+│   └── 15-ficha-cabecera.css   Cabecera con backdrop de la ficha
+├── js/                         23 módulos: api, almacen, ui, hero, detalle, …
+├── img/                        Logo local
+└── vendor/                     Bootstrap e iconos (sin CDN)
 
-css/style.css       Todos los estilos
-js/api.js           Datos: TMDB vía proxy, OMDb de respaldo, caché
-js/preferencias.js  Preferencias globales y clases de apariencia
-js/almacen.js       Acceso seguro a localStorage (claves versionadas)
-js/favoritos.js     Estado de Mi lista: contador y cambios
-js/historial.js     Historial de búsquedas recientes
-js/ajustes.js       Controles de Ajustes, contadores y copias de seguridad
-js/generos.js       Géneros fijos de TMDB (sin petición extra)
-js/filtros.js       Barra de filtros y estado en la URL
-js/ui.js            Tarjetas, escapado de HTML, navegación y foco
-js/buscador.js      Buscador de la cabecera + historial
-js/home.js          Carruseles de la portada
-js/hero.js          Hero rotativo: diez estrenos recientes, fundido y puntos
-js/busqueda.js      Búsqueda + paginación + avisos
-js/listado.js       Listados por tipo, filtros y paginación
-js/detalle.js       Ficha: tráiler, temporadas, reparto, plataformas, galería y similares
-js/persona.js       Ficha de persona: biografía y filmografía paginada
-js/dominio-publico.js  Catálogo local de cine de dominio público
-js/progreso.js      Posición de reproducción (catálogo y reproductor)
-js/reproductor.js   Reproductor modal (Internet Archive)
-js/pagina-dominio.js  Pinta el catálogo de dominio público
-js/mi-lista.js      Página Mi lista: quitar títulos con deshacer
+backend/                        Capa de servidor (nunca se sirve como estático)
+├── server.js                   Orquesta rutas y arranque
+├── config.js                   Credenciales, rutas y límites
+├── http.js                     Respuestas y cabeceras comunes
+├── estatico.js                 Archivos públicos de frontend/ y 404
+├── servicios/
+│   ├── cache.js                Caché en memoria de los proxies
+│   ├── tmdb.js                 Proxy de TMDB + fusión de páginas
+│   └── omdb.js                 Proxy de respaldo OMDb
+├── config.example.js           Plantilla de configuración
+└── config.local.js             Credenciales reales (ignorado por Git)
 
-tests/              Pruebas con node:test (npm test)
-server.js           Estático + proxy TMDB/OMDb + fusión de páginas
-config.example.js   Plantilla de configuración
+tests/                          Pruebas con node:test (npm test)
+server.js                       Envoltorio de compatibilidad: node server.js
 ```
+
+Los parciales de CSS se importan en el mismo orden en que estaban las
+secciones del archivo original, así que la cascada no cambia. `tests/ayuda.cjs`
+los expande para revisar las reglas como si estuvieran juntos.
 
 ## Cómo funciona el proxy
 

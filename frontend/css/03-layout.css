@@ -1,0 +1,346 @@
+/* ------------------------------------------------------------
+   Cabecera
+   ---------------------------------------------------------- */
+
+.barra-superior {
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  transition: top var(--transition-2);
+}
+
+.header-cine {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  width: 100%;
+  min-height: 80px;
+  margin: 0;
+  padding: 8px 24px;
+  border: 0;
+  background: transparent;
+  transition: min-height var(--transition-2), padding var(--transition-2), background-color var(--transition-2), box-shadow var(--transition-2);
+}
+
+.logo {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+}
+
+.logo img {
+  display: block;
+  height: 44px;
+  width: auto;
+  object-fit: contain;
+  transition: height var(--transition-2);
+}
+
+header a {
+  text-decoration: none;
+  color: #fff;
+  font-weight: 520;
+}
+
+.navegacion {
+  flex: 0 1 auto;
+  min-width: 0;
+}
+
+.anclas-header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.anclas-header a {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 14px;
+  border-radius: 999px;
+  color: var(--texto-suave);
+  font-size: var(--fs-10);
+  font-weight: var(--fw-700);
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  white-space: nowrap;
+  transition: color var(--transition-1), background-color var(--transition-1);
+}
+
+.anclas-header a:hover,
+.anclas-header a:focus-visible {
+  background: rgb(255 255 255 / 0.06);
+  color: #fff;
+}
+
+.anclas-header a[aria-current="page"] {
+  color: var(--primario-suave);
+}
+
+.anclas-header a[aria-current="page"]::after {
+  content: "";
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  width: 16px;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--primario);
+  transform: translateX(-50%);
+}
+
+/* Contador de «Mi lista» en la cabecera */
+
+.contador-favoritos {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  background: #ff4d6d;
+  color: #101214;
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.contador-favoritos[hidden] {
+  display: none;
+}
+
+.header-acciones {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  flex: 1 1 320px;
+  min-width: 0;
+}
+
+.search {
+  flex: 1;
+  min-width: 0;
+  max-width: 360px;
+  display: flex;
+  align-items: center;
+}
+
+.search input {
+  width: 100%;
+  padding: 10px 46px 10px 18px;
+  background-color: transparent;
+  border: 1px solid rgb(255 255 255 / 0.35);
+  border-radius: 1000px;
+  color: var(--texto);
+  font-family: var(--ff);
+  font-size: var(--fs-9);
+  font-weight: var(--fw-500);
+  transition: background-color var(--transition-2), border-color var(--transition-1), box-shadow var(--transition-1);
+}
+
+.search input::placeholder {
+  color: var(--texto-suave);
+  opacity: 0.75;
+}
+
+input:focus-visible {
+  outline: 2px solid var(--primario-suave);
+  outline-offset: 1px;
+}
+
+input::placeholder {
+  color: #ffffffd3;
+}
+
+.header-acciones .login-div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.login {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  padding: 8px;
+  border: none;
+  border-radius: 8px;
+  transition: background-color 0.3s, border-color 0.3s;
+}
+
+.login:hover {
+  background: rgb(255 255 255 / 0.08);
+}
+
+.login:focus-visible {
+  outline: 2px solid var(--primario-suave);
+  outline-offset: 2px;
+}
+
+.buscar-boton {
+  position: absolute;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: #fff;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.buscar-boton:hover {
+  background-color: rgba(255, 255, 255, 0.14);
+}
+
+.buscar-boton:focus-visible {
+  outline: 2px solid var(--primario-suave);
+  outline-offset: 2px;
+}
+
+/* Historial de búsquedas (buscador de la cabecera) */
+
+.historial {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 0;
+  right: 0;
+  z-index: 120;
+  padding: 8px;
+  border: 1px solid #ffffff1f;
+  border-radius: 14px;
+  background: #14161a;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.72);
+}
+
+.historial[hidden] {
+  display: none;
+}
+
+.historial-titulo {
+  margin: 4px 10px 6px;
+  color: var(--texto-suave);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.historial-lista {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.historial-opcion {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 9px 10px;
+  border-radius: 8px;
+  color: #fff;
+  cursor: pointer;
+}
+
+.historial-opcion i {
+  color: var(--texto-suave);
+}
+
+.historial-opcion:hover,
+.historial-opcion.activo {
+  background: #ffffff14;
+}
+
+.historial-opcion.activo {
+  outline: 2px solid var(--primario-suave);
+  outline-offset: -2px;
+}
+
+.historial-borrar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  margin-top: 6px;
+  padding: 9px 10px;
+  border: 0;
+  border-top: 1px solid #ffffff14;
+  border-radius: 0 0 8px 8px;
+  background: transparent;
+  color: var(--texto-suave);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.historial-borrar:hover {
+  background: #ffffff0f;
+  color: #fff;
+}
+
+.historial-borrar:focus-visible {
+  outline: 2px solid var(--primario-suave);
+  outline-offset: 2px;
+}
+/* ------------------------------------------------------------
+   Secciones y rejillas
+   ---------------------------------------------------------- */
+
+.nuevas {
+  padding: 0 40px;
+  margin-top: 40px;
+}
+
+/* Espacio bajo el último carrusel de la portada */
+.nuevas-final {
+  margin-bottom: 30px;
+}
+
+/* Columnas pares y explícitas: las filas siempre quedan completas
+   (60 títulos por página y 12 por carrusel son divisibles por 6, 4 y 2). */
+#resultado,
+#resultadoRecientes,
+#resultadoRecientesSeries,
+#resultadoRecientesAnime,
+#filmografia,
+#similares {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 16px;
+  align-items: start;
+}
+
+/* Barra de filtros de los listados */
+
+#filtros:empty {
+  display: none;
+}
+
+/* El selector compacto de filtros se define en la sección
+   «Selector compacto de filtros» al final de esta hoja. */
+
+.resumen-listado {
+  color: var(--texto-suave);
+  font-size: 0.9rem;
+  min-height: 1.2em;
+}
+
+#resultado {
+  padding: 0 0 24px;
+}
+

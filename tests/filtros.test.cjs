@@ -5,7 +5,7 @@ const assert = require("node:assert");
 const fs = require("fs");
 const path = require("path");
 
-const { cargar } = require("./ayuda.cjs");
+const { cargar, FRONT, leerCssCompleto } = require("./ayuda.cjs");
 
 test("los filtros se leen de la URL y se escriben sin page", () => {
   const location = { search: "?genero=28&page=3", pathname: "/pelicula.html" };
@@ -50,7 +50,7 @@ test("etiquetaFiltro describe los filtros activos", () => {
 });
 
 test("los listados conservan los controles y los nombres de los selects", () => {
-  const raiz = path.join(__dirname, "..");
+  const raiz = FRONT;
 
   for (const pagina of ["pelicula.html", "serie.html", "anime.html"]) {
     const html = fs.readFileSync(path.join(raiz, pagina), "utf8");
@@ -63,4 +63,16 @@ test("los listados conservan los controles y los nombres de los selects", () => 
   for (const control of ['campo("genero"', 'campo("anio"', 'campo("orden"', 'campo("nota"', 'id="limpiarFiltros"']) {
     assert.ok(codigo.includes(control), "falta " + control);
   }
+});
+
+test("la barra de filtros es horizontal y usa desplegables modernos", () => {
+  const raiz = FRONT;
+  const codigo = fs.readFileSync(path.join(raiz, "js/filtros.js"), "utf8");
+  const css = leerCssCompleto();
+
+  for (const parte of ['"filtros-barra"', 'class="filtro-menu"', 'aria-haspopup="listbox"', "Escape"]) {
+    assert.ok(codigo.includes(parte), "falta " + parte);
+  }
+  assert.ok(css.includes(".filtros-barra"), "falta estilo de barra horizontal");
+  assert.ok(css.includes(".filtro-menu"), "falta estilo de menú desplegable");
 });

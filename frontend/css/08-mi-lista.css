@@ -1,0 +1,162 @@
+/* ------------------------------------------------------------
+   Mi lista (favoritos.html)
+   ---------------------------------------------------------- */
+
+.mi-lista-vacia {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 64px 16px;
+  text-align: center;
+  color: var(--texto-suave);
+}
+
+.mi-lista-vacia > i {
+  font-size: 3rem;
+  color: #ff4d6d;
+}
+
+.mi-lista-vacia h2 {
+  margin: 0;
+  color: #fff;
+  font-size: 1.35rem;
+}
+
+.mi-lista-vacia p {
+  margin: 0 0 12px;
+  max-width: 460px;
+}
+
+.mi-lista-acciones {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.mi-lista-acciones .btn-vaciar {
+  border: 1px solid #ffffff40;
+  background: transparent;
+  color: #fff;
+  border-radius: 1000px;
+  padding: 8px 20px;
+  font-weight: 600;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.mi-lista-acciones .btn-vaciar:hover,
+.mi-lista-acciones .btn-vaciar:focus-visible {
+  background: rgba(255, 77, 109, 0.16);
+  border-color: #ff4d6d;
+}
+
+.mi-lista-acciones .btn-vaciar:focus-visible {
+  outline: 2px solid var(--primario-suave);
+  outline-offset: 2px;
+}
+
+/* Quitar un título concreto de la lista */
+.mi-lista-quitar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  margin-top: 6px;
+  padding: 6px 10px;
+  border: 1px solid transparent;
+  border-radius: 1000px;
+  background: transparent;
+  color: var(--texto-suave);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+
+.mi-lista-quitar:hover,
+.mi-lista-quitar:focus-visible {
+  border-color: #ffffff33;
+  background: #ffffff0f;
+  color: #fff;
+}
+
+.mi-lista-quitar:focus-visible {
+  outline: 2px solid var(--primario);
+  outline-offset: 2px;
+}
+
+/* Aviso flotante tras quitar, con opción de deshacer */
+.mi-lista-aviso {
+  position: fixed;
+  left: 50%;
+  bottom: 24px;
+  z-index: 1080;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  max-width: calc(100% - 32px);
+  padding: 12px 18px;
+  border: 1px solid #ffffff26;
+  border-radius: 10px;
+  background: #1b1e23;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.55);
+  color: #fff;
+  font-size: 0.92rem;
+  opacity: 0;
+  transform: translate(-50%, 12px);
+  pointer-events: none;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.mi-lista-aviso.visible {
+  opacity: 1;
+  transform: translate(-50%, 0);
+  pointer-events: auto;
+}
+
+.mi-lista-aviso-accion {
+  padding: 4px 2px;
+  border: 0;
+  background: transparent;
+  color: var(--primario-suave);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.mi-lista-aviso-accion:focus-visible {
+  outline: 2px solid var(--primario-suave);
+  outline-offset: 2px;
+}
+
+/* Enlaces de personas (ficha de título) */
+
+.reparto-enlace {
+  display: block;
+  color: inherit;
+  text-decoration: none;
+}
+
+.reparto-enlace:hover .reparto-nombre,
+.reparto-enlace:focus-visible .reparto-nombre {
+  color: var(--primario-suave);
+}
+
+.reparto-enlace:focus-visible {
+  outline: 2px solid var(--primario-suave);
+  outline-offset: 4px;
+  border-radius: 12px;
+}
+
+.enlace-persona {
+  color: var(--primario-suave);
+  text-decoration: none;
+}
+
+.enlace-persona:hover,
+.enlace-persona:focus-visible {
+  text-decoration: underline;
+}
+

@@ -1,0 +1,26 @@
+@charset "UTF-8";
+@import url("https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap");
+
+/* ============================================================
+   CINEMA · hoja de estilos principal
+
+   Sistema visual inspirado en FilmLane (codewithsadee, 2022,
+   uso libre) adaptado a la identidad de CINEMA: se conserva el
+   azul como color de acento y el hover original de las tarjetas.
+   ============================================================ */
+@import url("01-base.css");
+@import url("02-componentes.css");
+@import url("03-layout.css");
+@import url("04-tarjetas.css");
+@import url("05-ficha.css");
+@import url("06-paginas-varias.css");
+@import url("07-responsive.css");
+@import url("08-mi-lista.css");
+@import url("09-persona.css");
+@import url("10-apariencia.css");
+@import url("11-ajustes.css");
+@import url("12-perfiles.css");
+@import url("13-portada.css");
+@import url("14-listados.css");
+@import url("15-ficha-cabecera.css");
+

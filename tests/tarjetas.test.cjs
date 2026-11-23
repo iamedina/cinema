@@ -5,8 +5,8 @@ const assert = require("node:assert");
 const fs = require("fs");
 const path = require("path");
 
-const RAIZ = path.join(__dirname, "..");
-const css = fs.readFileSync(path.join(RAIZ, "css/style.css"), "utf8");
+const { leerCssCompleto } = require("./ayuda.cjs");
+const css = leerCssCompleto();
 
 function bloque(selector) {
   const inicio = css.indexOf(selector + " {");
@@ -15,10 +15,9 @@ function bloque(selector) {
   return css.slice(inicio, fin + 2);
 }
 
-test("todas las tarjetas y pósters comparten una transición de 0,6 s", () => {
+test("todas las tarjetas y pósters tienen transición suave en ida y vuelta", () => {
   const tarjeta = bloque(".pelicula-card");
-  assert.match(tarjeta, /transition:\s*transform\s*0\.6s\s*ease/);
-  assert.match(tarjeta, /animation:\s*tarjeta-aparecer\s*0\.6s\s*ease\s*both/);
+  assert.match(tarjeta, /transition:\s*0\.4s\s*;/);
 
   const imagen = bloque(".img-pelicula");
   assert.match(imagen, /transition:\s*opacity\s*0\.6s\s*ease,\s*transform\s*0\.6s\s*ease/);
@@ -35,7 +34,7 @@ test("el zoom del póster se anima: transform está incluido en la transición",
   assert.ok(transicion.includes("opacity"));
 
   const hover = bloque(".pelicula-card:hover .img-pelicula");
-  assert.match(hover, /opacity:\s*0\.75/);
+  assert.match(hover, /opacity:\s*0\.60/);
   assert.match(hover, /transform:\s*scale\(1\.03\)/);
   assert.match(bloque(".pelicula-card:hover"), /transform:\s*scale\(1\.02\)/);
 });

@@ -1,0 +1,114 @@
+/* ============================================================
+   Preferencias de apariencia
+   ============================================================ */
+
+/* Tamaño grande: escala la base rem de Bootstrap y del sitio. */
+html.texto-grande {
+  font-size: 112.5%;
+}
+
+html.texto-grande body {
+  font-size: 1rem;
+}
+
+html.texto-grande .detalle-plot,
+html.texto-grande .episodio-sinopsis,
+html.texto-grande .pelicula-card .card-title,
+html.texto-grande .ajustes-bloque,
+html.texto-grande .reparto-nombre {
+  font-size: 1.06em;
+}
+
+/* Reducir animaciones desde Ajustes (además de la preferencia del sistema). */
+html.reducir-animaciones *,
+html.reducir-animaciones *::before,
+html.reducir-animaciones *::after {
+  animation-iteration-count: 1 !important;
+  scroll-behavior: auto !important;
+}
+
+html.reducir-animaciones .esqueleto {
+  animation: none;
+  background: #1b1e23;
+}
+
+/* Enlace de Ajustes en la cabecera. */
+.ajustes-enlace {
+  gap: 8px;
+  text-decoration: none;
+  color: #fff;
+  font-weight: 600;
+}
+
+.ajustes-enlace i {
+  font-size: 1.05rem;
+}
+
+.ajustes-enlace[aria-current="page"] {
+  border-color: var(--primario-suave);
+  color: var(--primario-suave);
+}
+
+/* ============================================================
+   Tráiler diferido (sin carga automática)
+   ============================================================ */
+
+.trailer-diferido {
+  position: relative;
+}
+
+.trailer-portada {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  background: #000;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.trailer-portada img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.72;
+  transition: opacity 0.2s ease, transform 0.35s ease;
+}
+
+.trailer-portada:hover img,
+.trailer-portada:focus-visible img {
+  opacity: 0.92;
+  transform: scale(1.02);
+}
+
+.trailer-portada:focus-visible {
+  outline: 3px solid var(--primario-suave);
+  outline-offset: -3px;
+}
+
+.trailer-play {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: rgba(13, 110, 253, 0.92);
+  color: #fff;
+  font-size: 2.4rem;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 8px 28px rgba(0, 0, 0, 0.55);
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.trailer-portada:hover .trailer-play,
+.trailer-portada:focus-visible .trailer-play {
+  background: var(--primario);
+  transform: translate(-50%, -50%) scale(1.06);
+}
+

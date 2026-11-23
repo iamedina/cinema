@@ -9,6 +9,48 @@ const path = require("path");
 const vm = require("vm");
 
 const RAIZ = path.join(__dirname, "..");
+const FRONT = path.join(RAIZ, "frontend");
+const BACK = path.join(RAIZ, "backend");
+
+/** Resuelve una ruta del proyecto según la capa a la que pertenece. */
+function resolver(relativo) {
+  if (/^(js|css|img|vendor)\//.test(relativo) || relativo.endsWith(".html")) {
+    return path.join(FRONT, relativo);
+  }
+  if (relativo.startsWith("frontend/") || relativo.startsWith("backend/")) {
+    return path.join(RAIZ, relativo);
+  }
+  return path.join(RAIZ, relativo);
+}
+
+/**
+ * Devuelve el CSS completo tal como lo ve el navegador: la hoja de entrada
+ * más sus @import locales, en el mismo orden. El @import de Google Fonts
+ * se ignora porque no aporta reglas que revisiones aquí.
+ */
+function leerCssCompleto() {
+  const visitados = new Set();
+
+  function expandir(relativo) {
+    const absoluto = resolver(relativo);
+    if (visitados.has(absoluto)) return "";
+    visitados.add(absoluto);
+
+    const texto = fs.readFileSync(absoluto, "utf8");
+    const imports = [...texto.matchAll(/@import\s+url\("([^"]+)"\)\s*;/g)];
+    const locales = imports
+      .map((m) => m[1])
+      .filter((ruta) => !/^https?:\/\//i.test(ruta));
+
+    const base = texto.replace(/@import\s+url\("[^"]+"\)\s*;\s*/g, "");
+    return locales.reduce((acc, ruta) => {
+      const relativoImport = path.posix.join(path.posix.dirname(relativo), ruta);
+      return acc + expandir(relativoImport);
+    }, base);
+  }
+
+  return expandir("css/style.css");
+}
 
 function crearLocalStorage() {
   const datos = new Map();
@@ -78,7 +120,7 @@ function cargar(archivos, opciones = {}) {
   });
 
   for (const archivo of archivos) {
-    const codigo = fs.readFileSync(path.join(RAIZ, archivo), "utf8");
+    const codigo = fs.readFileSync(resolver(archivo), "utf8");
     vm.runInContext(codigo, contexto, { filename: archivo });
   }
 
@@ -89,4 +131,13 @@ function emitirStorage(oyentes, evento) {
   for (const callback of oyentes.storage || []) callback(evento);
 }
 
-module.exports = { RAIZ, cargar, crearLocalStorage, emitirStorage };
+module.exports = {
+  RAIZ,
+  FRONT,
+  BACK,
+  resolver,
+  leerCssCompleto,
+  cargar,
+  crearLocalStorage,
+  emitirStorage,
+};

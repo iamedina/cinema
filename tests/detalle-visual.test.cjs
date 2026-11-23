@@ -5,9 +5,9 @@ const assert = require("node:assert");
 const fs = require("fs");
 const path = require("path");
 
-const RAIZ = path.join(__dirname, "..");
-const detalle = fs.readFileSync(path.join(RAIZ, "js/detalle.js"), "utf8");
-const css = fs.readFileSync(path.join(RAIZ, "css/style.css"), "utf8");
+const { FRONT, leerCssCompleto } = require("./ayuda.cjs");
+const detalle = fs.readFileSync(path.join(FRONT, "js/detalle.js"), "utf8");
+const css = leerCssCompleto();
 
 test("la ficha usa una cabecera con backdrop y chips junto al título", () => {
   for (const fragmento of [

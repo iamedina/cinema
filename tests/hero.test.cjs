@@ -5,15 +5,15 @@ const assert = require("node:assert");
 const fs = require("fs");
 const path = require("path");
 
-const RAIZ = path.join(__dirname, "..");
-const leer = (archivo) => fs.readFileSync(path.join(RAIZ, archivo), "utf8");
+const { FRONT, leerCssCompleto } = require("./ayuda.cjs");
+const leer = (archivo) => fs.readFileSync(path.join(FRONT, archivo), "utf8");
 
 global.window = {};
-require(path.join(RAIZ, "js/hero.js"));
+require(path.join(FRONT, "js/hero.js"));
 const { DESTACADOS, INTERVALO, TRANSICION } = global.window.CINEMA.heroCine;
 
 const html = leer("index.html");
-const css = leer("css/style.css");
+const css = leerCssCompleto();
 const home = leer("js/home.js");
 const hero = leer("js/hero.js");
 
@@ -77,17 +77,19 @@ test("el paso se detiene en hover, foco, pestaña oculta y movimiento reducido",
   }
 });
 
-test("el hero mide 650 px en escritorio y se adapta en pantallas pequeñas", () => {
+test("el hero ocupa la pantalla completa y deja sitio al header transparente", () => {
   const heroCss = css.slice(css.indexOf(".hero-cine {"), css.indexOf(".hero-capa {"));
   assert.match(heroCss, /width:\s*100%/);
-  assert.match(heroCss, /height:\s*650px/);
-  assert.doesNotMatch(heroCss, /min-height/);
+  assert.match(heroCss, /min-height:\s*100vh/);
+  assert.match(heroCss, /margin-top:\s*calc\(-1 \* var\(--header-alto\)\)/);
+  assert.match(heroCss, /padding:\s*calc\(80px \+ var\(--header-alto\)\)/);
 
   const inicioMovil = css.indexOf(".hero-cine", css.indexOf(".hero-sinopsis"));
   const movil = css.slice(inicioMovil, css.indexOf(".hero-titulo", inicioMovil));
-  assert.match(movil, /height:\s*540px/);
+  assert.match(movil, /min-height:\s*100vh/);
+
   const pequeno = css.slice(css.indexOf("@media (max-width: 480px)"), css.indexOf(".cabecera-seccion"));
-  assert.match(pequeno, /height:\s*500px/);
+  assert.match(pequeno, /min-height:\s*100vh/);
 });
 
 test("el fondo se ve claro y fondo y texto cambian en un solo relevo", () => {

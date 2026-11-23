@@ -1,0 +1,140 @@
+/* ------------------------------------------------------------
+   Responsive
+   ---------------------------------------------------------- */
+
+@media (max-width: 900px) {
+  .contenedor {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .articleDetalle {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .detalle-accion {
+    padding-top: 0;
+  }
+}
+
+@media (max-width: 1199px) {
+  .nuevas {
+    padding: 0 32px;
+  }
+
+  #resultado,
+  #resultadoRecientes,
+  #resultadoRecientesSeries,
+  #resultadoRecientesAnime,
+  #filmografia,
+  #similares {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --header-alto: 113px;
+  }
+
+  .header-cine {
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 10px 16px;
+  }
+
+  .logo img {
+    height: 40px;
+  }
+
+  .navegacion {
+    order: 3;
+    flex-basis: 100%;
+  }
+
+  .header-acciones {
+    flex: 1 1 auto;
+  }
+
+  .search {
+    max-width: none;
+  }
+
+  .anclas-header {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 2px;
+    scrollbar-width: none;
+  }
+
+  .anclas-header::-webkit-scrollbar {
+    display: none;
+  }
+
+  .anclas-header a {
+    flex-shrink: 0;
+  }
+
+  .nuevas {
+    padding: 0 16px;
+  }
+
+  #resultado {
+    padding: 0 0 16px;
+  }
+
+  #resultado,
+  #resultadoRecientes,
+  #resultadoRecientesSeries,
+  #resultadoRecientesAnime,
+  #filmografia,
+  #similares {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .contenedor {
+    padding: 20px 16px 40px;
+  }
+
+  .trailer-seccion {
+    padding: 0 16px 40px;
+  }
+
+  .galeria {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .reparto-item {
+    flex-basis: 96px;
+  }
+
+  .reparto-foto {
+    width: 96px;
+    height: 96px;
+    line-height: 96px;
+    font-size: 2rem;
+  }
+
+  .detalle-seccion {
+    padding: 0 16px 36px;
+  }
+}
+
+@media (max-width: 559px) {
+  #resultado,
+  #resultadoRecientes,
+  #resultadoRecientesSeries,
+  #resultadoRecientesAnime,
+  #filmografia,
+  #similares {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .filtro {
+    flex: 1 1 100%;
+  }
+}
+

@@ -1,0 +1,173 @@
+/* ------------------------------------------------------------
+   Ficha de persona (persona.html)
+   ---------------------------------------------------------- */
+
+.persona-pagina {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 36px 20px 60px;
+}
+
+.persona-cabecera {
+  display: flex;
+  align-items: flex-start;
+  gap: 36px;
+  margin-bottom: 48px;
+}
+
+.persona-retrato {
+  flex: 0 0 260px;
+}
+
+.persona-foto {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 260px;
+  height: 390px;
+  object-fit: cover;
+  border-radius: 14px;
+  background-color: #20242a;
+  color: #6c757d;
+  font-size: 5rem;
+}
+
+.persona-datos {
+  flex: 1;
+  min-width: 0;
+}
+
+.persona-departamento {
+  margin: 0 0 6px;
+  color: var(--primario-suave);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.persona-datos h1 {
+  margin: 0 0 16px;
+  color: #fff;
+  font-size: 2.2rem;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+.persona-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 24px;
+  margin: 0 0 20px;
+  padding: 0;
+  list-style: none;
+  color: var(--texto-suave);
+}
+
+.persona-meta i {
+  margin-right: 6px;
+  color: var(--primario-suave);
+}
+
+.persona-bio {
+  color: #ced4da;
+  line-height: 1.65;
+}
+
+.persona-bio p {
+  margin: 0;
+}
+
+.persona-bio-larga:not(.persona-bio-abierta) {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 5;
+}
+
+.persona-bio-toggle {
+  margin-top: 10px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--primario-suave);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.persona-bio-toggle:hover,
+.persona-bio-toggle:focus-visible {
+  text-decoration: underline;
+}
+
+.persona-bio-toggle:focus-visible {
+  outline: 2px solid var(--primario-suave);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+.persona-filmografia h2 {
+  margin-bottom: 18px;
+  color: #fff;
+  font-size: 1.35rem;
+  font-weight: 600;
+}
+
+.persona-cuenta {
+  color: var(--texto-suave);
+  font-weight: 400;
+}
+
+@media (max-width: 900px) {
+  .persona-cabecera {
+    flex-direction: column;
+    align-items: center;
+    gap: 22px;
+    text-align: center;
+  }
+
+  .persona-retrato {
+    flex-basis: auto;
+  }
+
+  .persona-foto {
+    width: 190px;
+    height: 285px;
+  }
+
+  .persona-meta {
+    justify-content: center;
+  }
+
+  .persona-datos h1 {
+    font-size: 1.7rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .persona-pagina {
+    padding: 24px 16px 44px;
+  }
+}
+
+/* ------------------------------------------------------------
+   Movimiento y objetivos táctiles
+   ---------------------------------------------------------- */
+
+/* Quien prefiera menos movimiento: sin parpadeos ni transiciones. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .esqueleto {
+    animation: none;
+    background: #1b1e23;
+  }
+}
+

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://image.tmdb.org" crossorigin>
+    <link rel="dns-prefetch" href="https://image.tmdb.org">
+    <link href="vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+    <link href="vendor/bootstrap/bootstrap.min.css" rel="stylesheet">
+    <title>Persona | CINEMA</title>
+    <meta name="description" content="Ficha de una persona: biografía y filmografía completa en CINEMA.">
+    <meta name="theme-color" content="#171d21">
+    <meta name="color-scheme" content="dark">
+    <meta property="og:type" content="profile">
+    <meta property="og:title" content="Persona | CINEMA">
+    <meta property="og:description" content="Ficha de una persona: biografía y filmografía completa en CINEMA.">
+    <meta property="og:image" content="img/image-cinema.png">
+    <link rel="icon" type="image/png" href="img/image-cinema.png">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/preferencias.js"></script>
+</head>
+
+<body>
+    <a class="saltar-contenido" href="#contenido">Saltar al contenido</a>
+
+    <div class="barra-superior">
+        <header class="header-cine">
+            <a class="logo" href="index.html" aria-label="CINEMA · Inicio">
+                <img src="img/image-cinema.png" alt="CINEMA" width="228" height="201">
+            </a>
+
+            <nav class="navegacion" aria-label="Navegación principal">
+                <div class="anclas-header">
+                    <a href="index.html">Inicio</a>
+                    <a href="pelicula.html">Películas</a>
+                    <a href="serie.html">Series</a>
+                    <a href="anime.html">Animes</a>
+                </div>
+            </nav>
+
+            <div class="header-acciones">
+                <div class="search">
+                    <div class="position-relative w-100">
+                        <input type="text" class="ps-3" id="nombrePeliculas" autocomplete="off" aria-label="Buscar películas y series" placeholder="Buscar películas y series...">
+                        <button type="button" id="buscarBtn" class="buscar-boton" aria-label="Buscar"><i class="bi bi-search text-white" aria-hidden="true"></i></button>
+                    </div>
+                </div>
+                <div class="login-div">
+                    <a class="login ajustes-enlace" href="ajustes.html" title="Ajustes"><i class="bi bi-gear" aria-hidden="true"></i></a>
+                </div>
+            </div>
+        </header>
+    </div>
+    <main id="contenido" tabindex="-1">
+        <section id="persona"></section>
+    </main>
+
+    <footer class="text-light pt-4 cine-footer">
+        <div class="container py-4">
+            <div class="row text-start text-md-start text-sm-start align-items-start mt-4">
+
+                <div class="col-md-3 mb-4 mb-lg-2">
+                    <h5 class="fw-bold">Explora</h5>
+                    <a href="index.html" class="d-block text-light text-decoration-none">Inicio</a>
+                    <a href="pelicula.html" class="d-block text-light text-decoration-none">Películas</a>
+                    <a href="serie.html" class="d-block text-light text-decoration-none">Series</a>
+                    <a href="anime.html" class="d-block text-light text-decoration-none">Anime</a>
+                    <a href="dominio-publico.html" class="d-block text-light text-decoration-none">Dominio público</a>
+                    <a href="ajustes.html" class="d-block text-light text-decoration-none">Ajustes</a>
+                </div>
+
+                <div class="col-md-3 mb-4 mb-lg-2">
+                    <h5 class="fw-bold">Legal</h5>
+                    <a href="legal.html" class="d-block text-light text-decoration-none">Aviso legal</a>
+                    <a href="legal.html#dmca" class="d-block text-light text-decoration-none">DMCA</a>
+                    <a href="legal.html#privacidad" class="d-block text-light text-decoration-none">Privacidad</a>
+                    <a href="legal.html#publicidad" class="d-block text-light text-decoration-none">Publicidad</a>
+                </div>
+
+                <div class="col-md-3 mb-4 mb-lg-2">
+                    <h5 class="fw-bold mb-3">Contáctanos</h5>
+                    <p class="mb-1">support@peliculas.com</p>
+                    <small class="text-secondary">Actualizado el 12 de noviembre de 2026, 14:39 <br> GMT-5</small>
+                </div>
+
+                <div class="col-md-3 mb-4 mb-lg-2">
+                    <h5 class="fw-bold">Síguenos</h5>
+                    <a href="https://facebook.com" target="_blank" rel="noopener noreferrer"
+                        class="btn btn-outline-light btn-md rounded-3 me-2">
+                        <i class="bi bi-facebook"></i>
+                    </a>
+                    <a href="https://x.com" target="_blank" rel="noopener noreferrer"
+                        class="btn btn-outline-light btn-md rounded-3 me-2">
+                        <i class="bi bi-twitter"></i>
+                    </a>
+                    <a href="https://t.me" target="_blank" rel="noopener noreferrer"
+                        class="btn btn-outline-light btn-md rounded-3">
+                        <i class="bi bi-telegram"></i>
+                    </a>
+                </div>
+
+            </div>
+
+            <hr class="border-secondary">
+
+            <div class="text-center">
+                <p class="mb-1">&copy; 2025 CINEMA</p>
+                <small class="d-block"><i class="bi bi-explicit-fill"></i> El sitio contiene contenido 18+</small>
+                <small class="d-block mt-1">Este producto usa la API de TMDB pero no está respaldado ni certificado por TMDB.</small>
+                <small class="d-block mt-1">CINEMA no aloja contenido audiovisual: enlaza a plataformas oficiales y reproduce cine de dominio público desde Internet Archive. Datos de TMDB y OMDb.</small>
+            </div>
+        </div>
+    </footer>
+
+    <script src="vendor/bootstrap/bootstrap.bundle.min.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/almacen.js"></script>
+    <script src="js/perfiles.js"></script>
+    <script src="js/historial.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/favoritos.js"></script>
+    <script src="js/buscador.js"></script>
+    <script src="js/persona.js"></script>
+    <script src="js/tema.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,50 @@
+:root {
+  /* Paleta FilmLane */
+  --eerie-black: hsl(207 19% 11%);
+  --rich-black: hsl(225 25% 9%);
+  --raisin-black: hsl(228 13% 15%);
+  --gunmetal-1: hsl(229 15% 21%);
+  --gunmetal-2: hsl(216 22% 18%);
+  --light-gray: hsl(0 3% 80%);
+  --gray-x: hsl(0 0% 74%);
+  --gainsboro: hsl(0 7% 88%);
+
+  /* Identidad CINEMA */
+  --fondo: var(--eerie-black);
+  --panel: var(--rich-black);
+  --superficie: var(--raisin-black);
+  --texto: #fff;
+  --texto-suave: var(--light-gray);
+  --primario: #0d6efd;
+  --primario-suave: #6ea8fe;
+  --borde: hsl(0 0% 100% / 0.1);
+  --borde-fuerte: hsl(0 0% 100% / 0.2);
+  --sombra: 0 2px 8px rgb(0 0 0 / 0.35);
+  --radio: 6px;
+
+  /* Tipografía */
+  --ff: "Poppins", "Segoe UI", system-ui, sans-serif;
+  --fs-1: 36px;
+  --fs-2: 32px;
+  --fs-3: 30px;
+  --fs-4: 24px;
+  --fs-5: 20px;
+  --fs-6: 18px;
+  --fs-7: 16px;
+  --fs-8: 15px;
+  --fs-9: 14px;
+  --fs-10: 13px;
+  --fs-11: 12px;
+  --fs-12: 11px;
+  --fw-500: 500;
+  --fw-700: 700;
+
+  /* Ritmo y movimiento */
+  --section-padding: 100px;
+  --transition-1: 0.15s ease;
+  --transition-2: 0.25s ease-in;
+
+  /* Altura de la cabecera: la usa el hero para situarse detrás del header. */
+  --header-alto: 80px;
+}
+

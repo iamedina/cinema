@@ -48,7 +48,7 @@
    */
   function crearTarjeta(item) {
     const article = document.createElement("article");
-    article.className = "pelicula-card";
+   
 
     const poster = item.poster || POSTER_PLACEHOLDER;
     const titulo = escapeHtml(item.titulo);
@@ -61,6 +61,8 @@
     const destino = "descripcion.html?id=" + encodeURIComponent(item.id);
 
     article.innerHTML = `
+    <div class='pelicula-card'>
+    <div>
       <a class="card-banner" href="${destino}" data-id="${escapeHtml(item.id)}"
          aria-label="Ver detalles de ${titulo}">
         <img src="${escapeHtml(poster)}" alt="Póster de ${titulo}"
@@ -78,6 +80,8 @@
           ? `<span class="rating"><i class="bi bi-star-fill" aria-hidden="true"></i><data value="${nota}">${nota}</data></span>`
           : `<span class="rating rating-vacio">Sin nota</span>`}
       </div>
+    </div>
+    </div>
     `;
 
     return article;

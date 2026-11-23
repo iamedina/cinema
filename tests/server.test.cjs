@@ -33,8 +33,8 @@ test("servidor: OMDb por proxy, archivos estáticos y rutas permitidas", async (
   process.env.OMDB_API_KEY = "clave-de-prueba";
   process.env.OMDB_BASE = "http://127.0.0.1:" + puertoFalso + "/";
 
-  delete require.cache[require.resolve("../server.js")];
-  const { servidor } = require("../server.js");
+  delete require.cache[require.resolve("../backend/server.js")];
+  const { servidor } = require("../backend/server.js");
   const puerto = await escuchar(servidor);
   const base = "http://127.0.0.1:" + puerto;
 
@@ -82,6 +82,21 @@ test("servidor: OMDb por proxy, archivos estáticos y rutas permitidas", async (
     assert.equal(noExiste.status, 404);
     assert.equal(noExiste.headers.get("x-content-type-options"), "nosniff");
     assert.match(await noExiste.text(), /Esta página no existe/);
+
+    /* La capa de servidor y sus credenciales nunca se sirven como estáticos. */
+    for (const oculto of [
+      "/server.js",
+      "/backend/server.js",
+      "/backend/config.local.js",
+      "/config.example.js",
+    ]) {
+      const respuesta = await fetch(base + oculto);
+      assert.equal(respuesta.status, 404, oculto + " no debe servirse");
+    }
+
+    const cssLocal = await fetch(base + "/css/style.css");
+    assert.equal(cssLocal.status, 200);
+    assert.match(cssLocal.headers.get("content-type"), /text\/css/);
   } finally {
     await cerrar(servidor);
     await cerrar(falsoOmdb);
