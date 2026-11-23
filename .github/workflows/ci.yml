@@ -1,0 +1,36 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  verificar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Sintaxis de todo el JavaScript
+        run: |
+          find backend frontend/js tests -type f \( -name '*.js' -o -name '*.cjs' \) -print0 \
+            | xargs -0 -n1 node --check
+          node --check server.js
+
+      - name: Pruebas unitarias y de integración
+        run: npm test
+
+      - name: Humo del servidor
+        run: |
+          PORT=8123 node backend/server.js > /tmp/cinema-server.log 2>&1 &
+          SERVIDOR=$!
+          trap 'kill $SERVIDOR 2>/dev/null || true' EXIT
+          curl -fsS --retry 15 --retry-connrefused --retry-delay 1 \
+            http://127.0.0.1:8123/api/health
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:8123/)" = 200
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:8123/css/style.css)" = 200
+          test "$(curl -s -o /dev/null -w '%{http_code}' http://127.0.0.1:8123/backend/server.js)" = 404
+          cat /tmp/cinema-server.log

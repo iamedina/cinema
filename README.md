@@ -159,7 +159,24 @@ reproducción, escapado de HTML, filtros en la URL, preferencias, tráilers y
 región, copias de seguridad y el servidor (proxy de OMDb, rutas permitidas, 404
 propio y `/api/health`). También se revisan las páginas HTML: que carguen
 `preferencias.js` antes que el resto, que enlacen Ajustes y que no falte ningún
-módulo o archivo referenciado.
+módulo o archivo referenciado. La Fase 1 añade comprobaciones de metadatos,
+licencia, CSP, timeout de red y tokens de color.
+
+Para un recorrido real en navegador:
+
+```bash
+npm run test:e2e
+```
+
+Arranca el servidor en un puerto libre, abre Chrome con CDP, visita las 12
+páginas en 1440 px y 390 px y falla si hay errores de consola, desbordamiento
+horizontal o rutas del backend expuestas. Necesita Chrome y Node 22+ (por el
+`WebSocket` global); con `CHROME_PATH` puedes indicar dónde está el ejecutable.
+Esos mismos chequeos de sintaxis, pruebas y humo del servidor se ejecutan solos en
+GitHub Actions (`.github/workflows/ci.yml`) en cada push o pull request.
+
+`CHANGELOG.md` recoge los cambios por versión y `CONTRIBUTING.md` las normas
+breves para seguir trabajando.
 
 ## Mi lista (favoritos)
 
@@ -454,6 +471,12 @@ backend/                        Capa de servidor (nunca se sirve como estático)
 └── config.local.js             Credenciales reales (ignorado por Git)
 
 tests/                          Pruebas con node:test (npm test)
+├── e2e/verificar.mjs           Recorrido en Chrome (npm run test:e2e)
+├── fase1.test.cjs              Metadatos, CSP, red y CSS accesible
+└── ...                         almacén, API, filtros, servidor, visual…
+.github/workflows/ci.yml        Sintaxis + pruebas + humo en cada push
+CHANGELOG.md                    Cambios por versión
+CONTRIBUTING.md                 Normas de colaboración
 server.js                       Envoltorio de compatibilidad: node server.js
 LICENSE                         Licencia MIT
 frontend/robots.txt             Instrucciones para rastreadores
