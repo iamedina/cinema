@@ -8,6 +8,7 @@
 
   const { api, ui, buscador, dominioPublico, reproductor } = window.CINEMA;
   const escapeHtml = ui.escapeHtml;
+  const srcsetPoster = ui.srcsetPoster;
   const POSTER_PLACEHOLDER = ui.POSTER_PLACEHOLDER;
   const etiquetaTipo = ui.etiquetaTipo;
 
@@ -20,6 +21,7 @@
       const imagen = evento.target;
       if (!imagen || imagen.tagName !== "IMG" || !imagen.hasAttribute("data-poster-respaldo")) return;
       imagen.removeAttribute("data-poster-respaldo");
+      imagen.removeAttribute("srcset");
       imagen.src = POSTER_PLACEHOLDER;
     },
     true
@@ -809,6 +811,7 @@
     const etiquetaDirector = datos.tipoRaw === "tv" ? "Creador" : "Director";
     const publico = dominioPublico.buscar(datos.id, datos.titulo, datos.anio);
     const guardar = botonFavorito(datos);
+    const srcset = srcsetPoster(datos.poster);
 
     const accionPrincipal = publico
       ? '<button type="button" class="btn btn-primary fw-semibold detalle-ver-ahora" ' +
@@ -864,7 +867,11 @@
       '" alt="Póster de ' +
       escapeHtml(datos.titulo) +
       '" class="img-fluid poster-detalle" ' +
-      'fetchpriority="high" decoding="async" data-poster-respaldo>' +
+      'fetchpriority="high" decoding="async" ' +
+      (srcset
+        ? 'srcset="' + escapeHtml(srcset) + '" sizes="(max-width: 768px) 90vw, 320px" '
+        : "") +
+      'data-poster-respaldo>' +
       '<span class="play-decorativo" aria-hidden="true"><i class="bi bi-play-fill"></i></span>' +
       "</div>" +
       "</div>" +

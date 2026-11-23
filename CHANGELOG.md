@@ -4,6 +4,19 @@ Todos los cambios relevantes de CINEMA se anotan aquí. El formato sigue
 [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y el proyecto usa
 [SemVer](https://semver.org/lang/es/).
 
+## [1.2.0] - 2026-11-23
+
+### Añadido
+- PWA instalable: `manifest.webmanifest`, iconos de 192 y 512 px y service
+  worker con red primero para HTML y caché con revalidación para estáticos.
+- Poppins alojada localmente (8 subconjuntos woff2, licencia SIL OFL incluida).
+- `srcset` de 185/342/500 en los pósters de TMDB.
+- `npm run build:css` y opción `CINEMA_CSS=min` para servir la hoja minificada.
+
+### Cambiado
+- La CSP ya no permite orígenes de Google Fonts: `font-src 'self' data:`.
+- `manifest+json` añadido a los tipos MIME del servidor.
+
 ## [1.1.0] - 2026-11-23
 
 ### Añadido

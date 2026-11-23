@@ -23,6 +23,11 @@ jobs:
       - name: Pruebas unitarias y de integración
         run: npm test
 
+      - name: Hoja CSS minificada
+        run: |
+          npm run build:css
+          test -s frontend/css/style.min.css
+
       - name: Humo del servidor
         run: |
           PORT=8123 node backend/server.js > /tmp/cinema-server.log 2>&1 &

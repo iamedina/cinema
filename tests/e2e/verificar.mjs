@@ -217,13 +217,20 @@ async function main() {
         await dormir(700);
         cdp.manejadores.clear();
 
-        const datos = await cdp.evaluar(`(() => ({
-          titulo: document.title,
-          main: !!document.querySelector('main#contenido'),
-          pie: !!document.querySelector('footer'),
-          desborde: document.documentElement.scrollWidth - window.innerWidth,
-          fuente: getComputedStyle(document.body).fontFamily
-        }))()`);
+        const datos = await cdp.evaluar(`(async () => {
+          if (document.fonts) await document.fonts.ready;
+          return {
+            titulo: document.title,
+            main: !!document.querySelector('main#contenido'),
+            pie: !!document.querySelector('footer'),
+            desborde: document.documentElement.scrollWidth - window.innerWidth,
+            fuente: getComputedStyle(document.body).fontFamily,
+            carasPoppins: document.fonts
+              ? [...document.fonts].filter((f) => f.family === 'Poppins').length
+              : 0,
+            manifest: !!document.querySelector('link[rel="manifest"]')
+          };
+        })()`);
 
         const fallos = [];
         if (!datos.titulo) fallos.push("sin título");
@@ -231,6 +238,8 @@ async function main() {
         if (!datos.pie) fallos.push("sin pie");
         if (datos.desborde > 1) fallos.push("desborde " + datos.desborde);
         if (!/Poppins/.test(datos.fuente)) fallos.push("sin Poppins");
+        if (!datos.carasPoppins) fallos.push("Poppins local no cargada");
+        if (!datos.manifest) fallos.push("sin manifest");
         if (errores.length) fallos.push("consola: " + errores[0].slice(0, 160));
 
         total += 1;

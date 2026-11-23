@@ -43,6 +43,19 @@
   }
 
   /**
+   * Devuelve un `srcset` de TMDB para la misma imagen en varios anchos.
+   * Las URLs y los marcadores de posición (data:) se dejan intactos.
+   */
+  function srcsetPoster(url, anchos = [185, 342, 500]) {
+    if (typeof url !== "string" || !/^https:\/\/image\.tmdb\.org\/t\/p\/w\d+\//.test(url)) {
+      return "";
+    }
+    return anchos
+      .map((ancho) => url.replace(/\/w\d+\//, "/w" + ancho + "/") + " " + ancho + "w")
+      .join(", ");
+  }
+
+  /**
    * Construye una tarjeta. El id viaja en data-id: la navegación se
    * resuelve por delegación, nunca con onclick inline.
    */
@@ -59,6 +72,10 @@
         ? item.rating.toFixed(1)
         : null;
     const destino = "descripcion.html?id=" + encodeURIComponent(item.id);
+    const srcset = srcsetPoster(poster);
+    const atributosImagen = srcset
+      ? `srcset="${escapeHtml(srcset)}" sizes="(max-width: 576px) 45vw, (max-width: 992px) 30vw, 220px"`
+      : "";
 
     article.innerHTML = `
     <div class='pelicula-card'>
@@ -66,7 +83,7 @@
       <a class="card-banner" href="${destino}" data-id="${escapeHtml(item.id)}"
          aria-label="Ver detalles de ${titulo}">
         <img src="${escapeHtml(poster)}" alt="Póster de ${titulo}"
-             class="img-pelicula" loading="lazy" decoding="async">
+             class="img-pelicula" loading="lazy" decoding="async" ${atributosImagen}>
       </a>
       <div class="title-wrapper">
         <a class="card-title-enlace" href="${destino}">
@@ -263,6 +280,7 @@
     POSTER_PLACEHOLDER,
     escapeHtml,
     etiquetaTipo,
+    srcsetPoster,
     reduceMovimiento,
     crearTarjeta,
     pintarTarjetas,

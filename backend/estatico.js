@@ -14,6 +14,7 @@ const MIME = {
   ".css": "text/css; charset=utf-8",
   ".js": "text/javascript; charset=utf-8",
   ".json": "application/json; charset=utf-8",
+  ".webmanifest": "application/manifest+json",
   ".png": "image/png",
   ".jpg": "image/jpeg",
   ".jpeg": "image/jpeg",
@@ -85,6 +86,16 @@ function crearEstatico({ raiz, cabecerasSeguridad }) {
     if (!datos) return responder404(res);
 
     const tipo = MIME[path.extname(absoluto).toLowerCase()] || "application/octet-stream";
+
+    /* CINEMA_CSS=min sirve el CSS generado por `npm run build:css` sin tocar
+       las hojas fuente. Por defecto se usa siempre style.css (legible). */
+    if (tipo.startsWith("text/html") && /^min$/i.test(process.env.CINEMA_CSS || "")) {
+      const minificado = path.join(raiz, "css", "style.min.css");
+      if (fs.existsSync(minificado)) {
+        datos = Buffer.from(datos.toString("utf8").replaceAll("css/style.css", "css/style.min.css"));
+      }
+    }
+
     /* Vendor e imágenes locales casi nunca cambian: se cachean con tiempo largo. */
     const cache = /^(vendor|img)\//.test(relativo)
       ? "public, max-age=31536000, immutable"

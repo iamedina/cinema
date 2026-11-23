@@ -9,6 +9,7 @@ sin dependencias externas y sin enviar credenciales al navegador.
 npm start          # servidor en http://127.0.0.1:8080
 npm test           # pruebas con node:test
 npm run test:e2e   # recorrido en Chrome (requiere Chrome y Node 22+)
+npm run build:css  # genera css/style.min.css (no editar a mano)
 ```
 
 No hay `npm install`: el servidor usa solo módulos nativos de Node 18+.

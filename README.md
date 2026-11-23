@@ -419,6 +419,24 @@ cambiaban la maquetación según la página.
   inmutable; el HTML y los JS siguen revalidando (`no-cache`).
 - Los módulos solo se cargan donde se usan (por ejemplo, la portada ya no
   carga el reproductor ni el progreso).
+- Los pósters de TMDB llevan `srcset` en `185w / 342w / 500w` y un `sizes`
+  acorde con la rejilla; el navegador elige la imagen justa en cada pantalla.
+- **Poppins está alojada en el proyecto** (`frontend/vendor/fonts/`, licencia
+  SIL OFL en `OFL.txt`). No se llama a Google Fonts y funciona sin conexión.
+- `npm run build:css` genera `frontend/css/style.min.css` (84,9 KB → 64,3 KB)
+  uniendo los 17 parciales en orden. Con `CINEMA_CSS=min npm start` el servidor
+  sirve esa versión sin tocar las hojas fuente; por defecto se usa `style.css`.
+
+## Aplicación instalable (PWA)
+
+Las 12 páginas enlazan `manifest.webmanifest` y registran `sw.js` desde un
+script externo (la CSP prohíbe el código inline). Hay iconos PNG de 192 y 512 px,
+`display: standalone` y color de tema propio.
+
+El service worker usa red primero para el HTML, caché con revalidación para
+CSS/JS/fuentes/imágenes y **nunca** guarda `/api/*`. Si no hay red, sirve la
+página visitada desde caché o, como último recurso, la portada. Si el navegador
+no admite service workers, el sitio sigue funcionando igual.
 
 ## Estructura
 
@@ -436,8 +454,12 @@ frontend/                       Capa de presentación (raíz web del servidor)
 ├── legal.html                  Aviso legal, DMCA, privacidad y fuentes
 ├── dominio-publico.html        Catálogo de dominio público con reproductor
 ├── 404.html                    Página no encontrada
+├── manifest.webmanifest        Nombre, colores e iconos de la PWA
+├── sw.js                       Service worker (red en HTML, caché en estáticos)
 ├── css/
 │   ├── style.css               Entrada: @charset, Poppins y @imports ordenados
+│   ├── 00-fuentes.css          @font-face de Poppins alojada localmente
+│   ├── style.min.css           Generado por npm run build:css (no editar)
 │   ├── 01-base.css             Tokens y paleta (acento #0d6efd)
 │   ├── 02-componentes.css      Botones, badges y accesibilidad
 │   ├── 03-layout.css           Cabecera, secciones y rejillas
@@ -453,9 +475,9 @@ frontend/                       Capa de presentación (raíz web del servidor)
 │   ├── 13-portada.css          Hero rotativo, Top 10 y géneros
 │   ├── 14-listados.css         Hero, destacados y filtros de los listados
 │   └── 15-ficha-cabecera.css   Cabecera con backdrop de la ficha
-├── js/                         23 módulos: api, almacen, ui, hero, detalle, …
-├── img/                        Logo local
-└── vendor/                     Bootstrap e iconos (sin CDN)
+├── js/                         24 módulos: api, almacen, ui, pwa, hero, detalle, …
+├── img/                        Logo e iconos 192/512 de la PWA
+└── vendor/                     Bootstrap, iconos y fuentes Poppins (sin CDN)
 
 backend/                        Capa de servidor (nunca se sirve como estático)
 ├── server.js                   Orquesta rutas y arranque
@@ -473,7 +495,9 @@ backend/                        Capa de servidor (nunca se sirve como estático)
 tests/                          Pruebas con node:test (npm test)
 ├── e2e/verificar.mjs           Recorrido en Chrome (npm run test:e2e)
 ├── fase1.test.cjs              Metadatos, CSP, red y CSS accesible
+├── fase2.test.cjs              PWA, fuentes locales, srcset y build CSS
 └── ...                         almacén, API, filtros, servidor, visual…
+scripts/build-css.mjs           Genera style.min.css (npm run build:css)
 .github/workflows/ci.yml        Sintaxis + pruebas + humo en cada push
 CHANGELOG.md                    Cambios por versión
 CONTRIBUTING.md                 Normas de colaboración
