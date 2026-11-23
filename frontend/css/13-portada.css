@@ -387,7 +387,7 @@
 .chip-genero:hover,
 .chip-genero:focus-visible {
   border-color: var(--primario);
-  background: rgb(13 110 253 / 0.12);
+  background: rgb(var(--acento-rgb) / 0.12);
   color: #fff;
 }
 
@@ -430,7 +430,7 @@
   height: 56px;
   margin: 0 auto 18px;
   border-radius: 50%;
-  background: rgb(13 110 253 / 0.14);
+  background: rgb(var(--acento-rgb) / 0.14);
   color: var(--primario-suave);
   font-size: 24px;
 }

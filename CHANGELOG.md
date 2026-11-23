@@ -4,6 +4,19 @@ Todos los cambios relevantes de CINEMA se anotan aquí. El formato sigue
 [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y el proyecto usa
 [SemVer](https://semver.org/lang/es/).
 
+## [1.4.0] - 2026-11-23
+
+### Añadido
+- Tokens semánticos de acento (`--acento`, `--acento-rgb`, `--acento-suave` y
+  `--acento-profundo`); `--primario*` queda como alias compatible.
+- Experimental «Color de acento» en Ajustes: ámbar reversible al instante,
+  persistido con el resto de preferencias y visible en botones, enlaces, focos
+  y realces de todas las páginas.
+- Comprobación E2E del cambio de acento sin recargar la página.
+
+### Cambiado
+- Los realces azules escritos a mano pasan a usar los tokens semánticos.
+
 ## [1.3.0] - 2026-11-23
 
 ### Añadido

@@ -98,7 +98,7 @@ html.reducir-animaciones .esqueleto {
   width: 76px;
   height: 76px;
   border-radius: 50%;
-  background: rgba(13, 110, 253, 0.92);
+  background: rgb(var(--acento-rgb) / 0.92);
   color: #fff;
   font-size: 2.4rem;
   transform: translate(-50%, -50%);

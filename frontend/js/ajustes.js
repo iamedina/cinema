@@ -25,6 +25,7 @@
   const recordarProgreso = document.getElementById("recordarProgreso");
   const reanudacion = document.getElementById("reanudacion");
   const radiosTexto = Array.from(document.querySelectorAll('input[name="textoGrande"]'));
+  const radiosAcento = Array.from(document.querySelectorAll('input[name="acento"]'));
   const botonesBorrar = Array.from(document.querySelectorAll("[data-borrar]"));
   const exportar = document.getElementById("exportarDatos");
   const importar = document.getElementById("importarArchivo");
@@ -70,6 +71,9 @@
 
     for (const radio of radiosTexto) {
       radio.checked = radio.value === (prefs.textoGrande ? "grande" : "normal");
+    }
+    for (const radio of radiosAcento) {
+      radio.checked = radio.value === prefs.acento;
     }
   }
 
@@ -117,6 +121,13 @@
     radio.addEventListener("change", () => {
       if (!radio.checked) return;
       guardar({ textoGrande: radio.value === "grande" });
+    });
+  }
+
+  for (const radio of radiosAcento) {
+    radio.addEventListener("change", () => {
+      if (!radio.checked) return;
+      guardar({ acento: radio.value });
     });
   }
 

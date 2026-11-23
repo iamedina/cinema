@@ -34,6 +34,7 @@ test("preferencias arranca con los valores por defecto", () => {
   assert.deepEqual(prefs.leer(), {
     reducirAnimaciones: false,
     textoGrande: false,
+    acento: "azul",
     ordenTrailer: "latino",
     cargarTrailer: true,
     region: "MX",
@@ -73,8 +74,10 @@ test("normaliza valores inválidos sin romper el resto", () => {
     reanudacion: "telepatia",
     cargarTrailer: "no",
     recordarProgreso: 0,
+    acento: "verde",
   });
 
+  assert.equal(resultado.acento, "azul");
   assert.equal(resultado.region, "MX");
   assert.equal(resultado.ordenTrailer, "latino");
   assert.equal(resultado.reanudacion, "preguntar");
@@ -131,6 +134,12 @@ test("aplica las clases de apariencia al documento", () => {
 
   prefs.guardar({ textoGrande: false, reducirAnimaciones: false });
   assert.equal(clases.size, 0);
+
+  prefs.guardar({ acento: "ambar" });
+  assert.ok(clases.has("acento-ambar"));
+
+  prefs.guardar({ acento: "azul" });
+  assert.equal(clases.has("acento-ambar"), false);
 });
 
 test("avisa a los oyentes y permite desuscribirse", () => {

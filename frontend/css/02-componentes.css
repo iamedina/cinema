@@ -73,7 +73,7 @@
 
 .btn-primary:hover,
 .btn-primary:focus-visible {
-  box-shadow: 0 0 24px rgb(13 110 253 / 0.25);
+  box-shadow: 0 0 24px rgb(var(--acento-rgb) / 0.25);
 }
 
 /* ------------------------------------------------------------

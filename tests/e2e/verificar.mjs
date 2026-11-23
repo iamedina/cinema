@@ -258,6 +258,33 @@ async function main() {
       }
     }
 
+    /* El acento ámbar se aplica y se revierte en caliente, sin recargar. */
+    await cdp.enviar("Page.navigate", { url: base + "/ajustes.html" });
+    await dormir(700);
+    const acento = await cdp.evaluar(`(() => {
+      const raiz = document.documentElement;
+      const antes = getComputedStyle(raiz).getPropertyValue("--acento").trim();
+      document.getElementById("acentoAmbar").click();
+      const durante = getComputedStyle(raiz).getPropertyValue("--acento").trim();
+      const clase = raiz.classList.contains("acento-ambar");
+      document.getElementById("acentoAzul").click();
+      const despues = getComputedStyle(raiz).getPropertyValue("--acento").trim();
+      return { antes, durante, despues, clase };
+    })()`);
+
+    const fallosAcento = [];
+    if (!acento.clase || !/b45309/i.test(acento.durante)) fallosAcento.push("ámbar no aplicado");
+    if (!/0d6efd/i.test(acento.antes) || !/0d6efd/i.test(acento.despues)) {
+      fallosAcento.push("azul no restaurado");
+    }
+
+    total += 1;
+    if (!fallosAcento.length) correctos += 1;
+    console.log(
+      `${fallosAcento.length ? "FAIL" : "OK  "} acento ámbar reversible`.padEnd(58) +
+        fallosAcento.join(", ")
+    );
+
     console.log(`\nTOTAL E2E: ${correctos}/${total}`);
     return correctos === total ? 0 : 1;
   } finally {

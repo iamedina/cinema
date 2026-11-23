@@ -9,14 +9,20 @@
   --gray-x: hsl(0 0% 74%);
   --gainsboro: hsl(0 7% 88%);
 
-  /* Identidad CINEMA */
+  /* Identidad CINEMA: la capa semántica manda; los alias --primario* se
+     conservan para no reescribir cada regla. Valor por defecto: azul. */
+  --acento: #0d6efd;
+  --acento-rgb: 13 110 253;
+  --acento-suave: #6ea8fe;
+  --acento-profundo: #073b8c;
+
   --fondo: var(--eerie-black);
   --panel: var(--rich-black);
   --superficie: var(--raisin-black);
   --texto: #fff;
   --texto-suave: var(--light-gray);
-  --primario: #0d6efd;
-  --primario-suave: #6ea8fe;
+  --primario: var(--acento);
+  --primario-suave: var(--acento-suave);
   /* Texto e iconos sobre fondos oscuros: 7.76:1 frente a 4.17:1 del azul. */
   --color-enlace: var(--primario-suave);
   --borde: hsl(0 0% 100% / 0.1);
@@ -48,5 +54,14 @@
 
   /* Altura de la cabecera: la usa el hero para situarse detrás del header. */
   --header-alto: 80px;
+}
+
+/* Experimento reversible de Ajustes: Cambia solo la capa semántica, así que
+   botones, enlaces, focos y realces siguen las mismas reglas que el azul. */
+:root.acento-ambar {
+  --acento: #b45309;
+  --acento-rgb: 180 83 9;
+  --acento-suave: #fbbf24;
+  --acento-profundo: #78350f;
 }
 

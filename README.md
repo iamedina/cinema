@@ -29,7 +29,10 @@ El sistema visual está inspirado en [FilmLane](https://codewithsadee.github.io/
 de [codewithsadee](https://github.com/codewithsadee) (© 2022, uso libre):
 estructura de portada, tarjetas con póster 2:3 y componentes como badges,
 botones y pie de página. CINEMA mantiene su identidad propia: acento azul
-`#0d6efd`, tipografía Poppins, logo e imágenes de TMDB. El hover de las
+`#0d6efd` por defecto, tipografía Poppins, logo e imágenes de TMDB. El color
+vive en tokens semánticos (`--acento`, `--acento-rgb`, `--acento-suave` y
+`--acento-profundo`); los nombres antiguos (`--primario*`) son alias para no
+reescribir cada regla. El hover de las
 tarjetas eleva la tarjeta (`scale(1.02)`), acerca el póster (`scale(1.03)`) y
 baja su opacidad a `0.60`; la tarjeta usa `transition: 0.4s` y todos los
 pósters comparten `0.6s` para `transform` y `opacity` (también al salir).
@@ -164,7 +167,8 @@ propio y `/api/health`). También se revisan las páginas HTML: que carguen
 módulo o archivo referenciado. La Fase 1 añade comprobaciones de metadatos,
 licencia, CSP, timeout de red y tokens de color. La Fase 4 revisa además el
 botón de copiar enlace, «Sorpréndeme», los filtros de la búsqueda y
-«Siguiendo viendo».
+«Siguiendo viendo». La Fase 5 comprueba los tokens de acento y que el ámbar se
+aplica y se revierte sin recargar.
 
 Para un recorrido real en navegador:
 
@@ -173,8 +177,9 @@ npm run test:e2e
 ```
 
 Arranca el servidor en un puerto libre, abre Chrome con CDP, visita las 12
-páginas en 1440 px y 390 px y falla si hay errores de consola, desbordamiento
-horizontal o rutas del backend expuestas. Necesita Chrome y Node 22+ (por el
+páginas en 1440 px y 390 px, comprueba que el acento ámbar se aplica y se
+revierte, y falla si hay errores de consola, desbordamiento horizontal o rutas
+del backend expuestas. Necesita Chrome y Node 22+ (por el
 `WebSocket` global); con `CHROME_PATH` puedes indicar dónde está el ejecutable.
 Esos mismos chequeos de sintaxis, pruebas y humo del servidor se ejecutan solos en
 GitHub Actions (`.github/workflows/ci.yml`) en cada push o pull request.
@@ -252,8 +257,11 @@ navegador (`localStorage`, clave `cinema:ajustes:v1`): no hay cuenta ni se enví
 nada al servidor. El engranaje de la cabecera y el enlace del pie llevan a ella
 desde cualquier página.
 
-- **Apariencia:** reducir animaciones (además de la preferencia del sistema) y
-  tamaño de texto normal o grande. Los cambios se aplican al instante.
+- **Apariencia:** reducir animaciones (además de la preferencia del sistema),
+  tamaño de texto normal o grande y **color de acento** (azul o ámbar
+  experimental). Los cambios se aplican al instante en todas las páginas; el
+  ámbar se puede desactivar volviendo a «Azul» o con «Restablecer ajustes», y
+  se guarda con el resto de preferencias, incluidas las copias de seguridad.
 - **Tráilers:** orden del audio (`Latino → España → Inglés`, `España → Latino →
   Inglés`, `Inglés → Latino → España` o solo oficiales) y carga automática. Con
   la carga automática desactivada, la ficha muestra una miniatura de YouTube y

@@ -40,9 +40,15 @@
     { id: "inicio", nombre: "Empezar desde el inicio" },
   ];
 
+  const ACENTOS = [
+    { id: "azul", nombre: "Azul CINEMA" },
+    { id: "ambar", nombre: "Ámbar (experimental)" },
+  ];
+
   const DEFECTOS = Object.freeze({
     reducirAnimaciones: false,
     textoGrande: false,
+    acento: "azul",
     ordenTrailer: "latino",
     cargarTrailer: true,
     region: "MX",
@@ -68,6 +74,7 @@
     return {
       reducirAnimaciones: base.reducirAnimaciones === true,
       textoGrande: base.textoGrande === true,
+      acento: opcionValida(ACENTOS, base.acento, DEFECTOS.acento),
       ordenTrailer: opcionValida(ORDENES, base.ordenTrailer, DEFECTOS.ordenTrailer),
       cargarTrailer: base.cargarTrailer !== false,
       region: opcionValida(REGIONES, base.region, DEFECTOS.region),
@@ -98,6 +105,7 @@
     const raiz = document.documentElement;
     raiz.classList.toggle("texto-grande", prefs.textoGrande);
     raiz.classList.toggle("reducir-animaciones", prefs.reducirAnimaciones);
+    raiz.classList.toggle("acento-ambar", prefs.acento === "ambar");
   }
 
   function notificar(valor) {
@@ -171,6 +179,7 @@
     REGIONES,
     ORDENES,
     REANUDACIONES,
+    ACENTOS,
     normalizar,
     leer,
     guardar,
