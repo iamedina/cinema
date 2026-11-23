@@ -4,6 +4,18 @@ Todos los cambios relevantes de CINEMA se anotan aquí. El formato sigue
 [Keep a Changelog](https://keepachangelog.com/es-ES/1.1.0/) y el proyecto usa
 [SemVer](https://semver.org/lang/es/).
 
+## [1.3.0] - 2026-11-23
+
+### Añadido
+- «Copiar enlace» en la ficha, con confirmación en el botón y respaldo para
+  navegadores sin API de portapapeles.
+- Botón «Sorpréndeme» en el hero: abre la ficha de un destacado aleatorio
+  distinto del que está en pantalla, sin peticiones extra.
+- Los filtros del catálogo (género, año, orden y nota) también funcionan en la
+  búsqueda, conservando `query` y `page` en la URL.
+- Sección «Siguiendo viendo» en la portada con la barra de progreso, el
+  porcentaje y el tiempo restante de cada título en curso.
+
 ## [1.2.0] - 2026-11-23
 
 ### Añadido

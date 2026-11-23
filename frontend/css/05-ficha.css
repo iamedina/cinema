@@ -32,6 +32,16 @@
   font-weight: 600;
 }
 
+/* Botón de «Copiar enlace» de la ficha: comparte la URL exacta de la ficha. */
+.detalle-copiar-btn {
+  --bs-btn-color: #fff;
+  --bs-btn-border-color: var(--borde-fuerte);
+  --bs-btn-hover-color: #061224;
+  --bs-btn-hover-bg: var(--primario-suave);
+  --bs-btn-hover-border-color: var(--primario-suave);
+  padding: 12px 22px;
+}
+
 .poster-detalle-marco {
   position: relative;
   width: 100%;

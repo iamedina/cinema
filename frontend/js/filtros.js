@@ -85,6 +85,16 @@
   }
 
   function generosDe(tipo) {
+    /* La búsqueda mezcla películas y series: «todos» une ambos catálogos
+       y elimina ids repetidos para que no aparezcan dos «Animación». */
+    if (tipo === "todos") {
+      const unicos = new Map();
+      for (const genero of [...CINEMA.generos.para("movie"), ...CINEMA.generos.para("tv")]) {
+        unicos.set(genero.id, genero);
+      }
+      return [...unicos.values()];
+    }
+
     return CINEMA.generos
       .para(tipo)
       .filter((genero) => !(tipo === "anime" && genero.id === "16"));

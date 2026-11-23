@@ -56,7 +56,9 @@ pantallas pequeñas, ocupando siempre todo el ancho. Las imágenes se muestran
 claras con un sombreado ligero (`brightness(1.12)`). Se detiene al pasar el ratón,
 al enfocar un punto, al cambiar de pestaña o si el sistema pide movimiento
 reducido. Los datos y las imágenes son de TMDB y ya están resueltos, así que el
-carrusel no lanza peticiones adicionales.
+carrusel no lanza peticiones adicionales. Junto a los accesos a películas y
+series se añade **«Sorpréndeme»**: elige uno de esos diez destacados (distinto
+del que hay en pantalla) y abre su ficha.
 
 Las páginas de `pelicula.html`, `serie.html` y `anime.html` comparten una
 cabecera con póster decorativo y un bloque de **5 imprescindibles** que también
@@ -160,7 +162,9 @@ región, copias de seguridad y el servidor (proxy de OMDb, rutas permitidas, 404
 propio y `/api/health`). También se revisan las páginas HTML: que carguen
 `preferencias.js` antes que el resto, que enlacen Ajustes y que no falte ningún
 módulo o archivo referenciado. La Fase 1 añade comprobaciones de metadatos,
-licencia, CSP, timeout de red y tokens de color.
+licencia, CSP, timeout de red y tokens de color. La Fase 4 revisa además el
+botón de copiar enlace, «Sorpréndeme», los filtros de la búsqueda y
+«Siguiendo viendo».
 
 Para un recorrido real en navegador:
 
@@ -289,8 +293,12 @@ El reproductor recuerda dónde te quedaste, en el navegador
   botón pasa a **Continuar**.
 - Al pasar del **90 %** la película se marca como **Vista** (sello sobre el
   póster) y deja de contarse como «en curso», pero conserva la posición.
-- El progreso vive en el reproductor y en el catálogo: la portada no lo
-  muestra para no repetir en la portada las películas que estás viendo.
+- El progreso vive en el reproductor y en el catálogo. La portada añade la
+  sección **«Siguiendo viendo»** tras el Top 10 con los títulos empezados y sin
+  terminar: cada tarjeta reutiliza la barra del reproductor, muestra el
+  porcentaje y el tiempo restante, y enlaza a su ficha. La sección se oculta
+  sola cuando no hay nada en curso y se actualiza al guardar progreso o al
+  volver a la pestaña.
 - Se sincroniza entre pestañas del mismo navegador. Si el navegador bloquea el
   almacenamiento, el sitio sigue funcionando sin recordar el progreso.
 
@@ -298,11 +306,16 @@ El reproductor recuerda dónde te quedaste, en el navegador
 
 Películas, series y anime tienen una barra de filtros: **género, año, orden
 y nota mínima**. Los filtros viven en la URL (`?genero=28&anio=2024&orden=nota`)
-para poder compartir un listado o recargar sin perderlo.
+para poder compartir un listado o recargar sin perderlo. La página de
+resultados de búsqueda usa la misma barra (con los géneros de películas y
+series unidos): conserva `query` y `page` en la URL junto a los filtros.
 
 - Solo aparecen con el servidor en marcha: OMDb no admite filtros.
 - `Limpiar` vuelve al catálogo completo y a la página 1.
 - La paginación numérica se mantiene; cambiar un filtro reinicia a la página 1.
+- En la búsqueda, como TMDB no permite mezclar `search` con filtros en una
+  sola llamada, se consultan tres páginas y se filtran y paginan en el
+  navegador; los resultados se reutilizan mientras no cambie la búsqueda.
 
 La rejilla usa **columnas pares explícitas** (6 / 4 / 2 según el ancho) y cada
 página entrega 60 títulos, así las filas siempre quedan completas y no aparece
@@ -324,7 +337,9 @@ cambios de tamaño, y el lightbox se recorre con flechas en pantalla o con las
 flechas del teclado.
 
 - El botón **«Añadir a Mi lista»** vive en la ficha, junto a «Ver ahora»; los
-  listados no muestran corazones.
+  listados no muestran corazones. A su lado está **«Copiar enlace»**, que copia
+  la URL exacta de la ficha (con respaldo para navegadores sin API de portapapeles)
+  y confirma el resultado en el propio botón.
 - El tráiler se elige por prioridad: **oficial en español latino**, después
   **oficial en España**, después **oficial en otro idioma** y, por último,
   cualquier tráiler de YouTube. El orden se puede cambiar en Ajustes (por

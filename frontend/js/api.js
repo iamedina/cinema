@@ -187,6 +187,7 @@
       titulo: item.title || item.name || "Sin título",
       anio: String(item.release_date || item.first_air_date || "").slice(0, 4) || "—",
       tipo: serie ? "series" : "movie",
+      generoIds: Array.isArray(item.genre_ids) ? item.genre_ids.map(String) : [],
       poster: item.poster_path ? POSTER_BASE + item.poster_path : null,
       rating: item.vote_average || null,
     };

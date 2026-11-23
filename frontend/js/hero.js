@@ -128,6 +128,7 @@
     const meta = document.getElementById("heroMeta");
     const sinopsis = document.getElementById("heroSinopsis");
     const boton = document.getElementById("heroBoton");
+    const sorprender = document.getElementById("heroSorprendeme");
     const anuncio = document.getElementById("heroAnuncio");
     const capas = [
       document.getElementById("heroFondo"),
@@ -150,6 +151,17 @@
     });
 
     let indice = 0;
+
+    /* «Sorpréndeme» elige uno de los destacados; evita repetir el que
+       ya está en pantalla y no lanza ninguna petición adicional. */
+    if (sorprender) {
+      sorprender.addEventListener("click", () => {
+        let elegido = Math.floor(Math.random() * DESTACADOS.length);
+        if (elegido === indice) elegido = (elegido + 1) % DESTACADOS.length;
+        location.href = "descripcion.html?id=" + encodeURIComponent(DESTACADOS[elegido].id);
+      });
+    }
+
     let capaActiva = 0;
     let temporizador = null;
     let sobreHero = false;

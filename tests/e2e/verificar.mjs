@@ -214,7 +214,7 @@ async function main() {
         cdp.manejadores.set("Runtime.exceptionThrown", [capturar]);
 
         await cdp.enviar("Page.navigate", { url: base + "/" + pagina });
-        await dormir(700);
+        await dormir(pagina.startsWith("busqueda") ? 1200 : 700);
         cdp.manejadores.clear();
 
         const datos = await cdp.evaluar(`(async () => {
@@ -228,7 +228,11 @@ async function main() {
             carasPoppins: document.fonts
               ? [...document.fonts].filter((f) => f.family === 'Poppins').length
               : 0,
-            manifest: !!document.querySelector('link[rel="manifest"]')
+            manifest: !!document.querySelector('link[rel="manifest"]'),
+            copiar: !!document.querySelector("[data-copiar-enlace]"),
+            sorprender: !!document.getElementById("heroSorprendeme"),
+            filtros: !!document.querySelector("#filtros form"),
+            seguir: !!document.getElementById("seccionSeguimiento")
           };
         })()`);
 
@@ -240,6 +244,12 @@ async function main() {
         if (!/Poppins/.test(datos.fuente)) fallos.push("sin Poppins");
         if (!datos.carasPoppins) fallos.push("Poppins local no cargada");
         if (!datos.manifest) fallos.push("sin manifest");
+        if (pagina.startsWith("descripcion") && !datos.copiar) fallos.push("sin Copiar enlace");
+        if (pagina === "index.html") {
+          if (!datos.sorprender) fallos.push("sin Sorpréndeme");
+          if (!datos.seguir) fallos.push("sin Siguiendo viendo");
+        }
+        if (pagina.startsWith("busqueda") && !datos.filtros) fallos.push("sin filtros");
         if (errores.length) fallos.push("consola: " + errores[0].slice(0, 160));
 
         total += 1;

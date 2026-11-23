@@ -79,6 +79,9 @@
                 <a class="btn btn-outline-light" href="serie.html">
                     <i class="bi bi-tv" aria-hidden="true"></i> Explorar series
                 </a>
+                <button type="button" class="btn btn-outline-light hero-accion" id="heroSorprendeme">
+                    <i class="bi bi-shuffle" aria-hidden="true"></i> Sorpréndeme
+                </button>
             </div>
             <div class="hero-indicadores" id="heroIndicadores" role="group" aria-label="Elegir película destacada"></div>
             <span class="sr-only" id="heroAnuncio" aria-live="polite"></span>
@@ -97,6 +100,17 @@
             </div>
             <div id="top10" class="top-10-grid" aria-busy="false"></div>
         </div>
+    </section>
+
+    <section class="nuevas" id="seccionSeguimiento" aria-labelledby="tituloSeguimiento" hidden>
+        <div class="d-flex justify-content-between align-items-start flex-wrap gap-2">
+            <div>
+                <p class="section-subtitle">Retoma donde lo dejaste</p>
+                <h2 class="section-title text-start mb-4" id="tituloSeguimiento">Siguiendo viendo</h2>
+            </div>
+            <a class="ver-todo" href="ajustes.html">Gestionar datos</a>
+        </div>
+        <div id="resultadoSeguirViendo"></div>
     </section>
 
     <section class="nuevas" style="margin-top: 50px;">
@@ -245,6 +259,7 @@
     <script src="vendor/bootstrap/bootstrap.bundle.min.js"></script>
     <script src="js/api.js"></script>
     <script src="js/almacen.js"></script>
+    <script src="js/progreso.js"></script>
     <script src="js/perfiles.js"></script>
     <script src="js/historial.js"></script>
     <script src="js/ui.js"></script>

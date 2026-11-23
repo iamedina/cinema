@@ -18,6 +18,64 @@
 
   buscador.init();
 
+  /** «Siguiendo viendo»: solo títulos empezados y sin terminar. */
+  function cargarSeguimiento() {
+    const seccion = document.getElementById("seccionSeguimiento");
+    const elemento = document.getElementById("resultadoSeguirViendo");
+    const progreso = window.CINEMA.progreso;
+    if (!seccion || !elemento || !progreso) return;
+
+    const pintar = () => {
+      const items = progreso.enCurso().slice(0, 12);
+      if (!items.length) {
+        seccion.hidden = true;
+        elemento.innerHTML = "";
+        return;
+      }
+
+      seccion.hidden = false;
+      ui.activarNavegacion(elemento);
+      elemento.innerHTML = items
+        .map((item) => {
+          const esc = ui.escapeHtml;
+          const id = esc(item.id);
+          const titulo = esc(item.titulo);
+          const poster = esc(item.poster || ui.POSTER_PLACEHOLDER);
+          const anio = esc(item.anio);
+          const porcentaje = Math.round(progreso.porcentaje(item));
+          const restante = esc(progreso.formatear(progreso.restante(item)));
+
+          return (
+            '<article class="pelicula-card seguimiento-card">' +
+            '<a class="card-banner" data-id="' + id + '" ' +
+            'href="descripcion.html?id=' + encodeURIComponent(item.id) + '" ' +
+            'aria-label="Continuar viendo ' + titulo + '">' +
+            '<img src="' + poster + '" alt="Póster de ' + titulo + '" ' +
+            'class="img-pelicula" loading="lazy" decoding="async">' +
+            '<span class="pd-progreso" aria-hidden="true">' +
+            '<span class="pd-progreso-barra" style="width: ' + porcentaje + '%"></span>' +
+            "</span>" +
+            "</a>" +
+            '<div class="title-wrapper">' +
+            '<h3 class="card-title">' + titulo + "</h3>" +
+            '<time class="card-anio">' + anio + "</time>" +
+            "</div>" +
+            '<p class="seguimiento-restante">' + porcentaje + '% · ' + restante + " restantes</p>" +
+            "</article>"
+          );
+        })
+        .join("");
+    };
+
+    pintar();
+    progreso.alCambiar(pintar);
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) pintar();
+    });
+  }
+
+  cargarSeguimiento();
+
   async function cargarRail({ contenedor, tipo }) {
     const elemento = document.getElementById(contenedor);
     if (!elemento) return;

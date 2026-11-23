@@ -178,6 +178,17 @@
   --bs-btn-hover-border-color: var(--primario-suave);
 }
 
+/* «Siguiendo viendo» reutiliza las tarjetas y la barra del reproductor. */
+.seguimiento-card .pd-progreso {
+  display: block;
+}
+
+.seguimiento-restante {
+  margin: 6px 0 0;
+  color: var(--texto-suave);
+  font-size: var(--fs-10);
+}
+
 /* Carrusel del destacado: puntos, fundido de contenido y barra de progreso */
 
 .hero-indicadores {

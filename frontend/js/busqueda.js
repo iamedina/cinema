@@ -1,10 +1,14 @@
 /**
  * CINEMA · página de resultados de búsqueda con paginación real.
+ * Si hay filtros activos, se buscan varias páginas de una vez, se filtran
+ * en el cliente y se paginan localmente: TMDB no permite combinar
+ * `search` con género, año o nota mínima en la misma llamada.
  */
 (function () {
   "use strict";
 
   const { api, ui, buscador, historial } = window.CINEMA;
+  const moduloFiltros = window.CINEMA.filtros;
 
   const resultado = document.getElementById("resultado");
   const chevron = document.getElementById("chevron");
@@ -15,11 +19,19 @@
   const aviso = document.getElementById("avisoBusqueda");
 
   const MINIMO = (historial && historial.MINIMO) || 2;
+  const POR_PAGINA = 12;
+  const PAGINAS_A_CONSULTAR = [1, 2, 3];
 
   const estado = { query: "", page: 1, totalPaginas: 0 };
   let tokenActual = 0;
+  let filtrosActivos = moduloFiltros && moduloFiltros.leer ? moduloFiltros.leer() : {};
+  let cacheConFiltros = null;
 
   ui.activarNavegacion(resultado);
+
+  function hayFiltros() {
+    return Object.keys(filtrosActivos).length > 0;
+  }
 
   function mostrarAviso(texto) {
     if (!aviso) return;
@@ -47,11 +59,70 @@
   }
 
   function sincronizarUrl() {
+    /* Parte de la URL actual: así se conservan las claves de los filtros
+       que escribe filtros.js sin duplicar lógica de replaceState. */
     const params = new URLSearchParams(location.search);
     params.set("query", estado.query);
     if (estado.page > 1) params.set("page", String(estado.page));
     else params.delete("page");
     history.replaceState(null, "", location.pathname + "?" + params.toString());
+  }
+
+  /** Aplica los filtros visibles a los títulos ya normalizados por la API. */
+  function aplicarFiltros(items, filtros) {
+    let salida = (items || []).slice();
+
+    if (filtros.genero) {
+      salida = salida.filter((item) =>
+        (item.generoIds || []).some((id) => String(id) === String(filtros.genero))
+      );
+    }
+    if (filtros.anio) {
+      salida = salida.filter((item) => String(item.anio) === String(filtros.anio));
+    }
+    if (filtros.nota) {
+      salida = salida.filter((item) => Number(item.rating) >= Number(filtros.nota));
+    }
+    if (filtros.orden === "nota") {
+      salida.sort((a, b) => Number(b.rating || 0) - Number(a.rating || 0));
+    } else if (filtros.orden === "novedad") {
+      salida.sort((a, b) => String(b.anio).localeCompare(String(a.anio)));
+    } else if (filtros.orden === "titulo") {
+      salida.sort((a, b) => String(a.titulo).localeCompare(String(b.titulo), "es"));
+    }
+
+    return salida;
+  }
+
+  /** Busca un bloque de resultados y lo reutiliza mientras no cambien filtros. */
+  async function obtenerDatos(texto, page) {
+    if (!hayFiltros()) return api.buscar({ query: texto, page });
+
+    const firma = texto + "|" + JSON.stringify(filtrosActivos);
+    if (!cacheConFiltros || cacheConFiltros.firma !== firma) {
+      const respuestas = await Promise.all(
+        PAGINAS_A_CONSULTAR.map((pagina) => api.buscar({ query: texto, page: pagina }))
+      );
+
+      const vistos = new Set();
+      const todos = [];
+      for (const respuesta of respuestas) {
+        for (const item of (respuesta && respuesta.items) || []) {
+          if (vistos.has(item.id)) continue;
+          vistos.add(item.id);
+          todos.push(item);
+        }
+      }
+
+      cacheConFiltros = { firma, items: aplicarFiltros(todos, filtrosActivos) };
+    }
+
+    const inicio = (page - 1) * POR_PAGINA;
+    return {
+      items: cacheConFiltros.items.slice(inicio, inicio + POR_PAGINA),
+      total: cacheConFiltros.items.length,
+      totalPaginas: Math.max(1, Math.ceil(cacheConFiltros.items.length / POR_PAGINA)),
+    };
   }
 
   async function ejecutar(query, page = 1, { scroll = true } = {}) {
@@ -80,25 +151,26 @@
     document.title = 'Resultados para "' + texto + '" | CINEMA';
     ocultarAviso();
 
-    ui.pintarCargando(resultado, 10);
+    ui.pintarCargando(resultado, POR_PAGINA);
     if (resultado) resultado.setAttribute("aria-busy", "true");
     if (chevron) chevron.classList.add("oculto");
 
     try {
-      const datos = await api.buscar({ query: texto, page });
+      const datos = await obtenerDatos(texto, page);
       if (token !== tokenActual) return;
 
       estado.totalPaginas = datos.items.length ? datos.totalPaginas : 0;
 
       if (!datos.items.length) {
-        const mensaje =
-          datos.error === "Too many results."
+        const mensaje = hayFiltros()
+          ? "Ningún resultado cumple los filtros elegidos. Prueba a quitar alguno."
+          : datos.error === "Too many results."
             ? '"' + texto + '" es un término demasiado común. Prueba con algo más específico.'
             : 'No se encontraron resultados para "' + texto + '".';
         ui.pintarEstado(resultado, mensaje);
       } else {
         ui.pintarTarjetas(resultado, datos.items);
-        if (datos.truncado) {
+        if (datos.truncado && !hayFiltros()) {
           mostrarAviso(
             "Hay muchísimos resultados: solo mostramos los primeros. " +
               "Añade más palabras para afinar la búsqueda."
@@ -146,6 +218,19 @@
 
   if (buscadorIniciado && buscadorIniciado.input && queryInicial) {
     buscadorIniciado.input.value = queryInicial;
+  }
+
+  const contenedorFiltros = document.getElementById("filtros");
+  if (moduloFiltros && contenedorFiltros) {
+    moduloFiltros.init({
+      tipo: "todos",
+      contenedor: contenedorFiltros,
+      alCambiar: (nuevos) => {
+        filtrosActivos = nuevos || {};
+        cacheConFiltros = null;
+        if (estado.query) ejecutar(estado.query, 1, { scroll: false });
+      },
+    });
   }
 
   if (queryInicial) {

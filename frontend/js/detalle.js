@@ -757,6 +757,63 @@
     );
   }
 
+  /** Copia la URL de la ficha; el resultado se anuncia en el propio botón. */
+  function botonCopiar() {
+    return (
+      '<button type="button" class="btn btn-outline-light detalle-copiar-btn" ' +
+      'data-copiar-enlace aria-label="Copiar enlace de esta ficha" title="Copiar enlace">' +
+      '<i class="bi bi-link-45deg" aria-hidden="true"></i> ' +
+      '<span data-copiar-texto>Copiar enlace</span>' +
+      "</button>"
+    );
+  }
+
+  /**
+   * Delegación en el contenedor: sobrevive a las recargas de la ficha y
+   * no necesita manejadores inline (la CSP los prohíbe).
+   */
+  function activarCopiar() {
+    if (!contenedor || contenedor.dataset.copiarListo === "1") return;
+    contenedor.dataset.copiarListo = "1";
+
+    contenedor.addEventListener("click", async (evento) => {
+      const boton = evento.target.closest("[data-copiar-enlace]");
+      if (!boton) return;
+
+      const etiqueta = boton.querySelector("[data-copiar-texto]");
+      const textoInicial = etiqueta ? etiqueta.textContent : "";
+      const url = location.href;
+      let copiado = false;
+
+      try {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          await navigator.clipboard.writeText(url);
+          copiado = true;
+        } else {
+          const area = document.createElement("textarea");
+          area.value = url;
+          area.setAttribute("readonly", "");
+          area.style.position = "fixed";
+          area.style.opacity = "0";
+          document.body.appendChild(area);
+          area.select();
+          copiado = document.execCommand("copy");
+          area.remove();
+        }
+      } catch {
+        copiado = false;
+      }
+
+      if (etiqueta) etiqueta.textContent = copiado ? "¡Enlace copiado!" : "No se pudo copiar";
+      boton.setAttribute("aria-label", copiado ? "Enlace copiado" : "Copiar enlace de esta ficha");
+
+      window.setTimeout(() => {
+        if (etiqueta) etiqueta.textContent = textoInicial;
+        boton.setAttribute("aria-label", "Copiar enlace de esta ficha");
+      }, 2200);
+    });
+  }
+
   /** Backdrop de la galería o, si no hay, el póster como imagen de cabecera. */
   function fondoHero(datos) {
     const imagen =
@@ -884,6 +941,7 @@
       "</div>" +
       '<div class="detalle-accion">' +
       guardar +
+      botonCopiar() +
       accionPrincipal +
       "</div>" +
       "</div>" +
@@ -919,6 +977,7 @@
       document.title = datos.titulo + " (" + datos.anio + ") | CINEMA";
       contenedor.innerHTML = plantilla(datos);
       if (window.CINEMA.favoritos) window.CINEMA.favoritos.aplicarEstado(contenedor);
+      activarCopiar();
 
       const similares = document.getElementById("similares");
       if (similares) {
